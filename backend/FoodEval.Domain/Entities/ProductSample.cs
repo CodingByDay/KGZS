@@ -5,7 +5,7 @@ namespace FoodEval.Domain.Entities;
 public class ProductSample
 {
     public Guid Id { get; set; }
-    public Guid EventId { get; set; }
+    public Guid EvaluationEventId { get; set; }
     public Guid ApplicantId { get; set; }
     public Guid CategoryId { get; set; }
     public int SequentialNumber { get; set; }

@@ -5,7 +5,7 @@ namespace FoodEval.Domain.Entities;
 public class Commission
 {
     public Guid Id { get; set; }
-    public Guid EventId { get; set; }
+    public Guid EvaluationEventId { get; set; }
     public Guid CategoryId { get; set; }
     public string Name { get; set; } = string.Empty;
     public string? Description { get; set; }

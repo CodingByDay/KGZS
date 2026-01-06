@@ -1,9 +1,10 @@
 export enum UserRole {
-  Administrator = 'Administrator',
-  Organizer = 'Organizer',
+  SuperAdmin = 'SuperAdmin',
+  OrganizationAdmin = 'OrganizationAdmin',
+  DataEntry = 'DataEntry',
+  EvaluationOrganizer = 'EvaluationOrganizer',
   CommissionChair = 'CommissionChair',
   CommissionMember = 'CommissionMember',
   CommissionTrainee = 'CommissionTrainee',
-  Applicant = 'Applicant',
-  Consumer = 'Consumer',
+  InterestedParty = 'InterestedParty',
 }

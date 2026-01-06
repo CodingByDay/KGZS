@@ -1,6 +1,6 @@
 namespace FoodEval.Domain.Enums;
 
-public enum RecordStatus
+public enum ProtocolStatus
 {
     Draft,
     Generated,

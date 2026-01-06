@@ -4,7 +4,7 @@ public class EvaluationCriterion
 {
     public Guid Id { get; set; }
     public Guid? CommissionId { get; set; }
-    public Guid EventId { get; set; }
+    public Guid EvaluationEventId { get; set; }
     public string Name { get; set; } = string.Empty;
     public string? Description { get; set; }
     public decimal? Weight { get; set; }

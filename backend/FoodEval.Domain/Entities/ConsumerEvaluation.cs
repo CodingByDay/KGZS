@@ -3,7 +3,7 @@ namespace FoodEval.Domain.Entities;
 public class ConsumerEvaluation
 {
     public Guid Id { get; set; }
-    public Guid EventId { get; set; }
+    public Guid EvaluationEventId { get; set; }
     public Guid ProductSampleId { get; set; }
     public Guid ConsumerEvaluationStationId { get; set; }
     public decimal Score { get; set; }

@@ -3,6 +3,7 @@ import { StorageService } from '@/infrastructure/storage/StorageService';
 import { LoginRequest, LoginResponse, UserInfoResponse } from '@/domain/types/Auth';
 import { User } from '@/domain/types/User';
 import { UserRole } from '@/domain/enums/UserRole';
+import { UserType } from '@/domain/enums/UserType';
 
 export class AuthService {
   async login(email: string, password: string): Promise<void> {
@@ -31,6 +32,9 @@ export class AuthService {
       id: response.id,
       email: response.email,
       role: response.role as UserRole,
+      userType: response.userType as UserType,
+      organizationId: response.organizationId,
+      organizationName: response.organizationName,
     };
     
     StorageService.setUser(JSON.stringify(user));

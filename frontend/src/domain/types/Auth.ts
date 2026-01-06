@@ -11,4 +11,7 @@ export interface UserInfoResponse {
   id: string;
   email: string;
   role: string;
+  userType: number;
+  organizationId?: string;
+  organizationName?: string;
 }

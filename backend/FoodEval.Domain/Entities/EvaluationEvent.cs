@@ -2,7 +2,7 @@ using FoodEval.Domain.Enums;
 
 namespace FoodEval.Domain.Entities;
 
-public class Event
+public class EvaluationEvent
 {
     public Guid Id { get; set; }
     public string Name { get; set; } = string.Empty;

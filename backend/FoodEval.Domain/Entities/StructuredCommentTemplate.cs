@@ -5,7 +5,7 @@ namespace FoodEval.Domain.Entities;
 public class StructuredCommentTemplate
 {
     public Guid Id { get; set; }
-    public Guid EventId { get; set; }
+    public Guid EvaluationEventId { get; set; }
     public Guid? CategoryId { get; set; }
     public string Text { get; set; } = string.Empty;
     public StructuredCommentType CommentType { get; set; }

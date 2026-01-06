@@ -47,7 +47,7 @@ export function LoginPage() {
 
     try {
       await authService.login(email, password);
-      navigate('/dashboard');
+      navigate('/app/dashboard');
     } catch (err) {
       const apiError = err as ApiError;
       setError(apiError.message || 'Login failed. Please try again.');

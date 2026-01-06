@@ -2,11 +2,12 @@ namespace FoodEval.Domain.Enums;
 
 public enum UserRole
 {
-    Administrator,
-    Organizer,
+    SuperAdmin,
+    OrganizationAdmin,
+    DataEntry,                 // Vnašalec
+    EvaluationOrganizer,
     CommissionChair,
     CommissionMember,
     CommissionTrainee,
-    Applicant,
-    Consumer
+    InterestedParty
 }

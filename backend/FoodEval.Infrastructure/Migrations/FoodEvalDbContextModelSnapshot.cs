@@ -45,7 +45,7 @@ namespace FoodEval.Infrastructure.Migrations
                     b.Property<bool>("EmailVerified")
                         .HasColumnType("bit");
 
-                    b.Property<Guid>("EventId")
+                    b.Property<Guid>("EvaluationEventId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTimeOffset?>("PaymentConfirmedAt")
@@ -126,7 +126,7 @@ namespace FoodEval.Infrastructure.Migrations
                     b.Property<int>("DisplayOrder")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("EventId")
+                    b.Property<Guid>("EvaluationEventId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
@@ -197,7 +197,7 @@ namespace FoodEval.Infrastructure.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("EventId")
+                    b.Property<Guid>("EvaluationEventId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
@@ -259,7 +259,7 @@ namespace FoodEval.Infrastructure.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<Guid>("EventId")
+                    b.Property<Guid>("EvaluationEventId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("ProductSampleId")
@@ -286,7 +286,7 @@ namespace FoodEval.Infrastructure.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<Guid>("EventId")
+                    b.Property<Guid>("EvaluationEventId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
@@ -348,7 +348,7 @@ namespace FoodEval.Infrastructure.Migrations
                     b.Property<int>("DisplayOrder")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("EventId")
+                    b.Property<Guid>("EvaluationEventId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsRequired")
@@ -373,39 +373,7 @@ namespace FoodEval.Infrastructure.Migrations
                     b.ToTable("EvaluationCriteria");
                 });
 
-            modelBuilder.Entity("FoodEval.Domain.Entities.EvaluationSession", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset>("ActivatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<Guid>("ActivatedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("CommissionId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset?>("CompletedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<Guid>("ProductSampleId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("EvaluationSessions");
-                });
-
-            modelBuilder.Entity("FoodEval.Domain.Entities.Event", b =>
+            modelBuilder.Entity("FoodEval.Domain.Entities.EvaluationEvent", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -441,7 +409,39 @@ namespace FoodEval.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Events");
+                    b.ToTable("EvaluationEvents");
+                });
+
+            modelBuilder.Entity("FoodEval.Domain.Entities.EvaluationSession", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("ActivatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("ActivatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CommissionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("CompletedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("ProductSampleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EvaluationSessions");
                 });
 
             modelBuilder.Entity("FoodEval.Domain.Entities.ExpertEvaluation", b =>
@@ -527,6 +527,36 @@ namespace FoodEval.Infrastructure.Migrations
                     b.ToTable("Notifications");
                 });
 
+            modelBuilder.Entity("FoodEval.Domain.Entities.Organization", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Village")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Organizations");
+                });
+
             modelBuilder.Entity("FoodEval.Domain.Entities.Payment", b =>
                 {
                     b.Property<Guid>("Id")
@@ -547,7 +577,7 @@ namespace FoodEval.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("EventId")
+                    b.Property<Guid>("EvaluationEventId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("InvoiceNumber")
@@ -591,11 +621,11 @@ namespace FoodEval.Infrastructure.Migrations
                     b.Property<DateTimeOffset?>("EvaluatedAt")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<Guid>("EvaluationEventId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<int>("EvaluationMode")
                         .HasColumnType("int");
-
-                    b.Property<Guid>("EventId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTimeOffset?>("ExcludedAt")
                         .HasColumnType("datetimeoffset");
@@ -632,7 +662,7 @@ namespace FoodEval.Infrastructure.Migrations
                     b.ToTable("ProductSamples");
                 });
 
-            modelBuilder.Entity("FoodEval.Domain.Entities.Record", b =>
+            modelBuilder.Entity("FoodEval.Domain.Entities.Protocol", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -647,7 +677,7 @@ namespace FoodEval.Infrastructure.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<Guid>("EventId")
+                    b.Property<Guid>("EvaluationEventId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("FinalScore")
@@ -666,7 +696,7 @@ namespace FoodEval.Infrastructure.Migrations
                     b.Property<Guid>("ProductSampleId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("RecordNumber")
+                    b.Property<int>("ProtocolNumber")
                         .HasColumnType("int");
 
                     b.Property<DateTimeOffset?>("SentAt")
@@ -686,7 +716,7 @@ namespace FoodEval.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Records");
+                    b.ToTable("Protocols");
                 });
 
             modelBuilder.Entity("FoodEval.Domain.Entities.ScoringPolicy", b =>
@@ -698,7 +728,7 @@ namespace FoodEval.Infrastructure.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<Guid>("EventId")
+                    b.Property<Guid>("EvaluationEventId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTimeOffset>("ModifiedAt")
@@ -739,7 +769,7 @@ namespace FoodEval.Infrastructure.Migrations
                     b.Property<int>("DisplayOrder")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("EventId")
+                    b.Property<Guid>("EvaluationEventId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
@@ -784,6 +814,9 @@ namespace FoodEval.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("OrganizationId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -795,6 +828,9 @@ namespace FoodEval.Infrastructure.Migrations
                         .HasColumnType("bit");
 
                     b.Property<int>("PrimaryRole")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserType")
                         .HasColumnType("int");
 
                     b.HasKey("Id");

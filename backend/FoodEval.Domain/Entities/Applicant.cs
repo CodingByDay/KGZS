@@ -5,7 +5,7 @@ namespace FoodEval.Domain.Entities;
 public class Applicant
 {
     public Guid Id { get; set; }
-    public Guid EventId { get; set; }
+    public Guid EvaluationEventId { get; set; }
     public Guid? UserId { get; set; }
     public string? CompanyName { get; set; }
     public string ContactPersonName { get; set; } = string.Empty;

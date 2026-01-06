@@ -2,17 +2,17 @@ using FoodEval.Domain.Enums;
 
 namespace FoodEval.Domain.Entities;
 
-public class Record
+public class Protocol
 {
     public Guid Id { get; set; }
-    public Guid EventId { get; set; }
+    public Guid EvaluationEventId { get; set; }
     public Guid ProductSampleId { get; set; }
     public Guid ApplicantId { get; set; }
-    public int RecordNumber { get; set; }
+    public int ProtocolNumber { get; set; }
     public int Version { get; set; } = 1;
     public Guid? PreviousVersionId { get; set; }
     public decimal FinalScore { get; set; }
-    public RecordStatus Status { get; set; }
+    public ProtocolStatus Status { get; set; }
     public DateTimeOffset? GeneratedAt { get; set; }
     public DateTimeOffset? SentAt { get; set; }
     public DateTimeOffset? AcknowledgedAt { get; set; }
@@ -21,39 +21,39 @@ public class Record
     public Guid VersionCreatedBy { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
     
-    // Validation: First record version always has Version = 1
+    // Validation: First protocol version always has Version = 1
     // Validation: Each new version increments version number
     // Validation: PreviousVersionId links to immediate predecessor
     // Validation: Only latest version is considered active for sending
     // Validation: Version history is immutable (cannot delete or modify past versions)
-    public Record CreateNewVersion(Guid createdBy)
+    public Protocol CreateNewVersion(Guid createdBy)
     {
-        return new Record
+        return new Protocol
         {
             Id = Guid.NewGuid(),
-            EventId = EventId,
+            EvaluationEventId = EvaluationEventId,
             ProductSampleId = ProductSampleId,
             ApplicantId = ApplicantId,
-            RecordNumber = RecordNumber,
+            ProtocolNumber = ProtocolNumber,
             Version = Version + 1,
             PreviousVersionId = Id,
             FinalScore = FinalScore,
-            Status = RecordStatus.Draft,
+            Status = ProtocolStatus.Draft,
             VersionCreatedAt = DateTimeOffset.UtcNow,
             VersionCreatedBy = createdBy,
             CreatedAt = DateTimeOffset.UtcNow
         };
     }
     
-    // Validation: Record status flow: Draft → Generated → Sent → Acknowledged
-    public bool CanTransitionTo(RecordStatus newStatus)
+    // Validation: Protocol status flow: Draft → Generated → Sent → Acknowledged
+    public bool CanTransitionTo(ProtocolStatus newStatus)
     {
         return Status switch
         {
-            RecordStatus.Draft => newStatus == RecordStatus.Generated,
-            RecordStatus.Generated => newStatus == RecordStatus.Sent,
-            RecordStatus.Sent => newStatus == RecordStatus.Acknowledged,
-            RecordStatus.Acknowledged => false, // Acknowledged records cannot change
+            ProtocolStatus.Draft => newStatus == ProtocolStatus.Generated,
+            ProtocolStatus.Generated => newStatus == ProtocolStatus.Sent,
+            ProtocolStatus.Sent => newStatus == ProtocolStatus.Acknowledged,
+            ProtocolStatus.Acknowledged => false, // Acknowledged protocols cannot change
             _ => false
         };
     }

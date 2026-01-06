@@ -102,9 +102,12 @@ builder.Services.AddScoped<IEvaluationEventService, EvaluationEventService>();
 builder.Services.AddScoped<IProtocolService, ProtocolService>();
 builder.Services.AddScoped<IExpertEvaluationService, ExpertEvaluationService>();
 builder.Services.AddScoped<IEvaluationNotificationService, EvaluationNotificationService>();
+builder.Services.AddScoped<IUserManagementService, UserManagementService>();
+builder.Services.AddScoped<IOrganizationService, OrganizationService>();
 
 // Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IOrganizationRepository, OrganizationRepository>();
 builder.Services.AddScoped<IProductSampleRepository, ProductSampleRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICommissionRepository, CommissionRepository>();

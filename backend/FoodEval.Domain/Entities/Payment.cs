@@ -5,7 +5,7 @@ namespace FoodEval.Domain.Entities;
 public class Payment
 {
     public Guid Id { get; set; }
-    public Guid EventId { get; set; }
+    public Guid EvaluationEventId { get; set; }
     public Guid ApplicantId { get; set; }
     public decimal Amount { get; set; }
     public string Currency { get; set; } = string.Empty;

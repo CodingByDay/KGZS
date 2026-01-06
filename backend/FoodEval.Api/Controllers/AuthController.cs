@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using FoodEval.Application.DTOs.Auth;
+using FoodEval.Application.Interfaces;
 using FoodEval.Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,10 +12,12 @@ namespace FoodEval.Api.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
+    private readonly IOrganizationRepository _organizationRepository;
 
-    public AuthController(IAuthService authService)
+    public AuthController(IAuthService authService, IOrganizationRepository organizationRepository)
     {
         _authService = authService;
+        _organizationRepository = organizationRepository;
     }
 
     [HttpPost("login")]
@@ -52,11 +55,21 @@ public class AuthController : ControllerBase
             return Unauthorized();
         }
 
+        string? organizationName = null;
+        if (user.OrganizationId.HasValue)
+        {
+            var organization = await _organizationRepository.GetByIdAsync(user.OrganizationId.Value, cancellationToken);
+            organizationName = organization?.Name;
+        }
+
         var response = new UserInfoResponse
         {
             Id = user.Id,
             Email = user.Email,
-            Role = user.PrimaryRole
+            Role = user.PrimaryRole,
+            UserType = user.UserType,
+            OrganizationId = user.OrganizationId,
+            OrganizationName = organizationName
         };
 
         return Ok(response);

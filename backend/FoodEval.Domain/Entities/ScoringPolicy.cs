@@ -3,7 +3,7 @@ namespace FoodEval.Domain.Entities;
 public class ScoringPolicy
 {
     public Guid Id { get; set; }
-    public Guid EventId { get; set; }
+    public Guid EvaluationEventId { get; set; }
     public int TrimHighLowFromCount { get; set; } = 5;
     public int TrimCountHigh { get; set; } = 1;
     public int TrimCountLow { get; set; } = 1;
