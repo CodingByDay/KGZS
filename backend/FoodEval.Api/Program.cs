@@ -1,8 +1,11 @@
 using System.Text;
+using FoodEval.Api.Hubs;
+using FoodEval.Api.Services;
 using FoodEval.Application.Interfaces;
 using FoodEval.Application.Services;
 using FoodEval.Infrastructure.Persistence;
 using FoodEval.Infrastructure.Repositories;
+using FoodEval.Infrastructure.Seeding;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -74,6 +77,9 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
+// SignalR
+builder.Services.AddSignalR();
+
 // CORS
 builder.Services.AddCors(options =>
 {
@@ -89,9 +95,25 @@ builder.Services.AddCors(options =>
 // Application Services
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IProductSampleService, ProductSampleService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<ICommissionService, CommissionService>();
+builder.Services.AddScoped<IEvaluationEventService, EvaluationEventService>();
+builder.Services.AddScoped<IProtocolService, ProtocolService>();
+builder.Services.AddScoped<IExpertEvaluationService, ExpertEvaluationService>();
+builder.Services.AddScoped<IEvaluationNotificationService, EvaluationNotificationService>();
 
 // Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IProductSampleRepository, ProductSampleRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<ICommissionRepository, CommissionRepository>();
+builder.Services.AddScoped<ICommissionMemberRepository, CommissionMemberRepository>();
+builder.Services.AddScoped<IEvaluationEventRepository, EvaluationEventRepository>();
+builder.Services.AddScoped<IProtocolRepository, ProtocolRepository>();
+builder.Services.AddScoped<IEvaluationSessionRepository, EvaluationSessionRepository>();
+builder.Services.AddScoped<IExpertEvaluationRepository, ExpertEvaluationRepository>();
+builder.Services.AddScoped<IScoringPolicyRepository, ScoringPolicyRepository>();
 
 var app = builder.Build();
 
@@ -111,8 +133,40 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+// SignalR Hub
+app.MapHub<EvaluationHub>("/hubs/evaluation");
+
 app.MapGet("/health", () => new { status = "ok" })
     .WithName("Health")
     .WithOpenApi();
+
+// Seed dev super user (Development only)
+var seedEnabled = builder.Configuration["SEED_SUPERUSER_ENABLED"] == "true";
+if (app.Environment.IsDevelopment() || seedEnabled)
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var services = scope.ServiceProvider;
+        try
+        {
+            // Ensure database is created/migrated
+            var dbContext = services.GetRequiredService<FoodEvalDbContext>();
+            await dbContext.Database.MigrateAsync();
+
+            // Seed super user
+            var seeder = new DevSuperUserSeeder(
+                services.GetRequiredService<IUserRepository>(),
+                dbContext,
+                builder.Configuration,
+                services.GetRequiredService<ILogger<DevSuperUserSeeder>>());
+            await seeder.SeedAsync();
+        }
+        catch (Exception ex)
+        {
+            var logger = services.GetRequiredService<ILogger<Program>>();
+            logger.LogError(ex, "An error occurred while seeding the database.");
+        }
+    }
+}
 
 app.Run();
