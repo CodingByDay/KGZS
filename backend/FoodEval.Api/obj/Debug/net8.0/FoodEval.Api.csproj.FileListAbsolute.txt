@@ -149,3 +149,6 @@
 /home/jankoj/Development/KGSZ/backend/FoodEval.Api/obj/Debug/net8.0/FoodEval.Api.pdb
 /home/jankoj/Development/KGSZ/backend/FoodEval.Api/obj/Debug/net8.0/FoodEval.Api.genruntimeconfig.cache
 /home/jankoj/Development/KGSZ/backend/FoodEval.Api/obj/Debug/net8.0/ref/FoodEval.Api.dll
+/home/jankoj/Development/KGSZ/backend/FoodEval.Api/bin/Debug/net8.0/BCrypt.Net-Next.dll
+/home/jankoj/Development/KGSZ/backend/FoodEval.Api/bin/Debug/net8.0/Microsoft.AspNetCore.Authentication.JwtBearer.dll
+/home/jankoj/Development/KGSZ/backend/FoodEval.Api/bin/Debug/net8.0/Microsoft.Bcl.TimeProvider.dll

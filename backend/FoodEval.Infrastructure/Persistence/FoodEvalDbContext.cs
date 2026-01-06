@@ -34,5 +34,33 @@ public class FoodEvalDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        // Money
+        modelBuilder.Entity<Payment>()
+            .Property(x => x.Amount)
+            .HasPrecision(18, 2);
+
+        // Scores (allow 0-100 with decimals, adjust if you need more)
+        modelBuilder.Entity<ProductSample>()
+            .Property(x => x.FinalScore)
+            .HasPrecision(6, 2);
+
+        modelBuilder.Entity<Record>()
+            .Property(x => x.FinalScore)
+            .HasPrecision(6, 2);
+
+        modelBuilder.Entity<ExpertEvaluation>()
+            .Property(x => x.FinalScore)
+            .HasPrecision(6, 2);
+
+        modelBuilder.Entity<ConsumerEvaluation>()
+            .Property(x => x.Score)
+            .HasPrecision(6, 2);
+
+        // Weights (e.g. 0.00 - 9.99 or 0.0000 depending on your needs)
+        modelBuilder.Entity<EvaluationCriterion>()
+            .Property(x => x.Weight)
+            .HasPrecision(6, 3);
     }
+
 }
