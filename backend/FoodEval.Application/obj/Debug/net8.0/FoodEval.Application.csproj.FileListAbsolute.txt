@@ -1,0 +1,16 @@
+/home/jankoj/Development/KGSZ/backend/FoodEval.Application/bin/Debug/net8.0/FoodEval.Application.deps.json
+/home/jankoj/Development/KGSZ/backend/FoodEval.Application/bin/Debug/net8.0/FoodEval.Application.dll
+/home/jankoj/Development/KGSZ/backend/FoodEval.Application/bin/Debug/net8.0/FoodEval.Application.pdb
+/home/jankoj/Development/KGSZ/backend/FoodEval.Application/bin/Debug/net8.0/FoodEval.Domain.dll
+/home/jankoj/Development/KGSZ/backend/FoodEval.Application/bin/Debug/net8.0/FoodEval.Domain.pdb
+/home/jankoj/Development/KGSZ/backend/FoodEval.Application/obj/Debug/net8.0/FoodEval.Application.csproj.AssemblyReference.cache
+/home/jankoj/Development/KGSZ/backend/FoodEval.Application/obj/Debug/net8.0/FoodEval.Application.GeneratedMSBuildEditorConfig.editorconfig
+/home/jankoj/Development/KGSZ/backend/FoodEval.Application/obj/Debug/net8.0/FoodEval.Application.AssemblyInfoInputs.cache
+/home/jankoj/Development/KGSZ/backend/FoodEval.Application/obj/Debug/net8.0/FoodEval.Application.AssemblyInfo.cs
+/home/jankoj/Development/KGSZ/backend/FoodEval.Application/obj/Debug/net8.0/FoodEval.Application.csproj.CoreCompileInputs.cache
+/home/jankoj/Development/KGSZ/backend/FoodEval.Application/obj/Debug/net8.0/FoodEval.Application.sourcelink.json
+/home/jankoj/Development/KGSZ/backend/FoodEval.Application/obj/Debug/net8.0/FoodEval.Application.csproj.CopyComplete
+/home/jankoj/Development/KGSZ/backend/FoodEval.Application/obj/Debug/net8.0/FoodEval.Application.dll
+/home/jankoj/Development/KGSZ/backend/FoodEval.Application/obj/Debug/net8.0/refint/FoodEval.Application.dll
+/home/jankoj/Development/KGSZ/backend/FoodEval.Application/obj/Debug/net8.0/FoodEval.Application.pdb
+/home/jankoj/Development/KGSZ/backend/FoodEval.Application/obj/Debug/net8.0/ref/FoodEval.Application.dll

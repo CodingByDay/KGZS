@@ -1,6 +1,6 @@
-using Domain.Enums;
+using FoodEval.Domain.Enums;
 
-namespace Domain.Entities;
+namespace FoodEval.Domain.Entities;
 
 public class Payment
 {

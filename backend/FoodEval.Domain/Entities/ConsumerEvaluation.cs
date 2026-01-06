@@ -1,4 +1,4 @@
-namespace Domain.Entities;
+namespace FoodEval.Domain.Entities;
 
 public class ConsumerEvaluation
 {

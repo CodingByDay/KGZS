@@ -1,0 +1,12 @@
+/home/jankoj/Development/KGSZ/backend/FoodEval.Domain/bin/Debug/net8.0/FoodEval.Domain.deps.json
+/home/jankoj/Development/KGSZ/backend/FoodEval.Domain/bin/Debug/net8.0/FoodEval.Domain.dll
+/home/jankoj/Development/KGSZ/backend/FoodEval.Domain/bin/Debug/net8.0/FoodEval.Domain.pdb
+/home/jankoj/Development/KGSZ/backend/FoodEval.Domain/obj/Debug/net8.0/FoodEval.Domain.GeneratedMSBuildEditorConfig.editorconfig
+/home/jankoj/Development/KGSZ/backend/FoodEval.Domain/obj/Debug/net8.0/FoodEval.Domain.AssemblyInfoInputs.cache
+/home/jankoj/Development/KGSZ/backend/FoodEval.Domain/obj/Debug/net8.0/FoodEval.Domain.AssemblyInfo.cs
+/home/jankoj/Development/KGSZ/backend/FoodEval.Domain/obj/Debug/net8.0/FoodEval.Domain.csproj.CoreCompileInputs.cache
+/home/jankoj/Development/KGSZ/backend/FoodEval.Domain/obj/Debug/net8.0/FoodEval.Domain.sourcelink.json
+/home/jankoj/Development/KGSZ/backend/FoodEval.Domain/obj/Debug/net8.0/FoodEval.Domain.dll
+/home/jankoj/Development/KGSZ/backend/FoodEval.Domain/obj/Debug/net8.0/refint/FoodEval.Domain.dll
+/home/jankoj/Development/KGSZ/backend/FoodEval.Domain/obj/Debug/net8.0/FoodEval.Domain.pdb
+/home/jankoj/Development/KGSZ/backend/FoodEval.Domain/obj/Debug/net8.0/ref/FoodEval.Domain.dll
