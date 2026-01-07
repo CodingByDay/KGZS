@@ -1,6 +1,6 @@
 import { apiClient } from '@/infrastructure/api/apiClient';
 import { StorageService } from '@/infrastructure/storage/StorageService';
-import { LoginRequest, LoginResponse, UserInfoResponse } from '@/domain/types/Auth';
+import { LoginRequest, LoginResponse, UserInfoResponse, UpdateProfileRequest } from '@/domain/types/Auth';
 import { User } from '@/domain/types/User';
 import { UserRole } from '@/domain/enums/UserRole';
 import { UserType } from '@/domain/enums/UserType';
@@ -31,6 +31,28 @@ export class AuthService {
     const user: User = {
       id: response.id,
       email: response.email,
+      firstName: response.firstName,
+      lastName: response.lastName,
+      phoneNumber: response.phoneNumber,
+      role: response.role as UserRole,
+      userType: response.userType as UserType,
+      organizationId: response.organizationId,
+      organizationName: response.organizationName,
+    };
+    
+    StorageService.setUser(JSON.stringify(user));
+    return user;
+  }
+
+  async updateProfile(request: UpdateProfileRequest): Promise<User> {
+    const response = await apiClient.put<UserInfoResponse>('/api/auth/me/profile', request);
+    
+    const user: User = {
+      id: response.id,
+      email: response.email,
+      firstName: response.firstName,
+      lastName: response.lastName,
+      phoneNumber: response.phoneNumber,
       role: response.role as UserRole,
       userType: response.userType as UserType,
       organizationId: response.organizationId,

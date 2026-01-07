@@ -99,13 +99,29 @@
   "profile": {
     "title": "Profil",
     "subtitle": "Upravljajte podatke svojega računa",
+    "edit": "Uredi",
+    "save": "Shrani",
+    "cancel": "Prekliči",
     "email": "E-pošta",
+    "firstName": "Ime",
+    "lastName": "Priimek",
+    "phoneNumber": "Telefonska številka",
+    "phoneNumberPlaceholder": "Vnesite telefonsko številko",
+    "preferredLanguage": "Prednostni jezik",
+    "optional": "neobvezno",
     "userType": "Tip uporabnika",
     "role": "Vloga",
     "organization": "Organizacija",
-    "userId": "ID uporabnika",
     "superAdminActionsTitle": "SuperAdmin akcije",
-    "manageSuperAdmins": "Upravljaj SuperAdmin uporabnike"
+    "manageSuperAdmins": "Upravljaj SuperAdmin uporabnike",
+    "errors": {
+      "firstNameRequired": "Ime je obvezno",
+      "lastNameRequired": "Priimek je obvezen"
+    },
+    "messages": {
+      "updateSuccess": "Profil uspešno posodobljen",
+      "updateError": "Napaka pri posodabljanju profila"
+    }
   },
   "registerFarm": {
     "title": "Registracija kmetije",
@@ -138,6 +154,31 @@
       "cancel": "Prekliči",
       "submit": "Registriraj organizacijo",
       "submitting": "Registracija..."
+    }
+  },
+  "dashboard": {
+    "title": "Nadzorna plošča",
+    "welcome": "Dobrodošli nazaj",
+    "statistics": {
+      "title": "Statistika sistema",
+      "evaluations": "Dogodki ocenjevanja",
+      "categories": "Kategorije",
+      "productSamples": "Vzorci živil",
+      "commissions": "Komisije",
+      "protocols": "Zapisniki"
+    },
+    "recentActivity": {
+      "title": "Nedavna dejanja",
+      "noActivity": "Ni nedavnih dejanj",
+      "created": "Ustvarjeno",
+      "updated": "Posodobljeno",
+      "deleted": "Izbrisano",
+      "statusChanged": "Status spremenjen"
+    },
+    "systemInfo": {
+      "title": "Informacije o sistemu",
+      "version": "Različica",
+      "lastUpdated": "Zadnja posodobitev"
     }
   },
   "common": {

@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/ui/components/Button';
 import { useTranslation } from 'react-i18next';
+import SI from 'country-flag-icons/react/3x2/SI';
+import GB from 'country-flag-icons/react/3x2/GB';
 
 export function LandingPage() {
   const { t, i18n } = useTranslation();
@@ -36,22 +38,30 @@ export function LandingPage() {
                 <button
                   type="button"
                   onClick={() => changeLanguage('sl')}
-                  className={`px-2 py-1 text-xs rounded ${
-                    i18n.language === 'sl' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700'
+                  className={`flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-md transition-all ${
+                    i18n.language === 'sl' 
+                      ? 'bg-blue-600 text-white shadow-md' 
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
                   aria-label={t('language.sl')}
+                  title="Slovenščina"
                 >
-                  SL
+                  <SI className="w-4 h-4" />
+                  <span>SL</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => changeLanguage('en')}
-                  className={`px-2 py-1 text-xs rounded ${
-                    i18n.language === 'en' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700'
+                  className={`flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-md transition-all ${
+                    i18n.language === 'en' 
+                      ? 'bg-blue-600 text-white shadow-md' 
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
                   aria-label={t('language.en')}
+                  title="English"
                 >
-                  EN
+                  <GB className="w-4 h-4" />
+                  <span>EN</span>
                 </button>
               </div>
               <Link to="/login">

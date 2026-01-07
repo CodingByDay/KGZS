@@ -99,13 +99,29 @@
   "profile": {
     "title": "Profile",
     "subtitle": "Manage your account information",
+    "edit": "Edit",
+    "save": "Save",
+    "cancel": "Cancel",
     "email": "Email",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "phoneNumber": "Phone Number",
+    "phoneNumberPlaceholder": "Enter phone number",
+    "preferredLanguage": "Preferred Language",
+    "optional": "optional",
     "userType": "User Type",
     "role": "Role",
     "organization": "Organization",
-    "userId": "User ID",
     "superAdminActionsTitle": "SuperAdmin Actions",
-    "manageSuperAdmins": "Manage SuperAdmins"
+    "manageSuperAdmins": "Manage SuperAdmins",
+    "errors": {
+      "firstNameRequired": "First name is required",
+      "lastNameRequired": "Last name is required"
+    },
+    "messages": {
+      "updateSuccess": "Profile updated successfully",
+      "updateError": "Failed to update profile"
+    }
   },
   "registerFarm": {
     "title": "Register Your Farm",
@@ -138,6 +154,31 @@
       "cancel": "Cancel",
       "submit": "Register Organization",
       "submitting": "Registering..."
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome back",
+    "statistics": {
+      "title": "System Statistics",
+      "evaluations": "Evaluation Events",
+      "categories": "Categories",
+      "productSamples": "Product Samples",
+      "commissions": "Commissions",
+      "protocols": "Protocols"
+    },
+    "recentActivity": {
+      "title": "Recent Activity",
+      "noActivity": "No recent activity",
+      "created": "Created",
+      "updated": "Updated",
+      "deleted": "Deleted",
+      "statusChanged": "Status changed"
+    },
+    "systemInfo": {
+      "title": "System Information",
+      "version": "Version",
+      "lastUpdated": "Last Updated"
     }
   },
   "common": {

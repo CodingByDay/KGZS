@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using FoodEval.Application.DTOs;
 using FoodEval.Application.DTOs.Auth;
 using FoodEval.Application.Interfaces;
 using FoodEval.Application.Services;
@@ -13,15 +14,18 @@ public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
     private readonly IOrganizationRepository _organizationRepository;
+    private readonly IUserRepository _userRepository;
     private readonly ILogger<AuthController> _logger;
 
     public AuthController(
         IAuthService authService, 
         IOrganizationRepository organizationRepository,
+        IUserRepository userRepository,
         ILogger<AuthController> logger)
     {
         _authService = authService;
         _organizationRepository = organizationRepository;
+        _userRepository = userRepository;
         _logger = logger;
     }
 
@@ -84,6 +88,13 @@ public class AuthController : ControllerBase
             return Unauthorized();
         }
 
+        // Get full user entity to get PhoneNumber
+        var userEntity = await _userRepository.GetByIdAsync(userId, cancellationToken);
+        if (userEntity == null)
+        {
+            return Unauthorized();
+        }
+
         string? organizationName = null;
         if (user.OrganizationId.HasValue)
         {
@@ -95,6 +106,9 @@ public class AuthController : ControllerBase
         {
             Id = user.Id,
             Email = user.Email,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            PhoneNumber = userEntity.PhoneNumber,
             Role = user.PrimaryRole,
             UserType = user.UserType,
             OrganizationId = user.OrganizationId,
@@ -102,5 +116,69 @@ public class AuthController : ControllerBase
         };
 
         return Ok(response);
+    }
+
+    [HttpPut("me/profile")]
+    [Authorize]
+    [ProducesResponseType(typeof(UserInfoResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileRequest request, CancellationToken cancellationToken)
+    {
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (userIdClaim == null || !Guid.TryParse(userIdClaim, out var userId))
+        {
+            return Unauthorized();
+        }
+
+        if (!ModelState.IsValid)
+        {
+            return ValidationProblem(ModelState);
+        }
+
+        try
+        {
+            var userManagementService = HttpContext.RequestServices.GetRequiredService<IUserManagementService>();
+            var updatedUser = await userManagementService.UpdateUserProfileAsync(userId, request, cancellationToken);
+
+            // Get full user entity to get PhoneNumber
+            var userEntity = await _userRepository.GetByIdAsync(userId, cancellationToken);
+            if (userEntity == null)
+            {
+                return Unauthorized();
+            }
+
+            // Get organization name if needed
+            string? organizationName = null;
+            if (updatedUser.OrganizationId.HasValue)
+            {
+                var organization = await _organizationRepository.GetByIdAsync(updatedUser.OrganizationId.Value, cancellationToken);
+                organizationName = organization?.Name;
+            }
+
+            var response = new UserInfoResponse
+            {
+                Id = updatedUser.Id,
+                Email = updatedUser.Email,
+                FirstName = updatedUser.FirstName,
+                LastName = updatedUser.LastName,
+                PhoneNumber = userEntity.PhoneNumber,
+                Role = updatedUser.PrimaryRole,
+                UserType = updatedUser.UserType,
+                OrganizationId = updatedUser.OrganizationId,
+                OrganizationName = organizationName
+            };
+
+            return Ok(response);
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
     }
 }

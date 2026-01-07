@@ -100,3 +100,16 @@ public class UpdatePasswordRequest
     [System.ComponentModel.DataAnnotations.MinLength(6)]
     public string Password { get; set; } = string.Empty;
 }
+
+public class UpdateProfileRequest
+{
+    [System.ComponentModel.DataAnnotations.Required]
+    public string FirstName { get; set; } = string.Empty;
+
+    [System.ComponentModel.DataAnnotations.Required]
+    public string LastName { get; set; } = string.Empty;
+
+    public string? PhoneNumber { get; set; }
+
+    public string? PreferredLanguage { get; set; }
+}

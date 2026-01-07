@@ -192,6 +192,20 @@ public class UserManagementService : IUserManagementService
         await _userRepository.UpdateAsync(user, cancellationToken);
     }
 
+    public async Task<UserDto> UpdateUserProfileAsync(Guid id, UpdateProfileRequest request, CancellationToken cancellationToken = default)
+    {
+        var user = await _userRepository.GetByIdAsync(id, cancellationToken);
+        if (user == null)
+            throw new KeyNotFoundException($"User with id {id} not found");
+
+        user.FirstName = request.FirstName;
+        user.LastName = request.LastName;
+        user.PhoneNumber = request.PhoneNumber;
+
+        await _userRepository.UpdateAsync(user, cancellationToken);
+        return await GetUserByIdAsync(id, cancellationToken) ?? throw new InvalidOperationException("Failed to update user profile");
+    }
+
     private static UserDto MapToDto(User user, Dictionary<Guid, Organization> organizations)
     {
         return new UserDto

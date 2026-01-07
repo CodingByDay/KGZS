@@ -10,8 +10,18 @@ export interface LoginResponse {
 export interface UserInfoResponse {
   id: string;
   email: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber?: string;
   role: string;
   userType: number;
   organizationId?: string;
   organizationName?: string;
+}
+
+export interface UpdateProfileRequest {
+  firstName: string;
+  lastName: string;
+  phoneNumber?: string;
+  preferredLanguage?: string;
 }

@@ -3,6 +3,7 @@ import { apiClient } from '@/infrastructure/api/apiClient';
 import { AppShell } from '@/app/components/AppShell';
 import { UserType, UserTypeLabels } from '@/domain/enums/UserType';
 import { UserRole } from '@/domain/enums/UserRole';
+import { getRoleDisplayInfo, getRoleLabel } from '@/domain/enums/UserRoleDisplay';
 
 interface UserDto {
   id: string;
@@ -157,7 +158,18 @@ export function UsersManagementPage() {
                         {UserTypeLabels[user.userType]}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{user.primaryRole}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {(() => {
+                        const roleInfo = getRoleDisplayInfo(user.primaryRole, 'en');
+                        const Icon = roleInfo.icon;
+                        return (
+                          <span className={`inline-flex items-center gap-1.5 px-2 py-1 text-xs font-medium rounded-md ${roleInfo.bgColor} ${roleInfo.color}`}>
+                            <Icon className="w-3.5 h-3.5" />
+                            {getRoleLabel(user.primaryRole, 'en')}
+                          </span>
+                        );
+                      })()}
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {user.organizationName || '-'}
                     </td>

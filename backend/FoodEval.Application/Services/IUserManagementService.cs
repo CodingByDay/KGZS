@@ -12,4 +12,5 @@ public interface IUserManagementService
     Task<UserDto> CreateSuperAdminAsync(CreateSuperAdminRequest request, CancellationToken cancellationToken = default);
     Task<UserDto> UpdateUserEmailAsync(Guid id, UpdateEmailRequest request, CancellationToken cancellationToken = default);
     Task UpdateUserPasswordAsync(Guid id, UpdatePasswordRequest request, CancellationToken cancellationToken = default);
+    Task<UserDto> UpdateUserProfileAsync(Guid id, UpdateProfileRequest request, CancellationToken cancellationToken = default);
 }
