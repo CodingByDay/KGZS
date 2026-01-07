@@ -1,7 +1,14 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/ui/components/Button';
+import { useTranslation } from 'react-i18next';
 
 export function LandingPage() {
+  const { t, i18n } = useTranslation();
+
+  const changeLanguage = (lang: 'sl' | 'en') => {
+    i18n.changeLanguage(lang);
+    localStorage.setItem('lang', lang);
+  };
   return (
     <div className="min-h-screen bg-white">
       {/* Navbar */}
@@ -14,19 +21,41 @@ export function LandingPage() {
               </Link>
             </div>
             <div className="hidden md:flex items-center space-x-8">
-              <Link to="/" className="text-gray-700 hover:text-blue-600 transition-colors">
-                Features
-              </Link>
-              <Link to="/" className="text-gray-700 hover:text-blue-600 transition-colors">
-                How It Works
-              </Link>
-              <Link to="/" className="text-gray-700 hover:text-blue-600 transition-colors">
-                Security
-              </Link>
+              <a href="#features" className="text-gray-700 hover:text-blue-600 transition-colors">
+                {t('landing.nav.features')}
+              </a>
+              <a href="#how-it-works" className="text-gray-700 hover:text-blue-600 transition-colors">
+                {t('landing.nav.howItWorks')}
+              </a>
+              <a href="#security" className="text-gray-700 hover:text-blue-600 transition-colors">
+                {t('landing.nav.security')}
+              </a>
             </div>
-            <div className="flex items-center">
+            <div className="flex items-center gap-3">
+              <div className="flex gap-1">
+                <button
+                  type="button"
+                  onClick={() => changeLanguage('sl')}
+                  className={`px-2 py-1 text-xs rounded ${
+                    i18n.language === 'sl' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700'
+                  }`}
+                  aria-label={t('language.sl')}
+                >
+                  SL
+                </button>
+                <button
+                  type="button"
+                  onClick={() => changeLanguage('en')}
+                  className={`px-2 py-1 text-xs rounded ${
+                    i18n.language === 'en' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700'
+                  }`}
+                  aria-label={t('language.en')}
+                >
+                  EN
+                </button>
+              </div>
               <Link to="/login">
-                <Button variant="primary">Login</Button>
+                <Button variant="primary">{t('landing.login')}</Button>
               </Link>
             </div>
           </div>
@@ -55,11 +84,16 @@ export function LandingPage() {
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link to="/login">
                   <Button variant="primary" className="text-lg px-8 py-3 w-full sm:w-auto">
-                    Get Started
+                    {t('landing.getStarted')}
+                  </Button>
+                </Link>
+                <Link to="/register-farm">
+                  <Button variant="primary" className="text-lg px-8 py-3 w-full sm:w-auto bg-green-600 hover:bg-green-700">
+                    {t('landing.registerFarm')}
                   </Button>
                 </Link>
                 <a href="#features" className="text-lg px-8 py-3 text-center rounded-lg font-medium bg-white text-gray-900 border-2 border-gray-200 hover:border-blue-600 transition-colors">
-                  Learn More
+                  {t('landing.learnMore')}
                 </a>
               </div>
             </div>

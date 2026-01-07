@@ -1,0 +1,153 @@
+{
+  "app": {
+    "name": "Sistem za ocenjevanje"
+  },
+  "nav": {
+    "dashboard": "Nadzorna plošča",
+    "productSamples": "Vzorci",
+    "categories": "Kategorije",
+    "commissions": "Komisije",
+    "evaluations": "Ocenjevanja",
+    "protocols": "Zapisniki",
+    "admin": "Admin",
+    "profile": "Profil",
+    "logout": "Odjava"
+  },
+  "auth": {
+    "loginTitle": "Prijava v FoodEval",
+    "emailLabel": "E-pošta",
+    "emailPlaceholder": "Vnesite e-pošto",
+    "passwordLabel": "Geslo",
+    "passwordPlaceholder": "Vnesite geslo",
+    "loginButton": "Prijava",
+    "emailRequired": "E-pošta je obvezna",
+    "emailInvalid": "E-pošta ni veljavna",
+    "passwordRequired": "Geslo je obvezno",
+    "loginFailed": "Prijava ni uspela. Poskusite znova."
+  },
+  "landing": {
+    "login": "Prijava",
+    "getStarted": "Začni",
+    "registerFarm": "Registriraj kmetijo",
+    "learnMore": "Več informacij",
+    "nav": {
+      "features": "Funkcionalnosti",
+      "howItWorks": "Kako deluje",
+      "security": "Varnost"
+    }
+  },
+  "admin": {
+    "title": "Admin",
+    "userManagementTitle": "Upravljanje uporabnikov",
+    "userManagementDescription": "Upravljajte uporabnike, vloge in organizacije",
+    "superAdminManagementTitle": "Upravljanje SuperAdmin uporabnikov",
+    "superAdminManagementDescription": "Dodajanje in urejanje SuperAdmin računov"
+  },
+  "superAdmin": {
+    "pageTitle": "Upravljanje SuperAdmin uporabnikov",
+    "pageSubtitle": "Upravljajte SuperAdmin uporabnike",
+    "addButton": "Dodaj SuperAdmin",
+    "table": {
+      "name": "Ime",
+      "email": "E-pošta",
+      "createdAt": "Ustvarjen",
+      "actions": "Dejanja",
+      "noData": "Ni SuperAdmin uporabnikov"
+    },
+    "createModal": {
+      "title": "Ustvari SuperAdmin",
+      "email": "E-pošta",
+      "password": "Geslo",
+      "firstName": "Ime",
+      "lastName": "Priimek",
+      "emailRequired": "E-pošta je obvezna",
+      "passwordRequired": "Geslo mora imeti vsaj 6 znakov",
+      "firstNameRequired": "Ime je obvezno",
+      "lastNameRequired": "Priimek je obvezen",
+      "cancel": "Prekliči",
+      "create": "Ustvari"
+    },
+    "emailModal": {
+      "title": "Spremeni e-pošto",
+      "description": "Posodabljanje e-pošte za {{name}}",
+      "newEmail": "Nova e-pošta",
+      "emailRequired": "E-pošta je obvezna",
+      "cancel": "Prekliči",
+      "update": "Posodobi"
+    },
+    "passwordModal": {
+      "title": "Ponastavi geslo",
+      "description": "Ponastavitev gesla za {{name}}",
+      "newPassword": "Novo geslo",
+      "confirmPassword": "Potrdite geslo",
+      "passwordRequired": "Geslo je obvezno",
+      "passwordMinLength": "Geslo mora imeti vsaj 6 znakov",
+      "passwordsMismatch": "Gesli se ne ujemata",
+      "cancel": "Prekliči",
+      "reset": "Ponastavi geslo"
+    },
+    "messages": {
+      "loadError": "Napaka pri nalaganju SuperAdmin uporabnikov",
+      "createSuccess": "SuperAdmin uspešno ustvarjen",
+      "createError": "Napaka pri ustvarjanju SuperAdmin uporabnika",
+      "updateEmailSuccess": "E-pošta uspešno posodobljena",
+      "updateEmailError": "Napaka pri posodabljanju e-pošte",
+      "updatePasswordSuccess": "Geslo uspešno posodobljeno",
+      "updatePasswordError": "Napaka pri posodabljanju gesla"
+    }
+  },
+  "profile": {
+    "title": "Profil",
+    "subtitle": "Upravljajte podatke svojega računa",
+    "email": "E-pošta",
+    "userType": "Tip uporabnika",
+    "role": "Vloga",
+    "organization": "Organizacija",
+    "userId": "ID uporabnika",
+    "superAdminActionsTitle": "SuperAdmin akcije",
+    "manageSuperAdmins": "Upravljaj SuperAdmin uporabnike"
+  },
+  "registerFarm": {
+    "title": "Registracija kmetije",
+    "subtitle": "Ustvarite organizacijo in skrbniški račun",
+    "backToHome": "Nazaj na prvo stran",
+    "successTitle": "Registracija uspešna!",
+    "successMessage": "Vaša organizacija je bila uspešno registrirana.",
+    "redirectNotice": "Preusmeritev na prijavno stran...",
+    "organizationInfo": "Podatki organizacije",
+    "organizationName": "Ime organizacije",
+    "village": "Vas",
+    "address": "Naslov",
+    "email": "E-pošta",
+    "phone": "Telefon",
+    "required": "obvezno",
+    "adminAccount": "Skrbniški račun",
+    "adminEmail": "E-pošta skrbnika",
+    "adminPassword": "Geslo skrbnika",
+    "adminFirstName": "Ime skrbnika",
+    "adminLastName": "Priimek skrbnika",
+    "errors": {
+      "organizationNameRequired": "Ime organizacije je obvezno",
+      "adminEmailRequired": "E-pošta skrbnika je obvezna",
+      "adminPasswordRequired": "Geslo mora imeti vsaj 6 znakov",
+      "adminFirstNameRequired": "Ime skrbnika je obvezno",
+      "adminLastNameRequired": "Priimek skrbnika je obvezen",
+      "submitError": "Napaka pri registraciji organizacije"
+    },
+    "actions": {
+      "cancel": "Prekliči",
+      "submit": "Registriraj organizacijo",
+      "submitting": "Registracija..."
+    }
+  },
+  "common": {
+    "loading": "Nalaganje...",
+    "cancel": "Prekliči",
+    "save": "Shrani"
+  },
+  "language": {
+    "sl": "Slovenščina",
+    "en": "Angleščina"
+  }
+}
+

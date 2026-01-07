@@ -14,6 +14,7 @@ public class UserDto
     public UserRole PrimaryRole { get; set; }
     public bool IsActive { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
+    public DateTimeOffset? LastLoginAt { get; set; }
 }
 
 public class CreateUserRequest
@@ -67,4 +68,35 @@ public class RegisterOrganizationResponse
 {
     public OrganizationDto Organization { get; set; } = null!;
     public UserDto AdminUser { get; set; } = null!;
+}
+
+public class CreateSuperAdminRequest
+{
+    [System.ComponentModel.DataAnnotations.Required]
+    [System.ComponentModel.DataAnnotations.EmailAddress]
+    public string Email { get; set; } = string.Empty;
+
+    [System.ComponentModel.DataAnnotations.Required]
+    [System.ComponentModel.DataAnnotations.MinLength(6)]
+    public string Password { get; set; } = string.Empty;
+
+    [System.ComponentModel.DataAnnotations.Required]
+    public string FirstName { get; set; } = string.Empty;
+
+    [System.ComponentModel.DataAnnotations.Required]
+    public string LastName { get; set; } = string.Empty;
+}
+
+public class UpdateEmailRequest
+{
+    [System.ComponentModel.DataAnnotations.Required]
+    [System.ComponentModel.DataAnnotations.EmailAddress]
+    public string Email { get; set; } = string.Empty;
+}
+
+public class UpdatePasswordRequest
+{
+    [System.ComponentModel.DataAnnotations.Required]
+    [System.ComponentModel.DataAnnotations.MinLength(6)]
+    public string Password { get; set; } = string.Empty;
 }

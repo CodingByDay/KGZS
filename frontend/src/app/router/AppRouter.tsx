@@ -10,7 +10,9 @@ import { EvaluationDetailPage } from '@/pages/EvaluationDetailPage';
 import { ProtocolsPage } from '@/pages/ProtocolsPage';
 import { AdminPage } from '@/pages/AdminPage';
 import { UsersManagementPage } from '@/pages/UsersManagementPage';
+import { SuperAdminsPage } from '@/pages/SuperAdminsPage';
 import { ProfilePage } from '@/pages/ProfilePage';
+import { RegisterFarmPage } from '@/pages/RegisterFarmPage';
 import { ForbiddenPage } from '@/pages/ForbiddenPage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
 import { ProtectedRoute } from '@/app/components/ProtectedRoute';
@@ -101,6 +103,15 @@ export function AppRouter() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/app/admin/superadmins"
+          element={
+            <ProtectedRoute>
+              <SuperAdminsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/register-farm" element={<RegisterFarmPage />} />
         <Route path="/403" element={<ForbiddenPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>

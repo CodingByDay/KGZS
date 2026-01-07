@@ -9,13 +9,16 @@ public class OrganizationService : IOrganizationService
 {
     private readonly IOrganizationRepository _organizationRepository;
     private readonly IUserRepository _userRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
     public OrganizationService(
         IOrganizationRepository organizationRepository,
-        IUserRepository userRepository)
+        IUserRepository userRepository,
+        IUnitOfWork unitOfWork)
     {
         _organizationRepository = organizationRepository;
         _userRepository = userRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<IEnumerable<OrganizationDto>> GetAllOrganizationsAsync(CancellationToken cancellationToken = default)
@@ -26,42 +29,51 @@ public class OrganizationService : IOrganizationService
 
     public async Task<RegisterOrganizationResponse> RegisterOrganizationAsync(RegisterOrganizationRequest request, CancellationToken cancellationToken = default)
     {
-        // Check if email already exists
-        var existingUser = await _userRepository.GetByEmailAsync(request.AdminEmail, cancellationToken);
-        if (existingUser != null)
-            throw new InvalidOperationException("User with this email already exists");
+        Organization? createdOrganization = null;
+        User? createdUser = null;
 
-        // Create organization
-        var organization = new Organization
+        await _unitOfWork.ExecuteInTransactionAsync(async ct =>
         {
-            Id = Guid.NewGuid(),
-            Name = request.OrganizationName,
-            Village = request.Village,
-            Address = request.Address,
-            Email = request.Email,
-            Phone = request.Phone,
-            CreatedAt = DateTimeOffset.UtcNow
-        };
+            // Check if email already exists
+            var existingUser = await _userRepository.GetByEmailAsync(request.AdminEmail, ct);
+            if (existingUser != null)
+                throw new InvalidOperationException("User with this email already exists");
 
-        var createdOrganization = await _organizationRepository.CreateAsync(organization, cancellationToken);
+            // Create organization
+            var organization = new Organization
+            {
+                Id = Guid.NewGuid(),
+                Name = request.OrganizationName,
+                Village = request.Village,
+                Address = request.Address,
+                Email = request.Email,
+                Phone = request.Phone,
+                CreatedAt = DateTimeOffset.UtcNow
+            };
 
-        // Create organization admin user
-        var adminUser = new User
-        {
-            Id = Guid.NewGuid(),
-            Email = request.AdminEmail,
-            FirstName = request.AdminFirstName,
-            LastName = request.AdminLastName,
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.AdminPassword),
-            UserType = UserType.OrganizationAdmin,
-            OrganizationId = createdOrganization.Id,
-            PrimaryRole = UserRole.OrganizationAdmin,
-            IsActive = true,
-            EmailVerified = false,
-            CreatedAt = DateTimeOffset.UtcNow
-        };
+            createdOrganization = await _organizationRepository.CreateAsync(organization, ct);
 
-        var createdUser = await _userRepository.CreateAsync(adminUser, cancellationToken);
+            // Create organization admin user
+            var adminUser = new User
+            {
+                Id = Guid.NewGuid(),
+                Email = request.AdminEmail,
+                FirstName = request.AdminFirstName,
+                LastName = request.AdminLastName,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.AdminPassword),
+                UserType = UserType.OrganizationAdmin,
+                OrganizationId = createdOrganization.Id,
+                PrimaryRole = UserRole.OrganizationAdmin,
+                IsActive = true,
+                EmailVerified = false,
+                CreatedAt = DateTimeOffset.UtcNow
+            };
+
+            createdUser = await _userRepository.CreateAsync(adminUser, ct);
+        }, cancellationToken);
+
+        if (createdOrganization == null || createdUser == null)
+            throw new InvalidOperationException("Failed to register organization and admin user");
 
         return new RegisterOrganizationResponse
         {

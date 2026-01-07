@@ -1,0 +1,153 @@
+{
+  "app": {
+    "name": "Evaluation System"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "productSamples": "Product Samples",
+    "categories": "Categories",
+    "commissions": "Commissions",
+    "evaluations": "Evaluations",
+    "protocols": "Protocols",
+    "admin": "Admin",
+    "profile": "Profile",
+    "logout": "Logout"
+  },
+  "auth": {
+    "loginTitle": "Login to FoodEval",
+    "emailLabel": "Email",
+    "emailPlaceholder": "Enter your email",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "loginButton": "Login",
+    "emailRequired": "Email is required",
+    "emailInvalid": "Email is invalid",
+    "passwordRequired": "Password is required",
+    "loginFailed": "Login failed. Please try again."
+  },
+  "landing": {
+    "login": "Login",
+    "getStarted": "Get Started",
+    "registerFarm": "Register Your Farm",
+    "learnMore": "Learn More",
+    "nav": {
+      "features": "Features",
+      "howItWorks": "How It Works",
+      "security": "Security"
+    }
+  },
+  "admin": {
+    "title": "Admin",
+    "userManagementTitle": "User Management",
+    "userManagementDescription": "Manage users, roles, and organizations",
+    "superAdminManagementTitle": "SuperAdmin Management",
+    "superAdminManagementDescription": "Create and manage SuperAdmin accounts"
+  },
+  "superAdmin": {
+    "pageTitle": "SuperAdmin Management",
+    "pageSubtitle": "Manage SuperAdmin users",
+    "addButton": "Add SuperAdmin",
+    "table": {
+      "name": "Name",
+      "email": "Email",
+      "createdAt": "Created At",
+      "actions": "Actions",
+      "noData": "No SuperAdmins found"
+    },
+    "createModal": {
+      "title": "Create SuperAdmin",
+      "email": "Email",
+      "password": "Password",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "emailRequired": "Email is required",
+      "passwordRequired": "Password must be at least 6 characters",
+      "firstNameRequired": "First name is required",
+      "lastNameRequired": "Last name is required",
+      "cancel": "Cancel",
+      "create": "Create"
+    },
+    "emailModal": {
+      "title": "Change Email",
+      "description": "Updating email for {{name}}",
+      "newEmail": "New Email",
+      "emailRequired": "Email is required",
+      "cancel": "Cancel",
+      "update": "Update"
+    },
+    "passwordModal": {
+      "title": "Reset Password",
+      "description": "Resetting password for {{name}}",
+      "newPassword": "New Password",
+      "confirmPassword": "Confirm Password",
+      "passwordRequired": "Password is required",
+      "passwordMinLength": "Password must be at least 6 characters",
+      "passwordsMismatch": "Passwords do not match",
+      "cancel": "Cancel",
+      "reset": "Reset Password"
+    },
+    "messages": {
+      "loadError": "Failed to load SuperAdmins",
+      "createSuccess": "SuperAdmin created successfully",
+      "createError": "Failed to create SuperAdmin",
+      "updateEmailSuccess": "Email updated successfully",
+      "updateEmailError": "Failed to update email",
+      "updatePasswordSuccess": "Password updated successfully",
+      "updatePasswordError": "Failed to update password"
+    }
+  },
+  "profile": {
+    "title": "Profile",
+    "subtitle": "Manage your account information",
+    "email": "Email",
+    "userType": "User Type",
+    "role": "Role",
+    "organization": "Organization",
+    "userId": "User ID",
+    "superAdminActionsTitle": "SuperAdmin Actions",
+    "manageSuperAdmins": "Manage SuperAdmins"
+  },
+  "registerFarm": {
+    "title": "Register Your Farm",
+    "subtitle": "Create your organization and admin account",
+    "backToHome": "Back to Home",
+    "successTitle": "Registration Successful!",
+    "successMessage": "Your organization has been registered successfully.",
+    "redirectNotice": "Redirecting to login page...",
+    "organizationInfo": "Organization Information",
+    "organizationName": "Organization Name",
+    "village": "Village",
+    "address": "Address",
+    "email": "Email",
+    "phone": "Phone",
+    "required": "required",
+    "adminAccount": "Administrator Account",
+    "adminEmail": "Admin Email",
+    "adminPassword": "Admin Password",
+    "adminFirstName": "Admin First Name",
+    "adminLastName": "Admin Last Name",
+    "errors": {
+      "organizationNameRequired": "Organization name is required",
+      "adminEmailRequired": "Admin email is required",
+      "adminPasswordRequired": "Password must be at least 6 characters",
+      "adminFirstNameRequired": "Admin first name is required",
+      "adminLastNameRequired": "Admin last name is required",
+      "submitError": "Failed to register organization"
+    },
+    "actions": {
+      "cancel": "Cancel",
+      "submit": "Register Organization",
+      "submitting": "Registering..."
+    }
+  },
+  "common": {
+    "loading": "Loading...",
+    "cancel": "Cancel",
+    "save": "Save"
+  },
+  "language": {
+    "sl": "Slovenian",
+    "en": "English"
+  }
+}
+

@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text;
 using FoodEval.Api.Hubs;
 using FoodEval.Api.Services;
@@ -13,8 +14,12 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Localization
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddDataAnnotationsLocalization();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -107,6 +112,7 @@ builder.Services.AddScoped<IExpertEvaluationService, ExpertEvaluationService>();
 builder.Services.AddScoped<IEvaluationNotificationService, EvaluationNotificationService>();
 builder.Services.AddScoped<IUserManagementService, UserManagementService>();
 builder.Services.AddScoped<IOrganizationService, OrganizationService>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 // Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -129,6 +135,20 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+// Localization
+var supportedCultures = new[]
+{
+    new CultureInfo("sl-SI"),
+    new CultureInfo("en-US")
+};
+
+app.UseRequestLocalization(new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("sl-SI"),
+    SupportedCultures = supportedCultures,
+    SupportedUICultures = supportedCultures
+});
 
 // CORS must be early in the pipeline, before authentication/authorization and endpoints
 // This allows preflight OPTIONS requests to be handled correctly

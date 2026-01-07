@@ -69,4 +69,36 @@ public class AdminUsersController : ControllerBase
             return BadRequest(new { message = ex.Message });
         }
     }
+
+    [HttpPut("{id}/email")]
+    public async Task<ActionResult<UserDto>> UpdateUserEmail(Guid id, [FromBody] UpdateEmailRequest request, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var updated = await _service.UpdateUserEmailAsync(id, request, cancellationToken);
+            return Ok(updated);
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
+    [HttpPut("{id}/password")]
+    public async Task<ActionResult> UpdateUserPassword(Guid id, [FromBody] UpdatePasswordRequest request, CancellationToken cancellationToken)
+    {
+        try
+        {
+            await _service.UpdateUserPasswordAsync(id, request, cancellationToken);
+            return NoContent();
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
+    }
 }

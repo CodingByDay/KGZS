@@ -13,6 +13,11 @@ class ApiClient {
     this.baseUrl = baseUrl;
   }
 
+  private getAcceptLanguage(): string {
+    const lang = localStorage.getItem('lang') || 'sl';
+    return lang === 'en' ? 'en-US' : 'sl-SI';
+  }
+
   async request<T>(
     endpoint: string,
     options: RequestInit = {}
@@ -22,6 +27,7 @@ class ApiClient {
 
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
+      'Accept-Language': this.getAcceptLanguage(),
       ...(options.headers as Record<string, string>),
     };
 

@@ -4,9 +4,11 @@ import { Button } from '@/ui/components/Button';
 import { Input } from '@/ui/components/Input';
 import { authService } from '@/application/services/AuthService';
 import { ApiError } from '@/infrastructure/api/apiClient';
+import { useTranslation } from 'react-i18next';
 
 export function LoginPage() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -20,15 +22,15 @@ export function LoginPage() {
     setPasswordError('');
 
     if (!email) {
-      setEmailError('Email is required');
+      setEmailError(t('auth.emailRequired'));
       isValid = false;
     } else if (!/\S+@\S+\.\S+/.test(email)) {
-      setEmailError('Email is invalid');
+      setEmailError(t('auth.emailInvalid'));
       isValid = false;
     }
 
     if (!password) {
-      setPasswordError('Password is required');
+      setPasswordError(t('auth.passwordRequired'));
       isValid = false;
     }
 
@@ -50,7 +52,7 @@ export function LoginPage() {
       navigate('/app/dashboard');
     } catch (err) {
       const apiError = err as ApiError;
-      setError(apiError.message || 'Login failed. Please try again.');
+      setError(apiError.message || t('auth.loginFailed'));
     } finally {
       setIsLoading(false);
     }
@@ -60,27 +62,27 @@ export function LoginPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center px-4">
       <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8">
         <h1 className="text-3xl font-bold text-center text-gray-900 mb-8">
-          Login to FoodEval
+          {t('auth.loginTitle')}
         </h1>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <Input
             type="email"
-            label="Email"
+            label={t('auth.emailLabel')}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             error={emailError}
-            placeholder="Enter your email"
+            placeholder={t('auth.emailPlaceholder')}
             disabled={isLoading}
           />
 
           <Input
             type="password"
-            label="Password"
+            label={t('auth.passwordLabel')}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             error={passwordError}
-            placeholder="Enter your password"
+            placeholder={t('auth.passwordPlaceholder')}
             disabled={isLoading}
           />
 
@@ -96,7 +98,7 @@ export function LoginPage() {
             isLoading={isLoading}
             className="w-full"
           >
-            Login
+            {t('auth.loginButton')}
           </Button>
         </form>
       </div>

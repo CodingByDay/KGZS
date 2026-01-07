@@ -1,5 +1,6 @@
 using FoodEval.Application.Interfaces;
 using FoodEval.Domain.Entities;
+using FoodEval.Domain.Enums;
 using FoodEval.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -37,6 +38,13 @@ public class UserRepository : IUserRepository
     {
         return await _dbContext.Users
             .Where(u => u.OrganizationId == organizationId && u.IsActive)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<IEnumerable<User>> GetByRoleAsync(UserRole role, CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.Users
+            .Where(u => u.PrimaryRole == role && u.IsActive)
             .ToListAsync(cancellationToken);
     }
 

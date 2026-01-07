@@ -25,22 +25,6 @@ public class OrganizationsController : ControllerBase
         return Ok(organizations);
     }
 
-    [HttpPost("register")]
-    [AllowAnonymous]
-    public async Task<ActionResult<RegisterOrganizationResponse>> RegisterOrganization(
-        [FromBody] RegisterOrganizationRequest request,
-        CancellationToken cancellationToken)
-    {
-        try
-        {
-            var result = await _service.RegisterOrganizationAsync(request, cancellationToken);
-            return Ok(result);
-        }
-        catch (InvalidOperationException ex)
-        {
-            return BadRequest(new { message = ex.Message });
-        }
-    }
 
     [HttpGet("me")]
     [Authorize(Roles = "OrganizationAdmin")]
