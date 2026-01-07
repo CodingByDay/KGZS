@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Text;
+using System.Text.Json.Serialization;
 using FoodEval.Api.Hubs;
 using FoodEval.Api.Services;
 using FoodEval.Application.Interfaces;
@@ -19,7 +20,11 @@ builder.Services.AddLocalization(options => options.ResourcesPath = "Resources")
 
 // Add services to the container.
 builder.Services.AddControllers()
-    .AddDataAnnotationsLocalization();
+    .AddDataAnnotationsLocalization()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
