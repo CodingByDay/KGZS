@@ -108,6 +108,9 @@
     "phoneNumber": "Telefonska številka",
     "phoneNumberPlaceholder": "Vnesite telefonsko številko",
     "preferredLanguage": "Prednostni jezik",
+    "profilePicture": "Profilna slika",
+    "uploadPicture": "Naloži sliko",
+    "deletePicture": "Izbriši sliko",
     "optional": "neobvezno",
     "userType": "Tip uporabnika",
     "role": "Vloga",
@@ -120,7 +123,13 @@
     },
     "messages": {
       "updateSuccess": "Profil uspešno posodobljen",
-      "updateError": "Napaka pri posodabljanju profila"
+      "updateError": "Napaka pri posodabljanju profila",
+      "uploadSuccess": "Profilna slika uspešno naložena",
+      "uploadError": "Nalaganje profilne slike ni uspelo",
+      "deleteSuccess": "Profilna slika uspešno izbrisana",
+      "deleteError": "Brisanje profilne slike ni uspelo",
+      "fileTooLarge": "Velikost datoteke presega omejitev 5MB",
+      "invalidFileType": "Neveljavna vrsta datoteke. Dovoljeno: JPG, PNG, GIF, WEBP"
     }
   },
   "registerFarm": {
@@ -160,6 +169,7 @@
     "title": "Skupine živil",
     "subtitle": "Kategorije predstavljajo različne skupine živil za ocenjevanje",
     "createButton": "Ustvari novo skupino",
+    "edit": "Uredi",
     "createModal": {
       "title": "Ustvari skupino živil",
       "name": "Ime skupine živil",
@@ -174,6 +184,15 @@
       "noReviewers": "Ni izbranih ocenjevalcev",
       "cancel": "Prekliči",
       "create": "Ustvari"
+    },
+    "editModal": {
+      "title": "Uredi skupino živil",
+      "save": "Shrani spremembe"
+    },
+    "messages": {
+      "loadError": "Nalaganje kategorij ni uspelo",
+      "createError": "Ustvarjanje kategorije ni uspelo",
+      "updateError": "Posodabljanje kategorije ni uspelo"
     },
     "messages": {
       "createSuccess": "Kategorija uspešno ustvarjena",

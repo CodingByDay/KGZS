@@ -9,6 +9,7 @@ using FoodEval.Infrastructure.Persistence;
 using FoodEval.Infrastructure.Repositories;
 using FoodEval.Infrastructure.Seeding;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -25,6 +26,14 @@ builder.Services.AddControllers()
     {
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
+
+// Configure multipart form data limits for file uploads
+builder.Services.Configure<Microsoft.AspNetCore.Http.Features.FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = 5242880; // 5MB
+    options.ValueLengthLimit = int.MaxValue;
+    options.MultipartHeadersLengthLimit = int.MaxValue;
+});
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -160,6 +169,21 @@ app.UseRequestLocalization(new RequestLocalizationOptions
 // This allows preflight OPTIONS requests to be handled correctly
 app.UseRouting();
 app.UseCors("AllowFrontend");
+
+// Serve static files (for profile pictures)
+// First serve from wwwroot if it exists
+app.UseStaticFiles();
+
+// Also serve from uploads directory in ContentRootPath
+var uploadsPath = Path.Combine(builder.Environment.ContentRootPath, "uploads");
+if (Directory.Exists(uploadsPath))
+{
+    app.UseStaticFiles(new StaticFileOptions
+    {
+        FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(uploadsPath),
+        RequestPath = "/uploads"
+    });
+}
 
 app.UseAuthentication();
 app.UseAuthorization();

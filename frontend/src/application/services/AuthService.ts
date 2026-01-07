@@ -34,6 +34,7 @@ export class AuthService {
       firstName: response.firstName,
       lastName: response.lastName,
       phoneNumber: response.phoneNumber,
+      profilePictureUrl: response.profilePictureUrl,
       role: response.role as UserRole,
       userType: response.userType as UserType,
       organizationId: response.organizationId,
@@ -53,6 +54,7 @@ export class AuthService {
       firstName: response.firstName,
       lastName: response.lastName,
       phoneNumber: response.phoneNumber,
+      profilePictureUrl: response.profilePictureUrl,
       role: response.role as UserRole,
       userType: response.userType as UserType,
       organizationId: response.organizationId,
@@ -61,6 +63,23 @@ export class AuthService {
     
     StorageService.setUser(JSON.stringify(user));
     return user;
+  }
+
+  async uploadProfilePicture(file: File): Promise<string> {
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    const response = await apiClient.postForm<{ profilePictureUrl: string }>('/api/profilepicture/upload', formData);
+    
+    // Reload user to get updated profile picture
+    const updatedUser = await this.getCurrentUser();
+    return response.profilePictureUrl;
+  }
+
+  async deleteProfilePicture(): Promise<void> {
+    await apiClient.delete('/api/profilepicture');
+    // Reload user to get updated profile picture
+    await this.getCurrentUser();
   }
 }
 

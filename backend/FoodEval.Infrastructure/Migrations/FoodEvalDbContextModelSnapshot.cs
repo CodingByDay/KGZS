@@ -850,6 +850,9 @@ namespace FoodEval.Infrastructure.Migrations
                     b.Property<int>("PrimaryRole")
                         .HasColumnType("int");
 
+                    b.Property<string>("ProfilePictureUrl")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("UserType")
                         .HasColumnType("int");
 

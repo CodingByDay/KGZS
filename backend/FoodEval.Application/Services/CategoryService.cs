@@ -103,6 +103,41 @@ public class CategoryService : ICategoryService
 
         await _repository.UpdateAsync(entity, cancellationToken);
         
+        // Update reviewers
+        var existingReviewers = await _reviewerRepository.GetByCategoryIdAsync(id, cancellationToken);
+        var existingUserIds = existingReviewers.Select(r => r.UserId).ToHashSet();
+        var requestedUserIds = request.ReviewerUserIds?.ToHashSet() ?? new HashSet<Guid>();
+        
+        // Remove reviewers that are no longer assigned
+        foreach (var reviewer in existingReviewers)
+        {
+            if (!requestedUserIds.Contains(reviewer.UserId))
+            {
+                await _reviewerRepository.DeleteAsync(reviewer.Id, cancellationToken);
+            }
+        }
+        
+        // Add new reviewers
+        if (request.ReviewerUserIds != null)
+        {
+            var now = DateTimeOffset.UtcNow;
+            foreach (var userId in request.ReviewerUserIds)
+            {
+                if (!existingUserIds.Contains(userId))
+                {
+                    var reviewer = new CategoryReviewer
+                    {
+                        Id = Guid.NewGuid(),
+                        CategoryId = id,
+                        UserId = userId,
+                        AssignedAt = now,
+                        CreatedAt = now
+                    };
+                    await _reviewerRepository.CreateAsync(reviewer, cancellationToken);
+                }
+            }
+        }
+        
         var reviewers = await _reviewerRepository.GetByCategoryIdAsync(id, cancellationToken);
         return await MapToDtoAsync(entity, reviewers, cancellationToken);
     }

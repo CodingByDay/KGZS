@@ -201,6 +201,7 @@ public class UserManagementService : IUserManagementService
         user.FirstName = request.FirstName;
         user.LastName = request.LastName;
         user.PhoneNumber = request.PhoneNumber;
+        // ProfilePictureUrl is updated separately via file upload endpoint
 
         await _userRepository.UpdateAsync(user, cancellationToken);
         return await GetUserByIdAsync(id, cancellationToken) ?? throw new InvalidOperationException("Failed to update user profile");

@@ -108,6 +108,9 @@
     "phoneNumber": "Phone Number",
     "phoneNumberPlaceholder": "Enter phone number",
     "preferredLanguage": "Preferred Language",
+    "profilePicture": "Profile Picture",
+    "uploadPicture": "Upload Picture",
+    "deletePicture": "Delete Picture",
     "optional": "optional",
     "userType": "User Type",
     "role": "Role",
@@ -120,7 +123,13 @@
     },
     "messages": {
       "updateSuccess": "Profile updated successfully",
-      "updateError": "Failed to update profile"
+      "updateError": "Failed to update profile",
+      "uploadSuccess": "Profile picture uploaded successfully",
+      "uploadError": "Failed to upload profile picture",
+      "deleteSuccess": "Profile picture deleted successfully",
+      "deleteError": "Failed to delete profile picture",
+      "fileTooLarge": "File size exceeds 5MB limit",
+      "invalidFileType": "Invalid file type. Allowed: JPG, PNG, GIF, WEBP"
     }
   },
   "registerFarm": {
@@ -160,6 +169,7 @@
     "title": "Food Groups",
     "subtitle": "Categories represent different food groups for evaluation",
     "createButton": "Create New Food Group",
+    "edit": "Edit",
     "createModal": {
       "title": "Create Food Group Category",
       "name": "Food Group Name",
@@ -174,6 +184,15 @@
       "noReviewers": "No reviewers selected",
       "cancel": "Cancel",
       "create": "Create"
+    },
+    "editModal": {
+      "title": "Edit Food Group Category",
+      "save": "Save Changes"
+    },
+    "messages": {
+      "loadError": "Failed to load categories",
+      "createError": "Failed to create category",
+      "updateError": "Failed to update category"
     },
     "messages": {
       "createSuccess": "Category created successfully",

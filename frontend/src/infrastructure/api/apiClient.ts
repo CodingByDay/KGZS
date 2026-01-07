@@ -115,11 +115,112 @@ class ApiClient {
     return this.request<T>(endpoint, { method: 'GET' });
   }
 
-  async post<T>(endpoint: string, body?: unknown): Promise<T> {
-    return this.request<T>(endpoint, {
+  async post<T>(endpoint: string, body?: unknown, options?: RequestInit): Promise<T> {
+    const isFormData = body instanceof FormData;
+    const url = `${this.baseUrl}${endpoint}`;
+    const token = StorageService.getToken();
+
+    const headers: Record<string, string> = {
+      'Accept-Language': this.getAcceptLanguage(),
+      ...(options?.headers as Record<string, string>),
+    };
+
+    // Don't set Content-Type for FormData - browser will set it with boundary
+    if (!isFormData) {
+      headers['Content-Type'] = 'application/json';
+    }
+
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    const response = await fetch(url, {
       method: 'POST',
-      body: body ? JSON.stringify(body) : undefined,
+      headers,
+      body: isFormData ? body : (body ? JSON.stringify(body) : undefined),
+      credentials: 'include',
     });
+
+    if (!response.ok) {
+      const responseText = await response.text();
+      let errorData;
+      try {
+        errorData = JSON.parse(responseText);
+      } catch {
+        errorData = { message: responseText || 'An error occurred' };
+      }
+      
+      const error: ApiError = {
+        message: errorData.message || `HTTP error! status: ${response.status}`,
+        status: response.status,
+      };
+      throw error;
+    }
+
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      const responseText = await response.text();
+      return JSON.parse(responseText) as T;
+    }
+    
+    return {} as T;
+  }
+
+  async postForm<T>(endpoint: string, formData: FormData): Promise<T> {
+    const url = `${this.baseUrl}${endpoint}`;
+    const token = StorageService.getToken();
+
+    const headers: HeadersInit = {
+      'Accept-Language': this.getAcceptLanguage(),
+    };
+
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    // Don't set Content-Type - browser will set it with boundary for FormData
+    console.log('[API Client] Uploading form data to:', url);
+    console.log('[API Client] FormData entries:', Array.from(formData.entries()).map(([k, v]) => [k, v instanceof File ? `${v.name} (${v.size} bytes)` : v]));
+
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers,
+        body: formData,
+        credentials: 'include',
+      });
+
+      console.log('[API Client] Response status:', response.status, response.statusText);
+
+      if (!response.ok) {
+        const responseText = await response.text();
+        console.error('[API Client] Error response:', responseText);
+        let errorData;
+        try {
+          errorData = JSON.parse(responseText);
+        } catch {
+          errorData = { message: responseText || 'An error occurred' };
+        }
+        
+        const error: ApiError = {
+          message: errorData.message || `HTTP error! status: ${response.status}`,
+          status: response.status,
+        };
+        throw error;
+      }
+
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        const responseText = await response.text();
+        console.log('[API Client] Success response:', responseText);
+        return JSON.parse(responseText) as T;
+      }
+      
+      return {} as T;
+    } catch (error) {
+      console.error('[API Client] Network error:', error);
+      throw error;
+    }
   }
 
   async put<T>(endpoint: string, body?: unknown): Promise<T> {

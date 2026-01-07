@@ -34,12 +34,19 @@ interface CreateCategoryRequest {
   reviewerUserIds: string[];
 }
 
+interface UpdateCategoryRequest {
+  name: string;
+  description?: string;
+  reviewerUserIds: string[];
+}
+
 export function CategoriesPage() {
   const { t } = useTranslation();
   const [categories, setCategories] = useState<Category[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -71,6 +78,18 @@ export function CategoriesPage() {
     } catch (err) {
       const apiError = err as ApiError;
       setError(apiError.message || t('categories.messages.createError'));
+    }
+  };
+
+  const handleUpdateCategory = async (id: string, data: UpdateCategoryRequest) => {
+    try {
+      await apiClient.put<Category>(`/api/categories/${id}`, data);
+      await loadData();
+      setEditingCategory(null);
+      setError('');
+    } catch (err) {
+      const apiError = err as ApiError;
+      setError(apiError.message || t('categories.messages.updateError'));
     }
   };
 
@@ -113,6 +132,7 @@ export function CategoriesPage() {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Food Group Name</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Description</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Reviewers</th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -137,6 +157,14 @@ export function CategoriesPage() {
                       <span className="text-gray-400">-</span>
                     )}
                   </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <button
+                      onClick={() => setEditingCategory(category)}
+                      className="text-blue-600 hover:text-blue-900"
+                    >
+                      {t('categories.edit')}
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -151,6 +179,18 @@ export function CategoriesPage() {
               setError('');
             }}
             onSubmit={handleCreateCategory}
+          />
+        )}
+
+        {editingCategory && (
+          <EditCategoryModal
+            category={editingCategory}
+            users={users}
+            onClose={() => {
+              setEditingCategory(null);
+              setError('');
+            }}
+            onSubmit={(data) => handleUpdateCategory(editingCategory.id, data)}
           />
         )}
       </div>
@@ -302,6 +342,160 @@ function CreateCategoryModal({
               className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
             >
               {t('categories.createModal.create')}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+function EditCategoryModal({
+  category,
+  users,
+  onClose,
+  onSubmit,
+}: {
+  category: Category;
+  users: User[];
+  onClose: () => void;
+  onSubmit: (data: UpdateCategoryRequest) => void;
+}) {
+  const { t } = useTranslation();
+  const [formData, setFormData] = useState<UpdateCategoryRequest>({
+    name: category.name,
+    description: category.description || '',
+    reviewerUserIds: category.reviewers?.map(r => r.userId) || [],
+  });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validate = (): boolean => {
+    const newErrors: Record<string, string> = {};
+    if (!formData.name.trim()) {
+      newErrors.name = t('categories.createModal.nameRequired');
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (validate()) {
+      onSubmit({
+        ...formData,
+        description: formData.description || undefined,
+      });
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
+        <h2 className="text-2xl font-bold mb-4">{t('categories.editModal.title')}</h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium mb-1">
+              {t('categories.createModal.name')} *
+            </label>
+            <input
+              type="text"
+              value={formData.name}
+              onChange={(e) => {
+                setFormData({ ...formData, name: e.target.value });
+                if (errors.name) setErrors({ ...errors, name: '' });
+              }}
+              className={`w-full px-3 py-2 border rounded-lg ${
+                errors.name ? 'border-red-500' : 'border-gray-300'
+              }`}
+              required
+            />
+            {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">
+              {t('categories.createModal.description')}
+            </label>
+            <textarea
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+              rows={3}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">
+              {t('categories.createModal.reviewers')}
+            </label>
+            <p className="text-xs text-gray-500 mb-2">{t('categories.createModal.reviewersDescription')}</p>
+            <div className="border border-gray-300 rounded-lg p-3 max-h-48 overflow-y-auto">
+              {(() => {
+                const reviewerUsers = users.filter((user) => 
+                  user.role === 'CommissionMember' || 
+                  user.role === 'CommissionChair' || 
+                  user.role === 'CommissionTrainee' ||
+                  user.role === 'EvaluationOrganizer'
+                );
+                return reviewerUsers.length === 0 ? (
+                  <p className="text-sm text-gray-500">{t('categories.createModal.noReviewers')}</p>
+                ) : (
+                  <div className="space-y-2">
+                    {reviewerUsers.map((user) => (
+                      <label
+                        key={user.id}
+                        className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded cursor-pointer"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={formData.reviewerUserIds.includes(user.id)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setFormData({
+                                ...formData,
+                                reviewerUserIds: [...formData.reviewerUserIds, user.id],
+                              });
+                            } else {
+                              setFormData({
+                                ...formData,
+                                reviewerUserIds: formData.reviewerUserIds.filter((id) => id !== user.id),
+                              });
+                            }
+                          }}
+                          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                        />
+                        <div className="flex-1">
+                          <span className="text-sm font-medium text-gray-900">
+                            {user.firstName} {user.lastName}
+                          </span>
+                          <span className="text-xs text-gray-500 ml-2">({user.email})</span>
+                        </div>
+                      </label>
+                    ))}
+                  </div>
+                );
+              })()}
+            </div>
+            {formData.reviewerUserIds.length > 0 && (
+              <p className="mt-1 text-xs text-gray-500">
+                {formData.reviewerUserIds.length} {formData.reviewerUserIds.length === 1 ? 'reviewer' : 'reviewers'} selected
+              </p>
+            )}
+          </div>
+
+          <div className="flex gap-3 pt-4">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
+            >
+              {t('categories.createModal.cancel')}
+            </button>
+            <button
+              type="submit"
+              className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              {t('categories.editModal.save')}
             </button>
           </div>
         </form>

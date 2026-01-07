@@ -179,6 +179,91 @@ export function ProfilePage() {
 
         <div className="bg-white rounded-lg shadow p-6">
           <div className="space-y-4">
+            {/* Profile Picture */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                {t('profile.profilePicture')}
+              </label>
+              <div className="flex items-center gap-4">
+                <div className="relative">
+                  {user?.profilePictureUrl ? (
+                    <img
+                      src={`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5080'}${user.profilePictureUrl}`}
+                      alt="Profile"
+                      className="w-24 h-24 rounded-full object-cover border-2 border-gray-300"
+                    />
+                  ) : (
+                    <div className="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center border-2 border-gray-300">
+                      <span className="text-2xl text-gray-500">
+                        {user?.firstName?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase() || '?'}
+                      </span>
+                    </div>
+                  )}
+                </div>
+                {isEditing && (
+                  <div className="flex flex-col gap-2">
+                    <label className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors cursor-pointer text-sm text-center">
+                      {t('profile.uploadPicture')}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            // Validate file size (5MB max)
+                            if (file.size > 5 * 1024 * 1024) {
+                              addToast('error', t('profile.messages.fileTooLarge') || 'File size exceeds 5MB limit');
+                              return;
+                            }
+                            
+                            // Validate file type
+                            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+                            if (!allowedTypes.includes(file.type)) {
+                              addToast('error', t('profile.messages.invalidFileType') || 'Invalid file type. Allowed: JPG, PNG, GIF, WEBP');
+                              return;
+                            }
+
+                            try {
+                              console.log('Uploading file:', file.name, 'Size:', file.size, 'Type:', file.type);
+                              const url = await authService.uploadProfilePicture(file);
+                              console.log('Upload successful, URL:', url);
+                              const updatedUser = await authService.getCurrentUser();
+                              setUser(updatedUser);
+                              addToast('success', t('profile.messages.uploadSuccess'));
+                            } catch (err) {
+                              console.error('Upload error:', err);
+                              const apiError = err as ApiError;
+                              addToast('error', apiError.message || t('profile.messages.uploadError'));
+                            }
+                          }
+                        }}
+                      />
+                    </label>
+                    {user?.profilePictureUrl && (
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          try {
+                            await authService.deleteProfilePicture();
+                            const updatedUser = await authService.getCurrentUser();
+                            setUser(updatedUser);
+                            addToast('success', t('profile.messages.deleteSuccess'));
+                          } catch (err) {
+                            const apiError = err as ApiError;
+                            addToast('error', apiError.message || t('profile.messages.deleteError'));
+                          }
+                        }}
+                        className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm"
+                      >
+                        {t('profile.deletePicture')}
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+
             {/* Email - Read Only */}
             <div>
               <label className="block text-sm font-medium text-gray-700">

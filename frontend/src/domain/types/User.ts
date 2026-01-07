@@ -7,6 +7,7 @@ export interface User {
   firstName: string;
   lastName: string;
   phoneNumber?: string;
+  profilePictureUrl?: string;
   role: UserRole;
   userType: UserType;
   organizationId?: string;
