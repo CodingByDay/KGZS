@@ -19,6 +19,7 @@ import {
 } from 'react-icons/hi2';
 import SI from 'country-flag-icons/react/3x2/SI';
 import GB from 'country-flag-icons/react/3x2/GB';
+import { Logo } from '@/ui/components/Logo';
 
 interface AppShellProps {
   children: ReactNode;
@@ -82,7 +83,7 @@ export function AppShell({ children }: AppShellProps) {
         {/* Sidebar */}
         <aside className="w-64 bg-gradient-to-b from-blue-900 to-blue-800 shadow-xl min-h-screen flex flex-col">
           <div className="p-4 border-b border-blue-700 flex-shrink-0">
-            <h1 className="text-xl font-bold text-white">{t('app.name')}</h1>
+            <Logo size="md" />
           </div>
           <nav className="p-4 space-y-1 flex-1 overflow-y-auto">
             <Link

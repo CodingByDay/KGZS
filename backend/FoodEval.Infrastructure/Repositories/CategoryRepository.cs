@@ -21,14 +21,16 @@ public class CategoryRepository : ICategoryRepository
 
     public async Task<IEnumerable<Category>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        return await _dbContext.Categories.ToListAsync(cancellationToken);
+        return await _dbContext.Categories
+            .OrderBy(c => c.Name)
+            .ToListAsync(cancellationToken);
     }
 
     public async Task<IEnumerable<Category>> GetByEvaluationEventIdAsync(Guid evaluationEventId, CancellationToken cancellationToken = default)
     {
         return await _dbContext.Categories
             .Where(c => c.EvaluationEventId == evaluationEventId)
-            .OrderBy(c => c.DisplayOrder)
+            .OrderBy(c => c.Name)
             .ToListAsync(cancellationToken);
     }
 

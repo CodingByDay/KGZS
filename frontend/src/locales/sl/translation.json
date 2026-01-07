@@ -1,6 +1,6 @@
 {
   "app": {
-    "name": "Sistem za ocenjevanje"
+    "name": "OcenaPro"
   },
   "nav": {
     "dashboard": "Nadzorna plošča",
@@ -14,7 +14,7 @@
     "logout": "Odjava"
   },
   "auth": {
-    "loginTitle": "Prijava v FoodEval",
+    "loginTitle": "Prijava v OcenaPro",
     "emailLabel": "E-pošta",
     "emailPlaceholder": "Vnesite e-pošto",
     "passwordLabel": "Geslo",
@@ -40,22 +40,22 @@
     "title": "Admin",
     "userManagementTitle": "Upravljanje uporabnikov",
     "userManagementDescription": "Upravljajte uporabnike, vloge in organizacije",
-    "superAdminManagementTitle": "Upravljanje SuperAdmin uporabnikov",
-    "superAdminManagementDescription": "Dodajanje in urejanje SuperAdmin računov"
+    "superAdminManagementTitle": "Upravljanje sistemskih skrbnikov",
+    "superAdminManagementDescription": "Dodajanje in urejanje sistemskih skrbnikov"
   },
   "superAdmin": {
-    "pageTitle": "Upravljanje SuperAdmin uporabnikov",
-    "pageSubtitle": "Upravljajte SuperAdmin uporabnike",
-    "addButton": "Dodaj SuperAdmin",
+    "pageTitle": "Upravljanje sistemskih skrbnikov",
+    "pageSubtitle": "Upravljajte sistemske skrbnike",
+    "addButton": "Dodaj sistemskega skrbnika",
     "table": {
       "name": "Ime",
       "email": "E-pošta",
       "createdAt": "Ustvarjen",
       "actions": "Dejanja",
-      "noData": "Ni SuperAdmin uporabnikov"
+      "noData": "Ni sistemskih skrbnikov"
     },
     "createModal": {
-      "title": "Ustvari SuperAdmin",
+      "title": "Ustvari sistemskega skrbnika",
       "email": "E-pošta",
       "password": "Geslo",
       "firstName": "Ime",
@@ -87,9 +87,9 @@
       "reset": "Ponastavi geslo"
     },
     "messages": {
-      "loadError": "Napaka pri nalaganju SuperAdmin uporabnikov",
-      "createSuccess": "SuperAdmin uspešno ustvarjen",
-      "createError": "Napaka pri ustvarjanju SuperAdmin uporabnika",
+      "loadError": "Napaka pri nalaganju sistemskih skrbnikov",
+      "createSuccess": "Sistemski skrbnik uspešno ustvarjen",
+      "createError": "Napaka pri ustvarjanju sistemskega skrbnika",
       "updateEmailSuccess": "E-pošta uspešno posodobljena",
       "updateEmailError": "Napaka pri posodabljanju e-pošte",
       "updatePasswordSuccess": "Geslo uspešno posodobljeno",
@@ -112,8 +112,8 @@
     "userType": "Tip uporabnika",
     "role": "Vloga",
     "organization": "Organizacija",
-    "superAdminActionsTitle": "SuperAdmin akcije",
-    "manageSuperAdmins": "Upravljaj SuperAdmin uporabnike",
+    "superAdminActionsTitle": "Akcije sistemskih skrbnikov",
+    "manageSuperAdmins": "Upravljaj sistemske skrbnike",
     "errors": {
       "firstNameRequired": "Ime je obvezno",
       "lastNameRequired": "Priimek je obvezen"
@@ -154,6 +154,52 @@
       "cancel": "Prekliči",
       "submit": "Registriraj organizacijo",
       "submitting": "Registracija..."
+    }
+  },
+  "categories": {
+    "title": "Skupine živil",
+    "subtitle": "Kategorije predstavljajo različne skupine živil za ocenjevanje",
+    "createButton": "Ustvari novo skupino",
+    "createModal": {
+      "title": "Ustvari skupino živil",
+      "name": "Ime skupine živil",
+      "nameRequired": "Ime skupine živil je obvezno",
+      "description": "Opis",
+      "evaluationEvent": "Dogodek ocenjevanja",
+      "evaluationEventRequired": "Dogodek ocenjevanja je obvezen",
+      "displayOrder": "Vrstni red",
+      "displayOrderRequired": "Vrstni red je obvezen",
+      "reviewers": "Dodeljeni ocenjevalci",
+      "reviewersDescription": "Izberite uporabnike, ki bodo ocenjevali izdelke v tej skupini živil",
+      "noReviewers": "Ni izbranih ocenjevalcev",
+      "cancel": "Prekliči",
+      "create": "Ustvari"
+    },
+    "messages": {
+      "createSuccess": "Kategorija uspešno ustvarjena",
+      "createError": "Napaka pri ustvarjanju kategorije",
+      "loadError": "Napaka pri nalaganju kategorij"
+    }
+  },
+  "commissions": {
+    "title": "Komisije",
+    "createButton": "Ustvari novo",
+    "createModal": {
+      "title": "Ustvari komisijo",
+      "name": "Ime",
+      "nameRequired": "Ime je obvezno",
+      "description": "Opis",
+      "evaluationEvent": "Dogodek ocenjevanja",
+      "evaluationEventRequired": "Dogodek ocenjevanja je obvezen",
+      "category": "Kategorija",
+      "categoryRequired": "Kategorija je obvezna",
+      "cancel": "Prekliči",
+      "create": "Ustvari"
+    },
+    "messages": {
+      "createSuccess": "Komisija uspešno ustvarjena",
+      "createError": "Napaka pri ustvarjanju komisije",
+      "loadError": "Napaka pri nalaganju komisij"
     }
   },
   "dashboard": {

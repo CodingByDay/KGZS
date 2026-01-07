@@ -124,6 +124,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IOrganizationRepository, OrganizationRepository>();
 builder.Services.AddScoped<IProductSampleRepository, ProductSampleRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<ICategoryReviewerRepository, CategoryReviewerRepository>();
 builder.Services.AddScoped<ICommissionRepository, CommissionRepository>();
 builder.Services.AddScoped<ICommissionMemberRepository, CommissionMemberRepository>();
 builder.Services.AddScoped<IEvaluationEventRepository, EvaluationEventRepository>();

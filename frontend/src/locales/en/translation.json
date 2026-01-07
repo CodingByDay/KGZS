@@ -1,6 +1,6 @@
 {
   "app": {
-    "name": "Evaluation System"
+    "name": "EvalPro"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -14,7 +14,7 @@
     "logout": "Logout"
   },
   "auth": {
-    "loginTitle": "Login to FoodEval",
+    "loginTitle": "Login to EvalPro",
     "emailLabel": "Email",
     "emailPlaceholder": "Enter your email",
     "passwordLabel": "Password",
@@ -40,22 +40,22 @@
     "title": "Admin",
     "userManagementTitle": "User Management",
     "userManagementDescription": "Manage users, roles, and organizations",
-    "superAdminManagementTitle": "SuperAdmin Management",
-    "superAdminManagementDescription": "Create and manage SuperAdmin accounts"
+    "superAdminManagementTitle": "System Administrators Management",
+    "superAdminManagementDescription": "Create and manage system administrator accounts"
   },
   "superAdmin": {
-    "pageTitle": "SuperAdmin Management",
-    "pageSubtitle": "Manage SuperAdmin users",
-    "addButton": "Add SuperAdmin",
+    "pageTitle": "System Administrators Management",
+    "pageSubtitle": "Manage system administrators",
+    "addButton": "Add System Administrator",
     "table": {
       "name": "Name",
       "email": "Email",
       "createdAt": "Created At",
       "actions": "Actions",
-      "noData": "No SuperAdmins found"
+      "noData": "No system administrators found"
     },
     "createModal": {
-      "title": "Create SuperAdmin",
+      "title": "Create System Administrator",
       "email": "Email",
       "password": "Password",
       "firstName": "First Name",
@@ -87,9 +87,9 @@
       "reset": "Reset Password"
     },
     "messages": {
-      "loadError": "Failed to load SuperAdmins",
-      "createSuccess": "SuperAdmin created successfully",
-      "createError": "Failed to create SuperAdmin",
+      "loadError": "Failed to load system administrators",
+      "createSuccess": "System administrator created successfully",
+      "createError": "Failed to create system administrator",
       "updateEmailSuccess": "Email updated successfully",
       "updateEmailError": "Failed to update email",
       "updatePasswordSuccess": "Password updated successfully",
@@ -112,8 +112,8 @@
     "userType": "User Type",
     "role": "Role",
     "organization": "Organization",
-    "superAdminActionsTitle": "SuperAdmin Actions",
-    "manageSuperAdmins": "Manage SuperAdmins",
+    "superAdminActionsTitle": "System Administrator Actions",
+    "manageSuperAdmins": "Manage System Administrators",
     "errors": {
       "firstNameRequired": "First name is required",
       "lastNameRequired": "Last name is required"
@@ -154,6 +154,52 @@
       "cancel": "Cancel",
       "submit": "Register Organization",
       "submitting": "Registering..."
+    }
+  },
+  "categories": {
+    "title": "Food Groups",
+    "subtitle": "Categories represent different food groups for evaluation",
+    "createButton": "Create New Food Group",
+    "createModal": {
+      "title": "Create Food Group Category",
+      "name": "Food Group Name",
+      "nameRequired": "Food group name is required",
+      "description": "Description",
+      "evaluationEvent": "Evaluation Event",
+      "evaluationEventRequired": "Evaluation event is required",
+      "displayOrder": "Display Order",
+      "displayOrderRequired": "Display order is required",
+      "reviewers": "Assigned Reviewers",
+      "reviewersDescription": "Select users who will review items in this food group",
+      "noReviewers": "No reviewers selected",
+      "cancel": "Cancel",
+      "create": "Create"
+    },
+    "messages": {
+      "createSuccess": "Category created successfully",
+      "createError": "Failed to create category",
+      "loadError": "Failed to load categories"
+    }
+  },
+  "commissions": {
+    "title": "Commissions",
+    "createButton": "Create New",
+    "createModal": {
+      "title": "Create Commission",
+      "name": "Name",
+      "nameRequired": "Name is required",
+      "description": "Description",
+      "evaluationEvent": "Evaluation Event",
+      "evaluationEventRequired": "Evaluation event is required",
+      "category": "Category",
+      "categoryRequired": "Category is required",
+      "cancel": "Cancel",
+      "create": "Create"
+    },
+    "messages": {
+      "createSuccess": "Commission created successfully",
+      "createError": "Failed to create commission",
+      "loadError": "Failed to load commissions"
     }
   },
   "dashboard": {

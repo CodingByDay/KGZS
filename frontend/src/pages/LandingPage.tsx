@@ -3,6 +3,7 @@ import { Button } from '@/ui/components/Button';
 import { useTranslation } from 'react-i18next';
 import SI from 'country-flag-icons/react/3x2/SI';
 import GB from 'country-flag-icons/react/3x2/GB';
+import { Logo } from '@/ui/components/Logo';
 
 export function LandingPage() {
   const { t, i18n } = useTranslation();
@@ -18,8 +19,8 @@ export function LandingPage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <Link to="/" className="text-2xl font-bold text-blue-600">
-                FoodEval
+              <Link to="/" className="flex items-center">
+                <Logo size="lg" textColor="text-blue-600" />
               </Link>
             </div>
             <div className="hidden md:flex items-center space-x-8">
@@ -361,7 +362,9 @@ export function LandingPage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-4 gap-8">
             <div>
-              <h3 className="text-white text-xl font-bold mb-4">FoodEval</h3>
+              <div className="mb-4">
+                <Logo size="lg" className="text-white" />
+              </div>
               <p className="text-gray-400">
                 Digital evaluation platform for streamlined assessment processes.
               </p>
@@ -389,7 +392,7 @@ export function LandingPage() {
             </div>
           </div>
           <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; {new Date().getFullYear()} FoodEval. All rights reserved.</p>
+            <p>&copy; {new Date().getFullYear()} EvalPro. All rights reserved.</p>
           </div>
         </div>
       </footer>
