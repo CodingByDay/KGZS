@@ -85,7 +85,10 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:5173")
+        // Allow both Vite dev ports used by the frontend
+        policy.WithOrigins(
+                "http://localhost:5173",
+                "http://localhost:5174")
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
@@ -127,21 +130,22 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
-
+// CORS must be early in the pipeline, before authentication/authorization and endpoints
+// This allows preflight OPTIONS requests to be handled correctly
+app.UseRouting();
 app.UseCors("AllowFrontend");
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers();
-
-// SignalR Hub
-app.MapHub<EvaluationHub>("/hubs/evaluation");
-
-app.MapGet("/health", () => new { status = "ok" })
-    .WithName("Health")
-    .WithOpenApi();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+    endpoints.MapHub<EvaluationHub>("/hubs/evaluation");
+    endpoints.MapGet("/health", () => new { status = "ok" })
+             .WithName("Health")
+             .WithOpenApi();
+});
 
 // Seed dev super user (Development only)
 var seedEnabled = builder.Configuration["SEED_SUPERUSER_ENABLED"] == "true";

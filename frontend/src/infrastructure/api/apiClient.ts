@@ -40,13 +40,32 @@ class ApiClient {
     }
 
     try {
+      console.log(`[API Client] Making ${options.method || 'GET'} request to: ${url}`);
+      console.log('[API Client] Headers:', headers);
+      if (options.body) {
+        console.log('[API Client] Request body:', options.body);
+      }
+
       const response = await fetch(url, {
         ...options,
         headers,
+        credentials: 'include', // Include credentials for CORS with AllowCredentials
       });
 
+      console.log(`[API Client] Response status: ${response.status} ${response.statusText}`);
+      console.log('[API Client] Response headers:', Object.fromEntries(response.headers.entries()));
+
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ message: 'An error occurred' }));
+        const responseText = await response.text();
+        console.error(`[API Client] Error response body:`, responseText);
+        
+        let errorData;
+        try {
+          errorData = JSON.parse(responseText);
+        } catch {
+          errorData = { message: responseText || 'An error occurred' };
+        }
+        
         const error: ApiError = {
           message: errorData.message || `HTTP error! status: ${response.status}`,
           status: response.status,
@@ -57,9 +76,12 @@ class ApiClient {
       // Handle empty responses
       const contentType = response.headers.get('content-type');
       if (contentType && contentType.includes('application/json')) {
-        return await response.json();
+        const responseText = await response.text();
+        console.log('[API Client] Response body:', responseText);
+        return JSON.parse(responseText) as T;
       }
       
+      console.log('[API Client] Empty or non-JSON response');
       return {} as T;
     } catch (error) {
       if (error instanceof Error && error.message === 'Action queued for when connection is restored') {
@@ -67,11 +89,17 @@ class ApiClient {
       }
       
       if (error && typeof error === 'object' && 'status' in error) {
+        console.error('[API Client] API Error:', error);
         throw error;
       }
       
+      // Network errors (CORS, connection refused, etc.)
+      const errorMessage = error instanceof Error ? error.message : 'Network error';
+      console.error(`[API Client] Network error: ${errorMessage}`);
+      console.error('[API Client] Full error:', error);
+      
       throw {
-        message: error instanceof Error ? error.message : 'Network error',
+        message: errorMessage,
         status: 0,
       } as ApiError;
     }
