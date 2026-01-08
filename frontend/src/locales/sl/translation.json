@@ -422,7 +422,12 @@
     "select": "Izberi...",
     "delete": "Izbriši",
     "actions": "Dejanja",
-    "optional": "neobvezno"
+    "optional": "neobvezno",
+    "filters": "Filtri",
+    "clearFilters": "Počisti filtre",
+    "search": "Išči...",
+    "all": "Vsi",
+    "noResults": "Ni rezultatov"
   },
   "language": {
     "sl": "Slovenščina",

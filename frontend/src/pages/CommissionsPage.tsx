@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { apiClient } from '@/infrastructure/api/apiClient';
 import { AppShell } from '@/app/components/AppShell';
 import { ApiError } from '@/infrastructure/api/apiClient';
+import { HiPencil, HiTrash, HiMagnifyingGlass, HiFunnel } from 'react-icons/hi2';
 
 interface CommissionMember {
   id: string;
@@ -59,6 +60,12 @@ export function CommissionsPage() {
   const [editingCommission, setEditingCommission] = useState<Commission | null>(null);
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  
+  // Filter states
+  const [nameFilter, setNameFilter] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [memberCountFilter, setMemberCountFilter] = useState('all');
+  const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -124,6 +131,43 @@ export function CommissionsPage() {
     }
   };
 
+  // Filter commissions
+  const filteredCommissions = commissions.filter((commission) => {
+    // Name filter
+    if (nameFilter && !commission.name.toLowerCase().includes(nameFilter.toLowerCase())) {
+      return false;
+    }
+    
+    // Status filter
+    if (statusFilter !== 'all' && commission.status !== statusFilter) {
+      return false;
+    }
+    
+    // Member count filter
+    if (memberCountFilter !== 'all') {
+      const memberCount = commission.members.length;
+      switch (memberCountFilter) {
+        case '0':
+          if (memberCount !== 0) return false;
+          break;
+        case '1-3':
+          if (memberCount < 1 || memberCount > 3) return false;
+          break;
+        case '4-6':
+          if (memberCount < 4 || memberCount > 6) return false;
+          break;
+        case '7+':
+          if (memberCount < 7) return false;
+          break;
+      }
+    }
+    
+    return true;
+  });
+
+  // Get unique statuses for filter
+  const uniqueStatuses = Array.from(new Set(commissions.map(c => c.status)));
+
   if (loading) {
     return (
       <AppShell>
@@ -162,6 +206,94 @@ export function CommissionsPage() {
           </div>
         )}
 
+        {/* Filters */}
+        <div className="bg-white rounded-lg shadow p-4">
+          <div className="flex items-center justify-between mb-4">
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+            >
+              <HiFunnel className="w-4 h-4" />
+              {t('common.filters') || 'Filters'}
+              {(nameFilter || statusFilter !== 'all' || memberCountFilter !== 'all') && (
+                <span className="ml-1 px-2 py-0.5 text-xs bg-blue-600 text-white rounded-full">
+                  {[nameFilter && '1', statusFilter !== 'all' && '1', memberCountFilter !== 'all' && '1'].filter(Boolean).length}
+                </span>
+              )}
+            </button>
+            {(nameFilter || statusFilter !== 'all' || memberCountFilter !== 'all') && (
+              <button
+                onClick={() => {
+                  setNameFilter('');
+                  setStatusFilter('all');
+                  setMemberCountFilter('all');
+                }}
+                className="text-sm text-gray-600 hover:text-gray-900"
+              >
+                {t('common.clearFilters') || 'Clear Filters'}
+              </button>
+            )}
+          </div>
+
+          {showFilters && (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-gray-200">
+              {/* Name filter */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t('commissions.table.name')}
+                </label>
+                <div className="relative">
+                  <HiMagnifyingGlass className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <input
+                    type="text"
+                    value={nameFilter}
+                    onChange={(e) => setNameFilter(e.target.value)}
+                    placeholder={t('common.search') || 'Search...'}
+                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+              </div>
+
+              {/* Status filter */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t('commissions.table.status')}
+                </label>
+                <select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="all">{t('common.all') || 'All'}</option>
+                  {uniqueStatuses.map((status) => (
+                    <option key={status} value={status}>
+                      {status}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Member count filter */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t('commissions.table.members')}
+                </label>
+                <select
+                  value={memberCountFilter}
+                  onChange={(e) => setMemberCountFilter(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="all">{t('common.all') || 'All'}</option>
+                  <option value="0">0 {t('commissions.table.membersCount')}</option>
+                  <option value="1-3">1-3 {t('commissions.table.membersCount')}</option>
+                  <option value="4-6">4-6 {t('commissions.table.membersCount')}</option>
+                  <option value="7+">7+ {t('commissions.table.membersCount')}</option>
+                </select>
+              </div>
+            </div>
+          )}
+        </div>
+
         <div className="bg-white rounded-lg shadow overflow-hidden">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
@@ -184,14 +316,16 @@ export function CommissionsPage() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {commissions.length === 0 ? (
+              {filteredCommissions.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="px-6 py-4 text-center text-sm text-gray-500">
-                    {t('commissions.messages.noCommissions')}
+                    {commissions.length === 0 
+                      ? t('commissions.messages.noCommissions')
+                      : t('common.noResults') || 'No results found'}
                   </td>
                 </tr>
               ) : (
-                commissions.map((commission) => (
+                filteredCommissions.map((commission) => (
                   <tr key={commission.id}>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                       {commission.name}
@@ -208,18 +342,22 @@ export function CommissionsPage() {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <button
-                        onClick={() => setEditingCommission(commission)}
-                        className="text-blue-600 hover:text-blue-900 mr-4"
-                      >
-                        {t('commissions.table.edit')}
-                      </button>
-                      <button
-                        onClick={() => handleDeleteCommission(commission.id)}
-                        className="text-red-600 hover:text-red-900"
-                      >
-                        {t('commissions.table.delete')}
-                      </button>
+                      <div className="flex items-center gap-3">
+                        <button
+                          onClick={() => setEditingCommission(commission)}
+                          className="p-2 text-blue-600 hover:text-blue-900 hover:bg-blue-50 rounded transition-colors"
+                          title={t('commissions.table.edit')}
+                        >
+                          <HiPencil className="w-5 h-5" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteCommission(commission.id)}
+                          className="p-2 text-red-600 hover:text-red-900 hover:bg-red-50 rounded transition-colors"
+                          title={t('commissions.table.delete')}
+                        >
+                          <HiTrash className="w-5 h-5" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))

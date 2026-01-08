@@ -3,7 +3,7 @@ import { AppShell } from '@/app/components/AppShell';
 import { reviewerService, ReviewerDto, CreateReviewerRequest, UpdateReviewerEmailRequest, ResetReviewerPasswordRequest, UpdateReviewerProfileRequest } from '@/application/services/ReviewerService';
 import { ApiError } from '@/infrastructure/api/apiClient';
 import { useTranslation } from 'react-i18next';
-import { HiPencil, HiTrash, HiKey } from 'react-icons/hi2';
+import { HiPencil, HiTrash, HiKey, HiMagnifyingGlass, HiFunnel } from 'react-icons/hi2';
 
 interface Toast {
   id: number;
@@ -22,6 +22,12 @@ export function ReviewersPage() {
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedReviewer, setSelectedReviewer] = useState<ReviewerDto | null>(null);
+  
+  // Filter states
+  const [nameFilter, setNameFilter] = useState('');
+  const [emailFilter, setEmailFilter] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
     loadReviewers();
@@ -99,6 +105,30 @@ export function ReviewersPage() {
     }
   };
 
+  // Filter reviewers
+  const filteredReviewers = reviewers.filter((reviewer) => {
+    // Name filter
+    const fullName = `${reviewer.firstName} ${reviewer.lastName}`.toLowerCase();
+    if (nameFilter && !fullName.includes(nameFilter.toLowerCase())) {
+      return false;
+    }
+    
+    // Email filter
+    if (emailFilter && !reviewer.email.toLowerCase().includes(emailFilter.toLowerCase())) {
+      return false;
+    }
+    
+    // Status filter
+    if (statusFilter !== 'all') {
+      const isActive = statusFilter === 'active';
+      if (reviewer.isActive !== isActive) {
+        return false;
+      }
+    }
+    
+    return true;
+  });
+
   const handleResetPassword = async (data: ResetReviewerPasswordRequest): Promise<string | null> => {
     if (!selectedReviewer) return null;
     try {
@@ -164,6 +194,90 @@ export function ReviewersPage() {
           </div>
         )}
 
+        {/* Filters */}
+        <div className="bg-white rounded-lg shadow p-4">
+          <div className="flex items-center justify-between mb-4">
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+            >
+              <HiFunnel className="w-4 h-4" />
+              {t('common.filters') || 'Filters'}
+              {(nameFilter || emailFilter || statusFilter !== 'all') && (
+                <span className="ml-1 px-2 py-0.5 text-xs bg-blue-600 text-white rounded-full">
+                  {[nameFilter && '1', emailFilter && '1', statusFilter !== 'all' && '1'].filter(Boolean).length}
+                </span>
+              )}
+            </button>
+            {(nameFilter || emailFilter || statusFilter !== 'all') && (
+              <button
+                onClick={() => {
+                  setNameFilter('');
+                  setEmailFilter('');
+                  setStatusFilter('all');
+                }}
+                className="text-sm text-gray-600 hover:text-gray-900"
+              >
+                {t('common.clearFilters') || 'Clear Filters'}
+              </button>
+            )}
+          </div>
+
+          {showFilters && (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-gray-200">
+              {/* Name filter */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t('reviewers.table.name')}
+                </label>
+                <div className="relative">
+                  <HiMagnifyingGlass className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <input
+                    type="text"
+                    value={nameFilter}
+                    onChange={(e) => setNameFilter(e.target.value)}
+                    placeholder={t('common.search') || 'Search...'}
+                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+              </div>
+
+              {/* Email filter */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t('reviewers.table.email')}
+                </label>
+                <div className="relative">
+                  <HiMagnifyingGlass className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <input
+                    type="text"
+                    value={emailFilter}
+                    onChange={(e) => setEmailFilter(e.target.value)}
+                    placeholder={t('common.search') || 'Search...'}
+                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+              </div>
+
+              {/* Status filter */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t('reviewers.table.status')}
+                </label>
+                <select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="all">{t('common.all') || 'All'}</option>
+                  <option value="active">{t('common.active')}</option>
+                  <option value="inactive">{t('common.inactive')}</option>
+                </select>
+              </div>
+            </div>
+          )}
+        </div>
+
         <div className="bg-white rounded-lg shadow overflow-hidden">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
@@ -189,14 +303,16 @@ export function ReviewersPage() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {reviewers.length === 0 ? (
+              {filteredReviewers.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-4 text-center text-gray-500">
-                    {t('reviewers.table.noData')}
+                    {reviewers.length === 0 
+                      ? t('reviewers.table.noData')
+                      : (t('common.noResults') || 'No results found')}
                   </td>
                 </tr>
               ) : (
-                reviewers.map((reviewer) => (
+                filteredReviewers.map((reviewer) => (
                   <tr key={reviewer.id}>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-medium text-gray-900">

@@ -5,7 +5,7 @@ import { UserType, UserTypeLabels } from '@/domain/enums/UserType';
 import { UserRole } from '@/domain/enums/UserRole';
 import { getRoleDisplayInfo, getRoleLabel } from '@/domain/enums/UserRoleDisplay';
 import { useTranslation } from 'react-i18next';
-import { HiPencil, HiTrash, HiKey } from 'react-icons/hi2';
+import { HiPencil, HiTrash, HiKey, HiMagnifyingGlass, HiFunnel } from 'react-icons/hi2';
 import { ApiError } from '@/infrastructure/api/apiClient';
 
 interface UserDto {
@@ -75,6 +75,10 @@ export function UsersManagementPage() {
   const [selectedUser, setSelectedUser] = useState<UserDto | null>(null);
   const [filterUserType, setFilterUserType] = useState<string>('all');
   const [filterRole, setFilterRole] = useState<string>('all');
+  const [nameFilter, setNameFilter] = useState('');
+  const [emailFilter, setEmailFilter] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [showFilters, setShowFilters] = useState(false);
   const [toasts, setToasts] = useState<Toast[]>([]);
 
   useEffect(() => {
@@ -164,8 +168,25 @@ export function UsersManagementPage() {
   };
 
   const filteredUsers = users.filter((user) => {
+    // User type filter
     if (filterUserType !== 'all' && user.userType.toString() !== filterUserType) return false;
+    
+    // Role filter
     if (filterRole !== 'all' && user.primaryRole !== filterRole) return false;
+    
+    // Name filter
+    const fullName = `${user.firstName} ${user.lastName}`.toLowerCase();
+    if (nameFilter && !fullName.includes(nameFilter.toLowerCase())) return false;
+    
+    // Email filter
+    if (emailFilter && !user.email.toLowerCase().includes(emailFilter.toLowerCase())) return false;
+    
+    // Status filter
+    if (statusFilter !== 'all') {
+      const isActive = statusFilter === 'active';
+      if (user.isActive !== isActive) return false;
+    }
+    
     return true;
   });
 
@@ -205,33 +226,128 @@ export function UsersManagementPage() {
           </button>
         </div>
 
+        {/* Filters */}
         <div className="bg-white rounded-lg shadow p-4">
-          <div className="flex gap-4 mb-4">
-            <select
-              value={filterUserType}
-              onChange={(e) => setFilterUserType(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg"
+          <div className="flex items-center justify-between mb-4">
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
             >
-              <option value="all">All User Types</option>
-              {Object.entries(UserTypeLabels).map(([key, label]) => (
-                <option key={key} value={key}>
-                  {label}
-                </option>
-              ))}
-            </select>
-            <select
-              value={filterRole}
-              onChange={(e) => setFilterRole(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg"
-            >
-              <option value="all">All Roles</option>
-              {Object.values(UserRole).map((role) => (
-                <option key={role} value={role}>
-                  {role}
-                </option>
-              ))}
-            </select>
+              <HiFunnel className="w-4 h-4" />
+              {t('common.filters') || 'Filters'}
+              {(filterUserType !== 'all' || filterRole !== 'all' || nameFilter || emailFilter || statusFilter !== 'all') && (
+                <span className="ml-1 px-2 py-0.5 text-xs bg-blue-600 text-white rounded-full">
+                  {[filterUserType !== 'all' && '1', filterRole !== 'all' && '1', nameFilter && '1', emailFilter && '1', statusFilter !== 'all' && '1'].filter(Boolean).length}
+                </span>
+              )}
+            </button>
+            {(filterUserType !== 'all' || filterRole !== 'all' || nameFilter || emailFilter || statusFilter !== 'all') && (
+              <button
+                onClick={() => {
+                  setFilterUserType('all');
+                  setFilterRole('all');
+                  setNameFilter('');
+                  setEmailFilter('');
+                  setStatusFilter('all');
+                }}
+                className="text-sm text-gray-600 hover:text-gray-900"
+              >
+                {t('common.clearFilters') || 'Clear Filters'}
+              </button>
+            )}
           </div>
+
+          {showFilters && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 pt-4 border-t border-gray-200">
+              {/* Name filter */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Name
+                </label>
+                <div className="relative">
+                  <HiMagnifyingGlass className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <input
+                    type="text"
+                    value={nameFilter}
+                    onChange={(e) => setNameFilter(e.target.value)}
+                    placeholder={t('common.search') || 'Search...'}
+                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+              </div>
+
+              {/* Email filter */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Email
+                </label>
+                <div className="relative">
+                  <HiMagnifyingGlass className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <input
+                    type="text"
+                    value={emailFilter}
+                    onChange={(e) => setEmailFilter(e.target.value)}
+                    placeholder={t('common.search') || 'Search...'}
+                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+              </div>
+
+              {/* User Type filter */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  User Type
+                </label>
+                <select
+                  value={filterUserType}
+                  onChange={(e) => setFilterUserType(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="all">{t('common.all') || 'All'}</option>
+                  {Object.entries(UserTypeLabels).map(([key, label]) => (
+                    <option key={key} value={key}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Role filter */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Role
+                </label>
+                <select
+                  value={filterRole}
+                  onChange={(e) => setFilterRole(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="all">{t('common.all') || 'All'}</option>
+                  {Object.values(UserRole).map((role) => (
+                    <option key={role} value={role}>
+                      {role}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Status filter */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Status
+                </label>
+                <select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="all">{t('common.all') || 'All'}</option>
+                  <option value="active">{t('common.active')}</option>
+                  <option value="inactive">{t('common.inactive')}</option>
+                </select>
+              </div>
+            </div>
+          )}
 
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">

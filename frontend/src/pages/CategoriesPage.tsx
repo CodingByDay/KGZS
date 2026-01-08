@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { apiClient } from '@/infrastructure/api/apiClient';
 import { AppShell } from '@/app/components/AppShell';
 import { ApiError } from '@/infrastructure/api/apiClient';
-import { HiPencil, HiTrash, HiPlus, HiFolder, HiFolderOpen } from 'react-icons/hi2';
+import { HiPencil, HiTrash, HiPlus, HiFolder, HiFolderOpen, HiMagnifyingGlass, HiFunnel } from 'react-icons/hi2';
 
 interface Group {
   id: string;
@@ -52,6 +52,15 @@ export function CategoriesPage() {
   const [showCreateSubgroupModal, setShowCreateSubgroupModal] = useState(false);
   const [editingSubgroup, setEditingSubgroup] = useState<Subgroup | null>(null);
   const [error, setError] = useState('');
+  
+  // Filter states for groups
+  const [groupNameFilter, setGroupNameFilter] = useState('');
+  const [showGroupFilters, setShowGroupFilters] = useState(false);
+  
+  // Filter states for subgroups
+  const [subgroupNameFilter, setSubgroupNameFilter] = useState('');
+  const [subgroupCategoryFilter, setSubgroupCategoryFilter] = useState('all');
+  const [showSubgroupFilters, setShowSubgroupFilters] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -166,6 +175,30 @@ export function CategoriesPage() {
     return subgroups.filter(sg => sg.categoryId === groupId);
   };
 
+  // Filter groups
+  const filteredGroups = groups.filter((group) => {
+    if (groupNameFilter && !group.name.toLowerCase().includes(groupNameFilter.toLowerCase())) {
+      return false;
+    }
+    return true;
+  });
+
+  // Filter subgroups
+  const filteredSubgroups = subgroups.filter((subgroup) => {
+    if (subgroupNameFilter && !subgroup.name.toLowerCase().includes(subgroupNameFilter.toLowerCase())) {
+      return false;
+    }
+    if (subgroupCategoryFilter !== 'all' && subgroup.categoryId !== subgroupCategoryFilter) {
+      return false;
+    }
+    return true;
+  });
+
+  // Get unique categories for subgroup filter
+  const uniqueCategories = Array.from(
+    new Map(subgroups.map(sg => [sg.categoryId, { id: sg.categoryId, name: sg.categoryName }])).values()
+  );
+
   if (loading) {
     return (
       <AppShell>
@@ -211,6 +244,50 @@ export function CategoriesPage() {
             </div>
           </div>
 
+          {/* Group Filters */}
+          <div className="px-6 pb-4 border-b border-gray-200">
+            <div className="flex items-center justify-between mb-4">
+              <button
+                onClick={() => setShowGroupFilters(!showGroupFilters)}
+                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+              >
+                <HiFunnel className="w-4 h-4" />
+                {t('common.filters') || 'Filters'}
+                {groupNameFilter && (
+                  <span className="ml-1 px-2 py-0.5 text-xs bg-blue-600 text-white rounded-full">1</span>
+                )}
+              </button>
+              {groupNameFilter && (
+                <button
+                  onClick={() => setGroupNameFilter('')}
+                  className="text-sm text-gray-600 hover:text-gray-900"
+                >
+                  {t('common.clearFilters') || 'Clear Filters'}
+                </button>
+              )}
+            </div>
+
+            {showGroupFilters && (
+              <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    {t('categories.createModal.name')}
+                  </label>
+                  <div className="relative">
+                    <HiMagnifyingGlass className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                    <input
+                      type="text"
+                      value={groupNameFilter}
+                      onChange={(e) => setGroupNameFilter(e.target.value)}
+                      placeholder={t('common.search') || 'Search...'}
+                      className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
           <div className="p-6">
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
@@ -228,14 +305,16 @@ export function CategoriesPage() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {groups.length === 0 ? (
+                  {filteredGroups.length === 0 ? (
                     <tr>
                       <td colSpan={3} className="px-6 py-8 text-center text-gray-500">
-                        {t('categories.messages.noGroups') || 'No groups found. Create your first group.'}
+                        {groups.length === 0 
+                          ? (t('categories.messages.noGroups') || 'No groups found. Create your first group.')
+                          : (t('common.noResults') || 'No results found')}
                       </td>
                     </tr>
                   ) : (
-                    groups.map((group) => {
+                    filteredGroups.map((group) => {
                       const groupSubgroups = getSubgroupsForGroup(group.id);
 
                       return (
@@ -304,6 +383,72 @@ export function CategoriesPage() {
             </div>
           </div>
 
+          {/* Subgroup Filters */}
+          <div className="px-6 pb-4 border-b border-gray-200">
+            <div className="flex items-center justify-between mb-4">
+              <button
+                onClick={() => setShowSubgroupFilters(!showSubgroupFilters)}
+                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+              >
+                <HiFunnel className="w-4 h-4" />
+                {t('common.filters') || 'Filters'}
+                {(subgroupNameFilter || subgroupCategoryFilter !== 'all') && (
+                  <span className="ml-1 px-2 py-0.5 text-xs bg-blue-600 text-white rounded-full">
+                    {[subgroupNameFilter && '1', subgroupCategoryFilter !== 'all' && '1'].filter(Boolean).length}
+                  </span>
+                )}
+              </button>
+              {(subgroupNameFilter || subgroupCategoryFilter !== 'all') && (
+                <button
+                  onClick={() => {
+                    setSubgroupNameFilter('');
+                    setSubgroupCategoryFilter('all');
+                  }}
+                  className="text-sm text-gray-600 hover:text-gray-900"
+                >
+                  {t('common.clearFilters') || 'Clear Filters'}
+                </button>
+              )}
+            </div>
+
+            {showSubgroupFilters && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    {t('categories.subgroups.createModal.name')}
+                  </label>
+                  <div className="relative">
+                    <HiMagnifyingGlass className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                    <input
+                      type="text"
+                      value={subgroupNameFilter}
+                      onChange={(e) => setSubgroupNameFilter(e.target.value)}
+                      placeholder={t('common.search') || 'Search...'}
+                      className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    {t('categories.subgroups.createModal.group')}
+                  </label>
+                  <select
+                    value={subgroupCategoryFilter}
+                    onChange={(e) => setSubgroupCategoryFilter(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="all">{t('common.all') || 'All'}</option>
+                    {uniqueCategories.map((cat) => (
+                      <option key={cat.id} value={cat.id}>
+                        {cat.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            )}
+          </div>
+
           <div className="p-6">
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
@@ -324,14 +469,16 @@ export function CategoriesPage() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {subgroups.length === 0 ? (
+                  {filteredSubgroups.length === 0 ? (
                     <tr>
                       <td colSpan={4} className="px-6 py-8 text-center text-gray-500">
-                        {t('categories.subgroups.noSubgroups')}
+                        {subgroups.length === 0 
+                          ? t('categories.subgroups.noSubgroups')
+                          : (t('common.noResults') || 'No results found')}
                       </td>
                     </tr>
                   ) : (
-                    subgroups.map((subgroup) => (
+                    filteredSubgroups.map((subgroup) => (
                       <tr key={subgroup.id} className="hover:bg-gray-50">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm font-medium text-gray-900">{subgroup.categoryName}</div>

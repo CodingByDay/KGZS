@@ -426,7 +426,12 @@
     "select": "Select...",
     "delete": "Delete",
     "actions": "Actions",
-    "optional": "optional"
+    "optional": "optional",
+    "filters": "Filters",
+    "clearFilters": "Clear Filters",
+    "search": "Search...",
+    "all": "All",
+    "noResults": "No results found"
   },
   "language": {
     "sl": "Slovenian",

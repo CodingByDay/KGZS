@@ -63,12 +63,20 @@ public class UserRepository : IUserRepository
 
     public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var user = await GetByIdAsync(id, cancellationToken);
+        // Get user without IsActive filter to allow deletion of any user
+        var user = await _dbContext.Users
+            .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
+        
         if (user != null)
         {
             // Soft delete by setting IsActive to false
             user.IsActive = false;
+            _dbContext.Users.Update(user);
             await _dbContext.SaveChangesAsync(cancellationToken);
+        }
+        else
+        {
+            throw new KeyNotFoundException($"User with id {id} not found");
         }
     }
 }
