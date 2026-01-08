@@ -97,11 +97,11 @@ public class ReviewersController : ControllerBase
         }
     }
 
-    [HttpPut("{id}/reviewer-type")]
+    [HttpPut("{id}/profile")]
     [ProducesResponseType(typeof(ReviewerDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<ReviewerDto>> UpdateReviewerType(Guid id, [FromBody] UpdateReviewerTypeRequest request, CancellationToken cancellationToken)
+    public async Task<ActionResult<ReviewerDto>> UpdateReviewerProfile(Guid id, [FromBody] UpdateReviewerProfileRequest request, CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
         {
@@ -110,16 +110,12 @@ public class ReviewersController : ControllerBase
 
         try
         {
-            var updated = await _service.UpdateReviewerTypeAsync(id, request, cancellationToken);
+            var updated = await _service.UpdateReviewerProfileAsync(id, request, cancellationToken);
             return Ok(updated);
         }
         catch (KeyNotFoundException)
         {
             return NotFound();
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(new { message = ex.Message });
         }
         catch (InvalidOperationException ex)
         {

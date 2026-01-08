@@ -8,6 +8,7 @@ public class ProductSample
     public Guid EvaluationEventId { get; set; }
     public Guid ApplicantId { get; set; }
     public Guid CategoryId { get; set; }
+    public Guid? SubgroupId { get; set; } // Optional: can link to subgroup
     public int SequentialNumber { get; set; }
     public string Name { get; set; } = string.Empty;
     public string? Description { get; set; }

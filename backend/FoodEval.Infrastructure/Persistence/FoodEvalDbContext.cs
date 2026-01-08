@@ -13,7 +13,7 @@ public class FoodEvalDbContext : DbContext
     public DbSet<Applicant> Applicants { get; set; }
     public DbSet<AuditLog> AuditLogs { get; set; }
     public DbSet<Category> Categories { get; set; }
-    public DbSet<CategoryReviewer> CategoryReviewers { get; set; }
+    public DbSet<Subgroup> Subgroups { get; set; }
     public DbSet<Comment> Comments { get; set; }
     public DbSet<Commission> Commissions { get; set; }
     public DbSet<CommissionMember> CommissionMembers { get; set; }

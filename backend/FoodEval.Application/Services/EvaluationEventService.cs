@@ -12,19 +12,22 @@ public class EvaluationEventService : IEvaluationEventService
     private readonly IExpertEvaluationRepository _expertEvaluationRepository;
     private readonly IProductSampleRepository _productSampleRepository;
     private readonly IScoringPolicyRepository _scoringPolicyRepository;
+    private readonly ICommissionMemberRepository _commissionMemberRepository;
 
     public EvaluationEventService(
         IEvaluationEventRepository eventRepository,
         IEvaluationSessionRepository sessionRepository,
         IExpertEvaluationRepository expertEvaluationRepository,
         IProductSampleRepository productSampleRepository,
-        IScoringPolicyRepository scoringPolicyRepository)
+        IScoringPolicyRepository scoringPolicyRepository,
+        ICommissionMemberRepository commissionMemberRepository)
     {
         _eventRepository = eventRepository;
         _sessionRepository = sessionRepository;
         _expertEvaluationRepository = expertEvaluationRepository;
         _productSampleRepository = productSampleRepository;
         _scoringPolicyRepository = scoringPolicyRepository;
+        _commissionMemberRepository = commissionMemberRepository;
     }
 
     public async Task<EvaluationEventDto?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
@@ -97,6 +100,32 @@ public class EvaluationEventService : IEvaluationEventService
         var activeSession = await _sessionRepository.GetActiveByProductSampleIdAsync(request.ProductSampleId, cancellationToken);
         if (activeSession != null)
             throw new InvalidOperationException("An active evaluation session already exists for this product sample");
+
+        // Validate that the user can start the evaluation
+        // User must be either President OR MainMember (if President is not present)
+        // Get all commission members for this commission
+        var commissionMembers = await _commissionMemberRepository.GetByCommissionIdAsync(request.CommissionId, cancellationToken);
+        var userMember = commissionMembers.FirstOrDefault(m => m.UserId == activatedBy);
+        
+        if (userMember == null)
+            throw new InvalidOperationException("User is not a member of this commission");
+
+        // Check if there's a President
+        var president = commissionMembers.FirstOrDefault(m => m.Role == CommissionMemberRole.President);
+        
+        // Validation: If President exists, only President can start. If no President, MainMember can start.
+        if (president != null)
+        {
+            // President is present - only President can start
+            if (userMember.Role != CommissionMemberRole.President)
+                throw new InvalidOperationException("Only the President can start evaluation when President is assigned to the commission");
+        }
+        else
+        {
+            // No President - MainMember can start
+            if (userMember.Role != CommissionMemberRole.MainMember)
+                throw new InvalidOperationException("Only the Main Member can start evaluation when President is not assigned to the commission");
+        }
 
         var session = new EvaluationSession
         {

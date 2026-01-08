@@ -18,6 +18,6 @@ public interface IUserManagementService
     Task<IEnumerable<ReviewerDto>> GetReviewersAsync(CancellationToken cancellationToken = default);
     Task<ReviewerDto> CreateReviewerAsync(CreateReviewerRequest request, CancellationToken cancellationToken = default);
     Task<ReviewerDto> UpdateReviewerEmailAsync(Guid id, UpdateReviewerEmailRequest request, CancellationToken cancellationToken = default);
+    Task<ReviewerDto> UpdateReviewerProfileAsync(Guid id, UpdateReviewerProfileRequest request, CancellationToken cancellationToken = default);
     Task<ResetReviewerPasswordResponse> ResetReviewerPasswordAsync(Guid id, ResetReviewerPasswordRequest request, CancellationToken cancellationToken = default);
-    Task<ReviewerDto> UpdateReviewerTypeAsync(Guid id, UpdateReviewerTypeRequest request, CancellationToken cancellationToken = default);
 }

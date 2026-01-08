@@ -135,29 +135,6 @@ namespace FoodEval.Infrastructure.Migrations
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("FoodEval.Domain.Entities.CategoryReviewer", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset>("AssignedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<Guid>("CategoryId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("CategoryReviewers");
-                });
-
             modelBuilder.Entity("FoodEval.Domain.Entities.Comment", b =>
                 {
                     b.Property<Guid>("Id")
@@ -208,17 +185,11 @@ namespace FoodEval.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("CategoryId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("EvaluationEventId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -263,6 +234,8 @@ namespace FoodEval.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CommissionId");
 
                     b.ToTable("CommissionMembers");
                 });
@@ -674,6 +647,9 @@ namespace FoodEval.Infrastructure.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
+                    b.Property<Guid?>("SubgroupId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTimeOffset?>("SubmittedAt")
                         .HasColumnType("datetimeoffset");
 
@@ -737,6 +713,36 @@ namespace FoodEval.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Protocols");
+                });
+
+            modelBuilder.Entity("FoodEval.Domain.Entities.RefreshToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset>("ExpiresAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("ReplacedByTokenHash")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTimeOffset?>("RevokedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("TokenHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("RefreshTokens");
                 });
 
             modelBuilder.Entity("FoodEval.Domain.Entities.ScoringPolicy", b =>
@@ -804,6 +810,32 @@ namespace FoodEval.Infrastructure.Migrations
                     b.ToTable("StructuredCommentTemplates");
                 });
 
+            modelBuilder.Entity("FoodEval.Domain.Entities.Subgroup", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CategoryId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.ToTable("Subgroups");
+                });
+
             modelBuilder.Entity("FoodEval.Domain.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -862,6 +894,31 @@ namespace FoodEval.Infrastructure.Migrations
                         {
                             t.HasCheckConstraint("CK_Users_UserType", "UserType IN (1, 2, 3, 4, 5)");
                         });
+                });
+
+            modelBuilder.Entity("FoodEval.Domain.Entities.CommissionMember", b =>
+                {
+                    b.HasOne("FoodEval.Domain.Entities.Commission", null)
+                        .WithMany("Members")
+                        .HasForeignKey("CommissionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("FoodEval.Domain.Entities.Subgroup", b =>
+                {
+                    b.HasOne("FoodEval.Domain.Entities.Category", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("FoodEval.Domain.Entities.Commission", b =>
+                {
+                    b.Navigation("Members");
                 });
 #pragma warning restore 612, 618
         }

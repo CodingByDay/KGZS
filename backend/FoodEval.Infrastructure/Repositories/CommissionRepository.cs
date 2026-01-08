@@ -26,16 +26,16 @@ public class CommissionRepository : ICommissionRepository
 
     public async Task<IEnumerable<Commission>> GetByEvaluationEventIdAsync(Guid evaluationEventId, CancellationToken cancellationToken = default)
     {
-        return await _dbContext.Commissions
-            .Where(c => c.EvaluationEventId == evaluationEventId)
-            .ToListAsync(cancellationToken);
+        // Commissions are no longer tied to evaluation events
+        // This method is kept for backward compatibility but returns empty list
+        return Enumerable.Empty<Commission>();
     }
 
     public async Task<IEnumerable<Commission>> GetByCategoryIdAsync(Guid categoryId, CancellationToken cancellationToken = default)
     {
-        return await _dbContext.Commissions
-            .Where(c => c.CategoryId == categoryId)
-            .ToListAsync(cancellationToken);
+        // Commissions are no longer tied to categories
+        // This method is kept for backward compatibility but returns empty list
+        return Enumerable.Empty<Commission>();
     }
 
     public async Task<Commission> CreateAsync(Commission commission, CancellationToken cancellationToken = default)

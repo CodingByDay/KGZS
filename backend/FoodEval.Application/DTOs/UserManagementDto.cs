@@ -120,7 +120,7 @@ public class ReviewerDto
     public string Email { get; set; } = string.Empty;
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
-    public UserRole ReviewerType { get; set; }
+    public string? PhoneNumber { get; set; }
     public bool IsActive { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
     public DateTimeOffset? LastLoginAt { get; set; }
@@ -142,8 +142,7 @@ public class CreateReviewerRequest
     [System.ComponentModel.DataAnnotations.Required]
     public string LastName { get; set; } = string.Empty;
 
-    [System.ComponentModel.DataAnnotations.Required]
-    public UserRole ReviewerType { get; set; }
+    public string? PhoneNumber { get; set; }
 }
 
 public class UpdateReviewerEmailRequest
@@ -164,8 +163,17 @@ public class ResetReviewerPasswordResponse
     public string? TemporaryPassword { get; set; }
 }
 
-public class UpdateReviewerTypeRequest
+public class UpdateReviewerProfileRequest
 {
     [System.ComponentModel.DataAnnotations.Required]
-    public UserRole ReviewerType { get; set; }
+    public string FirstName { get; set; } = string.Empty;
+
+    [System.ComponentModel.DataAnnotations.Required]
+    public string LastName { get; set; } = string.Empty;
+
+    [System.ComponentModel.DataAnnotations.Required]
+    [System.ComponentModel.DataAnnotations.EmailAddress]
+    public string Email { get; set; } = string.Empty;
+
+    public string? PhoneNumber { get; set; }
 }

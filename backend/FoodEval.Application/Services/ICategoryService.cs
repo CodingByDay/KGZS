@@ -4,10 +4,10 @@ namespace FoodEval.Application.Services;
 
 public interface ICategoryService
 {
-    Task<CategoryDto?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
-    Task<IEnumerable<CategoryDto>> GetAllAsync(CancellationToken cancellationToken = default);
-    Task<IEnumerable<CategoryDto>> GetByEvaluationEventIdAsync(Guid evaluationEventId, CancellationToken cancellationToken = default);
-    Task<CategoryDto> CreateAsync(CreateCategoryRequest request, CancellationToken cancellationToken = default);
-    Task<CategoryDto> UpdateAsync(Guid id, UpdateCategoryRequest request, CancellationToken cancellationToken = default);
+    Task<GroupDto?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<IEnumerable<GroupDto>> GetAllAsync(CancellationToken cancellationToken = default);
+    Task<IEnumerable<GroupDto>> GetByEvaluationEventIdAsync(Guid evaluationEventId, CancellationToken cancellationToken = default);
+    Task<GroupDto> CreateAsync(CreateGroupRequest request, CancellationToken cancellationToken = default);
+    Task<GroupDto> UpdateAsync(Guid id, UpdateGroupRequest request, CancellationToken cancellationToken = default);
     Task DeleteAsync(Guid id, CancellationToken cancellationToken = default);
 }

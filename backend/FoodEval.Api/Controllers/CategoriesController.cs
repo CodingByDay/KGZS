@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace FoodEval.Api.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/groups")]
 [Authorize]
 public class CategoriesController : ControllerBase
 {
@@ -18,7 +18,7 @@ public class CategoriesController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<CategoryDto>>> GetAll([FromQuery] Guid? evaluationEventId, CancellationToken cancellationToken)
+    public async Task<ActionResult<IEnumerable<GroupDto>>> GetAll([FromQuery] Guid? evaluationEventId, CancellationToken cancellationToken)
     {
         var items = evaluationEventId.HasValue
             ? await _service.GetByEvaluationEventIdAsync(evaluationEventId.Value, cancellationToken)
@@ -27,7 +27,7 @@ public class CategoriesController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<CategoryDto>> GetById(Guid id, CancellationToken cancellationToken)
+    public async Task<ActionResult<GroupDto>> GetById(Guid id, CancellationToken cancellationToken)
     {
         var item = await _service.GetByIdAsync(id, cancellationToken);
         if (item == null)
@@ -37,7 +37,7 @@ public class CategoriesController : ControllerBase
 
     [HttpPost]
     [Authorize(Roles = "Organizer,Administrator,SuperAdmin")]
-    public async Task<ActionResult<CategoryDto>> Create([FromBody] CreateCategoryRequest request, CancellationToken cancellationToken)
+    public async Task<ActionResult<GroupDto>> Create([FromBody] CreateGroupRequest request, CancellationToken cancellationToken)
     {
         var created = await _service.CreateAsync(request, cancellationToken);
         return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
@@ -45,7 +45,7 @@ public class CategoriesController : ControllerBase
 
     [HttpPut("{id}")]
     [Authorize(Roles = "Organizer,Administrator,SuperAdmin")]
-    public async Task<ActionResult<CategoryDto>> Update(Guid id, [FromBody] UpdateCategoryRequest request, CancellationToken cancellationToken)
+    public async Task<ActionResult<GroupDto>> Update(Guid id, [FromBody] UpdateGroupRequest request, CancellationToken cancellationToken)
     {
         try
         {

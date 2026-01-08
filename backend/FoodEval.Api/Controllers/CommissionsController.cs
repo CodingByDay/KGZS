@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace FoodEval.Api.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
-[Authorize]
+[Route("api/admin/commissions")]
+[Authorize(Roles = "SuperAdmin")]
 public class CommissionsController : ControllerBase
 {
     private readonly ICommissionService _service;
@@ -18,11 +18,9 @@ public class CommissionsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<CommissionDto>>> GetAll([FromQuery] Guid? evaluationEventId, CancellationToken cancellationToken)
+    public async Task<ActionResult<IEnumerable<CommissionDto>>> GetAll(CancellationToken cancellationToken)
     {
-        var items = evaluationEventId.HasValue
-            ? await _service.GetByEvaluationEventIdAsync(evaluationEventId.Value, cancellationToken)
-            : await _service.GetAllAsync(cancellationToken);
+        var items = await _service.GetAllAsync(cancellationToken);
         return Ok(items);
     }
 
@@ -36,15 +34,24 @@ public class CommissionsController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Roles = "Organizer,Administrator,SuperAdmin")]
     public async Task<ActionResult<CommissionDto>> Create([FromBody] CreateCommissionRequest request, CancellationToken cancellationToken)
     {
-        var created = await _service.CreateAsync(request, cancellationToken);
-        return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+        try
+        {
+            var created = await _service.CreateAsync(request, cancellationToken);
+            return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
     }
 
     [HttpPut("{id}")]
-    [Authorize(Roles = "Organizer,Administrator,SuperAdmin")]
     public async Task<ActionResult<CommissionDto>> Update(Guid id, [FromBody] UpdateCommissionRequest request, CancellationToken cancellationToken)
     {
         try
@@ -52,14 +59,17 @@ public class CommissionsController : ControllerBase
             var updated = await _service.UpdateAsync(id, request, cancellationToken);
             return Ok(updated);
         }
-        catch (KeyNotFoundException)
+        catch (KeyNotFoundException ex)
         {
-            return NotFound();
+            return NotFound(new { message = ex.Message });
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { message = ex.Message });
         }
     }
 
     [HttpDelete("{id}")]
-    [Authorize(Roles = "Organizer,Administrator,SuperAdmin")]
     public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
     {
         try
