@@ -90,6 +90,8 @@ export class AuthService {
     };
     
     StorageService.setUser(JSON.stringify(user));
+    // Dispatch event to notify components (like AppShell) that user data was updated
+    window.dispatchEvent(new CustomEvent('userUpdated'));
     return user;
   }
 
@@ -110,6 +112,8 @@ export class AuthService {
     };
     
     StorageService.setUser(JSON.stringify(user));
+    // Dispatch event to notify components (like AppShell) that user data was updated
+    window.dispatchEvent(new CustomEvent('userUpdated'));
     return user;
   }
 

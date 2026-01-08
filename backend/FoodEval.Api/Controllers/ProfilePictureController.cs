@@ -115,6 +115,29 @@ public class ProfilePictureController : ControllerBase
         }
     }
 
+    [HttpGet("test")]
+    [AllowAnonymous]
+    public IActionResult TestStaticFiles()
+    {
+        var uploadsPath = Path.Combine(_environment.ContentRootPath, "uploads", "profile-pictures");
+        var files = Directory.Exists(uploadsPath) 
+            ? Directory.GetFiles(uploadsPath) 
+            : Array.Empty<string>();
+        
+        return Ok(new 
+        { 
+            uploadsPath,
+            fileCount = files.Length,
+            files = files.Select(f => new 
+            {
+                fileName = Path.GetFileName(f),
+                fullPath = f,
+                relativePath = f.Replace(_environment.ContentRootPath, "").Replace("\\", "/"),
+                exists = System.IO.File.Exists(f)
+            })
+        });
+    }
+
     [HttpDelete]
     public async Task<IActionResult> DeleteProfilePicture(CancellationToken cancellationToken)
     {

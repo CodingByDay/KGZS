@@ -37,12 +37,16 @@ export function AppShell({ children }: AppShellProps) {
       if (userJson) {
         try {
           const parsedUser = JSON.parse(userJson);
+          console.log('AppShell: Loaded user from storage:', parsedUser);
+          console.log('AppShell: ProfilePictureUrl:', parsedUser.profilePictureUrl);
           setUser(parsedUser);
         } catch {
           // If parsing fails, try to load from API
           if (authService.isAuthenticated()) {
             try {
               const userData = await authService.getCurrentUser();
+              console.log('AppShell: Loaded user from API:', userData);
+              console.log('AppShell: ProfilePictureUrl from API:', userData.profilePictureUrl);
               setUser(userData);
             } catch {
               // If API call fails, user might not be authenticated
@@ -53,6 +57,8 @@ export function AppShell({ children }: AppShellProps) {
         // No user in storage but token exists, load from API
         try {
           const userData = await authService.getCurrentUser();
+          console.log('AppShell: Loaded user from API (no storage):', userData);
+          console.log('AppShell: ProfilePictureUrl from API:', userData.profilePictureUrl);
           setUser(userData);
         } catch {
           // If API call fails, user might not be authenticated
@@ -61,6 +67,18 @@ export function AppShell({ children }: AppShellProps) {
     };
 
     loadUser();
+
+    // Listen for custom storage update events (for same-tab updates)
+    // This ensures AppShell updates when profile picture is uploaded in ProfilePage
+    const handleUserUpdated = () => {
+      loadUser();
+    };
+
+    window.addEventListener('userUpdated', handleUserUpdated);
+
+    return () => {
+      window.removeEventListener('userUpdated', handleUserUpdated);
+    };
   }, []);
 
   const isSuperAdmin = user?.role === UserRole.SuperAdmin || String(user?.role) === 'SuperAdmin';
@@ -172,10 +190,73 @@ export function AppShell({ children }: AppShellProps) {
             {/* User Info Card */}
             <div className="p-4 border-b border-blue-700/50">
               <div className="flex items-start gap-3">
-                <div className="flex-shrink-0">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-semibold text-sm shadow-md">
-                    {user?.email?.charAt(0).toUpperCase() || 'U'}
+                <div className="flex-shrink-0 relative w-10 h-10">
+                  {/* Fallback - always rendered */}
+                  <div 
+                    className="absolute inset-0 w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-semibold text-sm shadow-md z-0"
+                    style={{ display: user?.profilePictureUrl && user.profilePictureUrl.trim() !== '' ? 'none' : 'flex' }}
+                  >
+                    {user?.email?.charAt(0).toUpperCase() || user?.firstName?.[0]?.toUpperCase() || 'U'}
                   </div>
+                  {/* Profile picture - overlays fallback if available */}
+                  {user?.profilePictureUrl && user.profilePictureUrl.trim() !== '' && (() => {
+                    const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5080';
+                    // Ensure profilePictureUrl starts with / if it doesn't already
+                    const profileUrl = user.profilePictureUrl.startsWith('/') 
+                      ? user.profilePictureUrl 
+                      : `/${user.profilePictureUrl}`;
+                    const imageUrl = `${baseUrl}${profileUrl}`;
+                    console.log('AppShell: Rendering profile picture');
+                    console.log('AppShell: Base URL:', baseUrl);
+                    console.log('AppShell: ProfilePictureUrl (raw):', user.profilePictureUrl);
+                    console.log('AppShell: ProfilePictureUrl (normalized):', profileUrl);
+                    console.log('AppShell: Full Image URL:', imageUrl);
+                    return (
+                      <img
+                        src={imageUrl}
+                        alt={`${user.firstName} ${user.lastName}`}
+                        className="absolute inset-0 w-10 h-10 rounded-full object-cover border-2 border-blue-700 shadow-md"
+                        style={{ 
+                          display: 'block',
+                          zIndex: 10,
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          width: '2.5rem',
+                          height: '2.5rem'
+                        }}
+                        key={user.profilePictureUrl}
+                        onLoad={(e) => {
+                          console.log('AppShell: Profile picture loaded successfully');
+                          console.log('AppShell: Image element:', e.target);
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'block';
+                          target.style.opacity = '1';
+                          target.style.zIndex = '10';
+                          // Hide fallback when image loads
+                          const fallback = target.parentElement?.querySelector('div:first-child') as HTMLElement;
+                          if (fallback) {
+                            fallback.style.display = 'none';
+                          }
+                        }}
+                        onError={(e) => {
+                          // Log error for debugging
+                          console.error('AppShell: Failed to load profile picture');
+                          console.error('AppShell: ProfilePictureUrl (raw):', user.profilePictureUrl);
+                          console.error('AppShell: ProfilePictureUrl (normalized):', profileUrl);
+                          console.error('AppShell: Full URL:', imageUrl);
+                          console.error('AppShell: Error event:', e);
+                          // Hide image on error, show fallback
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                          const fallback = target.parentElement?.querySelector('div:first-child') as HTMLElement;
+                          if (fallback) {
+                            fallback.style.display = 'flex';
+                          }
+                        }}
+                      />
+                    );
+                  })()}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="text-sm font-semibold text-white truncate">

@@ -185,20 +185,69 @@ export function ProfilePage() {
                 {t('profile.profilePicture')}
               </label>
               <div className="flex items-center gap-4">
-                <div className="relative">
-                  {user?.profilePictureUrl ? (
-                    <img
-                      src={`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5080'}${user.profilePictureUrl}`}
-                      alt="Profile"
-                      className="w-24 h-24 rounded-full object-cover border-2 border-gray-300"
-                    />
-                  ) : (
-                    <div className="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center border-2 border-gray-300">
-                      <span className="text-2xl text-gray-500">
-                        {user?.firstName?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase() || '?'}
-                      </span>
-                    </div>
-                  )}
+                <div className="relative w-24 h-24">
+                  {/* Fallback - always rendered */}
+                  <div 
+                    className="absolute inset-0 w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center border-2 border-gray-300 z-0"
+                    style={{ display: user?.profilePictureUrl && user.profilePictureUrl.trim() !== '' ? 'none' : 'flex' }}
+                  >
+                    <span className="text-2xl text-gray-500">
+                      {user?.firstName?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase() || '?'}
+                    </span>
+                  </div>
+                  {/* Profile picture - overlays fallback if available */}
+                  {user?.profilePictureUrl && user.profilePictureUrl.trim() !== '' && (() => {
+                    const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5080';
+                    // Ensure profilePictureUrl starts with / if it doesn't already
+                    const profileUrl = user.profilePictureUrl.startsWith('/') 
+                      ? user.profilePictureUrl 
+                      : `/${user.profilePictureUrl}`;
+                    const imageUrl = `${baseUrl}${profileUrl}`;
+                    console.log('ProfilePage: Rendering profile picture');
+                    console.log('ProfilePage: Full Image URL:', imageUrl);
+                    return (
+                      <img
+                        src={imageUrl}
+                        alt="Profile"
+                        className="absolute inset-0 w-24 h-24 rounded-full object-cover border-2 border-gray-300"
+                        style={{ 
+                          display: 'block',
+                          zIndex: 10,
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          width: '6rem',
+                          height: '6rem'
+                        }}
+                        key={user.profilePictureUrl}
+                        onLoad={(e) => {
+                          console.log('ProfilePage: Profile picture loaded successfully');
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'block';
+                          target.style.opacity = '1';
+                          target.style.zIndex = '10';
+                          // Hide fallback when image loads
+                          const fallback = target.parentElement?.querySelector('div:first-child') as HTMLElement;
+                          if (fallback) {
+                            fallback.style.display = 'none';
+                          }
+                        }}
+                        onError={(e) => {
+                          // Log error for debugging
+                          console.error('ProfilePage: Failed to load profile picture');
+                          console.error('ProfilePage: ProfilePictureUrl:', user.profilePictureUrl);
+                          console.error('ProfilePage: Full URL:', imageUrl);
+                          // Hide image on error, show fallback
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                          const fallback = target.parentElement?.querySelector('div:first-child') as HTMLElement;
+                          if (fallback) {
+                            fallback.style.display = 'flex';
+                          }
+                        }}
+                      />
+                    );
+                  })()}
                 </div>
                 {isEditing && (
                   <div className="flex flex-col gap-2">

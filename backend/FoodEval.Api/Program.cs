@@ -166,25 +166,47 @@ app.UseRequestLocalization(new RequestLocalizationOptions
     SupportedUICultures = supportedCultures
 });
 
-// CORS must be early in the pipeline, before authentication/authorization and endpoints
-// This allows preflight OPTIONS requests to be handled correctly
-app.UseRouting();
-app.UseCors("AllowFrontend");
-
-// Serve static files (for profile pictures)
+// Serve static files (for profile pictures) BEFORE routing and authentication
+// This ensures static files are accessible without authentication
 // First serve from wwwroot if it exists
 app.UseStaticFiles();
 
 // Also serve from uploads directory in ContentRootPath
 var uploadsPath = Path.Combine(builder.Environment.ContentRootPath, "uploads");
-if (Directory.Exists(uploadsPath))
+// Create uploads directory if it doesn't exist
+if (!Directory.Exists(uploadsPath))
 {
-    app.UseStaticFiles(new StaticFileOptions
-    {
-        FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(uploadsPath),
-        RequestPath = "/uploads"
-    });
+    Directory.CreateDirectory(uploadsPath);
 }
+
+// Always register static file serving for uploads (even if directory is empty initially)
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(uploadsPath),
+    RequestPath = "/uploads",
+    OnPrepareResponse = ctx =>
+    {
+        // Add CORS headers to static file responses
+        var response = ctx.Context.Response;
+        var origin = ctx.Context.Request.Headers["Origin"].ToString();
+        // Allow requests from frontend origins
+        if (origin == "http://localhost:5173" || origin == "http://localhost:5174")
+        {
+            response.Headers.Append("Access-Control-Allow-Origin", origin);
+        }
+        else
+        {
+            response.Headers.Append("Access-Control-Allow-Origin", "http://localhost:5173");
+        }
+        response.Headers.Append("Access-Control-Allow-Credentials", "true");
+        response.Headers.Append("Cache-Control", "public,max-age=3600");
+    }
+});
+
+// CORS must be early in the pipeline, before authentication/authorization and endpoints
+// This allows preflight OPTIONS requests to be handled correctly
+app.UseRouting();
+app.UseCors("AllowFrontend");
 
 app.UseAuthentication();
 app.UseAuthorization();

@@ -75,8 +75,8 @@ export function ReviewersPage() {
     }
   };
 
-  const handleResetPassword = async (data: ResetReviewerPasswordRequest) => {
-    if (!selectedReviewer) return;
+  const handleResetPassword = async (data: ResetReviewerPasswordRequest): Promise<string | null> => {
+    if (!selectedReviewer) return null;
     try {
       const response = await reviewerService.resetReviewerPassword(selectedReviewer.id, data);
       setShowPasswordModal(false);
@@ -88,11 +88,12 @@ export function ReviewersPage() {
         // We'll handle this in the modal component
         return response.temporaryPassword;
       }
+      return null;
     } catch (err) {
       const apiError = err as ApiError;
       addToast('error', apiError.message || t('reviewers.messages.updatePasswordError'));
+      return null;
     }
-    return null;
   };
 
   const handleUpdateType = async (data: UpdateReviewerTypeRequest) => {
