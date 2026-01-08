@@ -1,5 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using FoodEval.Domain.Entities;
 using Microsoft.Extensions.Configuration;
@@ -49,5 +50,35 @@ public class JwtTokenService : IJwtTokenService
         );
 
         return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    public string GenerateRefreshToken()
+    {
+        var randomNumber = new byte[64];
+        using var rng = RandomNumberGenerator.Create();
+        rng.GetBytes(randomNumber);
+        return Convert.ToBase64String(randomNumber);
+    }
+
+    public int GetAccessTokenExpiryMinutes()
+    {
+        var jwtSettings = _configuration.GetSection("Jwt");
+        return int.Parse(jwtSettings["ExpiryMinutes"] ?? "60");
+    }
+
+    public TimeSpan GetRefreshTokenLifetime(bool rememberMe)
+    {
+        var jwtSettings = _configuration.GetSection("Jwt");
+
+        // Longer expiry when remember-me is enabled (default 30 days),
+        // shorter expiry otherwise (default 1 day)
+        if (rememberMe)
+        {
+            var days = int.Parse(jwtSettings["RefreshTokenRememberMeDays"] ?? "30");
+            return TimeSpan.FromDays(days);
+        }
+
+        var shortDays = int.Parse(jwtSettings["RefreshTokenShortDays"] ?? "1");
+        return TimeSpan.FromDays(shortDays);
     }
 }

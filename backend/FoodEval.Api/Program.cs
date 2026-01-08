@@ -141,6 +141,7 @@ builder.Services.AddScoped<IProtocolRepository, ProtocolRepository>();
 builder.Services.AddScoped<IEvaluationSessionRepository, EvaluationSessionRepository>();
 builder.Services.AddScoped<IExpertEvaluationRepository, ExpertEvaluationRepository>();
 builder.Services.AddScoped<IScoringPolicyRepository, ScoringPolicyRepository>();
+builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 
 var app = builder.Build();
 

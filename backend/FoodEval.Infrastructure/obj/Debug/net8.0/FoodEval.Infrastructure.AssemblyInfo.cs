@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FoodEval.Infrastructure")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+337c35078965c4208eb842afc93dfb2e343d77c5")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+012202bbefeeabcbc6d0c8d285e93efc46624c16")]
 [assembly: System.Reflection.AssemblyProductAttribute("FoodEval.Infrastructure")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FoodEval.Infrastructure")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

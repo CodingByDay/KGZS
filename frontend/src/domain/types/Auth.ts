@@ -1,10 +1,16 @@
 export interface LoginRequest {
   email: string;
   password: string;
+  rememberMe: boolean;
 }
 
 export interface LoginResponse {
   token: string;
+  refreshToken: string;
+}
+
+export interface RefreshRequest {
+  refreshToken: string;
 }
 
 export interface UserInfoResponse {

@@ -52,14 +52,33 @@ class ApiClient {
         console.log('[API Client] Request body:', options.body);
       }
 
-      const response = await fetch(url, {
-        ...options,
-        headers,
-        credentials: 'include', // Include credentials for CORS with AllowCredentials
-      });
+      const makeRequest = async (): Promise<Response> => {
+        return fetch(url, {
+          ...options,
+          headers,
+          credentials: 'include', // Include credentials for CORS with AllowCredentials
+        });
+      };
+
+      let response = await makeRequest();
 
       console.log(`[API Client] Response status: ${response.status} ${response.statusText}`);
       console.log('[API Client] Response headers:', Object.fromEntries(response.headers.entries()));
+
+      // If unauthorized, try to refresh token once and retry
+      if (response.status === 401) {
+        const refreshed = await this.tryRefreshToken();
+        if (refreshed) {
+          const newToken = StorageService.getToken();
+          if (newToken) {
+            headers['Authorization'] = `Bearer ${newToken}`;
+          } else {
+            delete headers['Authorization'];
+          }
+
+          response = await makeRequest();
+        }
+      }
 
       if (!response.ok) {
         const responseText = await response.text();
@@ -117,53 +136,15 @@ class ApiClient {
 
   async post<T>(endpoint: string, body?: unknown, options?: RequestInit): Promise<T> {
     const isFormData = body instanceof FormData;
-    const url = `${this.baseUrl}${endpoint}`;
-    const token = StorageService.getToken();
-
-    const headers: Record<string, string> = {
-      'Accept-Language': this.getAcceptLanguage(),
-      ...(options?.headers as Record<string, string>),
-    };
-
-    // Don't set Content-Type for FormData - browser will set it with boundary
-    if (!isFormData) {
-      headers['Content-Type'] = 'application/json';
+    if (isFormData) {
+      // Delegate to postForm for multipart/form-data
+      return this.postForm<T>(endpoint, body as FormData);
     }
 
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
-
-    const response = await fetch(url, {
+    return this.request<T>(endpoint, {
       method: 'POST',
-      headers,
-      body: isFormData ? body : (body ? JSON.stringify(body) : undefined),
-      credentials: 'include',
+      body: body ? JSON.stringify(body) : undefined,
     });
-
-    if (!response.ok) {
-      const responseText = await response.text();
-      let errorData;
-      try {
-        errorData = JSON.parse(responseText);
-      } catch {
-        errorData = { message: responseText || 'An error occurred' };
-      }
-      
-      const error: ApiError = {
-        message: errorData.message || `HTTP error! status: ${response.status}`,
-        status: response.status,
-      };
-      throw error;
-    }
-
-    const contentType = response.headers.get('content-type');
-    if (contentType && contentType.includes('application/json')) {
-      const responseText = await response.text();
-      return JSON.parse(responseText) as T;
-    }
-    
-    return {} as T;
   }
 
   async postForm<T>(endpoint: string, formData: FormData): Promise<T> {
@@ -232,6 +213,44 @@ class ApiClient {
 
   async delete<T>(endpoint: string): Promise<T> {
     return this.request<T>(endpoint, { method: 'DELETE' });
+  }
+
+  private async tryRefreshToken(): Promise<boolean> {
+    const refreshToken = StorageService.getRefreshToken();
+    if (!refreshToken) {
+      return false;
+    }
+
+    try {
+      const url = `${this.baseUrl}/api/auth/refresh`;
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept-Language': this.getAcceptLanguage(),
+        },
+        body: JSON.stringify({ refreshToken }),
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        return false;
+      }
+
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        return false;
+      }
+
+      const responseText = await response.text();
+      const data = JSON.parse(responseText) as { token: string; refreshToken: string };
+
+      StorageService.setTokensAfterRefresh(data.token, data.refreshToken);
+      return true;
+    } catch (error) {
+      console.error('[API Client] Failed to refresh token:', error);
+      return false;
+    }
   }
 }
 

@@ -47,7 +47,7 @@ export function ProfilePage() {
       } catch (err) {
         const apiError = err as ApiError;
         if (apiError.status === 401) {
-          authService.logout();
+          await authService.logout();
           navigate('/login');
         } else {
           setError(apiError.message || 'Failed to load user information');

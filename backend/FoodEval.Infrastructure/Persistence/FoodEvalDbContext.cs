@@ -32,6 +32,7 @@ public class FoodEvalDbContext : DbContext
     public DbSet<StructuredCommentTemplate> StructuredCommentTemplates { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<Organization> Organizations { get; set; }
+    public DbSet<RefreshToken> RefreshTokens { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

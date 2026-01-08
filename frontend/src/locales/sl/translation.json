@@ -23,7 +23,8 @@
     "emailRequired": "E-pošta je obvezna",
     "emailInvalid": "E-pošta ni veljavna",
     "passwordRequired": "Geslo je obvezno",
-    "loginFailed": "Prijava ni uspela. Poskusite znova."
+    "loginFailed": "Prijava ni uspela. Poskusite znova.",
+    "keepMeLoggedIn": "Ostani prijavljen"
   },
   "landing": {
     "login": "Prijava",

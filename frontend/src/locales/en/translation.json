@@ -23,7 +23,8 @@
     "emailRequired": "Email is required",
     "emailInvalid": "Email is invalid",
     "passwordRequired": "Password is required",
-    "loginFailed": "Login failed. Please try again."
+    "loginFailed": "Login failed. Please try again.",
+    "keepMeLoggedIn": "Keep me logged in"
   },
   "landing": {
     "login": "Login",

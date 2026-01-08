@@ -66,8 +66,9 @@ export function AppShell({ children }: AppShellProps) {
   const isSuperAdmin = user?.role === UserRole.SuperAdmin || String(user?.role) === 'SuperAdmin';
 
   const handleLogout = () => {
-    authService.logout();
-    navigate('/login');
+    authService.logout().finally(() => {
+      navigate('/login');
+    });
   };
 
   const isActive = (path: string) => location.pathname.startsWith(path);

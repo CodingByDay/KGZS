@@ -6,5 +6,7 @@ namespace FoodEval.Application.Services;
 public interface IAuthService
 {
     Task<LoginResponse?> LoginAsync(LoginRequest request, CancellationToken cancellationToken = default);
+    Task<LoginResponse?> RefreshAsync(string refreshToken, CancellationToken cancellationToken = default);
+    Task LogoutAsync(Guid userId, CancellationToken cancellationToken = default);
     Task<User?> GetUserByIdAsync(Guid userId, CancellationToken cancellationToken = default);
 }

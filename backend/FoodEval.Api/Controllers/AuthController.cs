@@ -68,6 +68,46 @@ public class AuthController : ControllerBase
         return Ok(response);
     }
 
+    [HttpPost("refresh")]
+    [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> Refresh([FromBody] RefreshRequest? request, CancellationToken cancellationToken)
+    {
+        if (request is null || string.IsNullOrWhiteSpace(request.RefreshToken))
+        {
+            _logger.LogWarning("Refresh token request body was null or empty");
+            return BadRequest(new { message = "Refresh token is required" });
+        }
+
+        var response = await _authService.RefreshAsync(request.RefreshToken, cancellationToken);
+
+        if (response == null)
+        {
+            _logger.LogWarning("Invalid refresh token");
+            return Unauthorized(new { message = "Invalid refresh token" });
+        }
+
+        return Ok(response);
+    }
+
+    [HttpPost("logout")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> Logout(CancellationToken cancellationToken)
+    {
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (userIdClaim == null || !Guid.TryParse(userIdClaim, out var userId))
+        {
+            return Unauthorized();
+        }
+
+        await _authService.LogoutAsync(userId, cancellationToken);
+        return NoContent();
+    }
+
     [HttpGet("me")]
     [Authorize]
     [ProducesResponseType(typeof(UserInfoResponse), StatusCodes.Status200OK)]
