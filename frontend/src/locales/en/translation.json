@@ -247,10 +247,86 @@
       "lastUpdated": "Last Updated"
     }
   },
+  "reviewers": {
+    "pageTitle": "Reviewers Management",
+    "pageSubtitle": "Manage commission users",
+    "addButton": "Add Commission User",
+    "table": {
+      "name": "Name",
+      "email": "Email",
+      "reviewerType": "Reviewer Type",
+      "status": "Status",
+      "createdAt": "Created",
+      "actions": "Actions",
+      "noData": "No reviewers found"
+    },
+    "reviewerTypes": {
+      "CommissionChair": "Commission Chair",
+      "CommissionMember": "Commission Member",
+      "CommissionTrainee": "Trainee"
+    },
+    "createModal": {
+      "title": "Create Commission User",
+      "email": "Email",
+      "password": "Password",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "reviewerType": "Reviewer Type",
+      "reviewerTypeRequired": "Reviewer type is required",
+      "emailRequired": "Email is required",
+      "passwordRequired": "Password must be at least 6 characters",
+      "firstNameRequired": "First name is required",
+      "lastNameRequired": "Last name is required",
+      "cancel": "Cancel",
+      "create": "Create"
+    },
+    "emailModal": {
+      "title": "Change Email",
+      "description": "Updating email for {{name}}",
+      "newEmail": "New Email",
+      "emailRequired": "Email is required",
+      "cancel": "Cancel",
+      "update": "Update"
+    },
+    "passwordModal": {
+      "title": "Reset Password",
+      "description": "Resetting password for {{name}}",
+      "newPassword": "New Password (leave empty for auto-generated)",
+      "confirmPassword": "Confirm Password",
+      "passwordMinLength": "Password must be at least 6 characters",
+      "passwordsMismatch": "Passwords do not match",
+      "temporaryPassword": "Temporary Password",
+      "temporaryPasswordWarning": "This password will only be shown once. Please save it securely.",
+      "copyPassword": "Copy Password",
+      "cancel": "Cancel",
+      "reset": "Reset Password"
+    },
+    "typeModal": {
+      "title": "Change Reviewer Type",
+      "description": "Updating reviewer type for {{name}}",
+      "reviewerType": "Reviewer Type",
+      "reviewerTypeRequired": "Reviewer type is required",
+      "cancel": "Cancel",
+      "update": "Update"
+    },
+    "messages": {
+      "loadError": "Failed to load reviewers",
+      "createSuccess": "Reviewer created successfully",
+      "createError": "Failed to create reviewer",
+      "updateEmailSuccess": "Email updated successfully",
+      "updateEmailError": "Failed to update email",
+      "updatePasswordSuccess": "Password updated successfully",
+      "updatePasswordError": "Failed to update password",
+      "updateTypeSuccess": "Reviewer type updated successfully",
+      "updateTypeError": "Failed to update reviewer type"
+    }
+  },
   "common": {
     "loading": "Loading...",
     "cancel": "Cancel",
-    "save": "Save"
+    "save": "Save",
+    "active": "Active",
+    "inactive": "Inactive"
   },
   "language": {
     "sl": "Slovenian",

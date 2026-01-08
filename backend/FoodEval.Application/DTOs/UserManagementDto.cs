@@ -113,3 +113,59 @@ public class UpdateProfileRequest
 
     public string? PreferredLanguage { get; set; }
 }
+
+public class ReviewerDto
+{
+    public Guid Id { get; set; }
+    public string Email { get; set; } = string.Empty;
+    public string FirstName { get; set; } = string.Empty;
+    public string LastName { get; set; } = string.Empty;
+    public UserRole ReviewerType { get; set; }
+    public bool IsActive { get; set; }
+    public DateTimeOffset CreatedAt { get; set; }
+    public DateTimeOffset? LastLoginAt { get; set; }
+}
+
+public class CreateReviewerRequest
+{
+    [System.ComponentModel.DataAnnotations.Required]
+    [System.ComponentModel.DataAnnotations.EmailAddress]
+    public string Email { get; set; } = string.Empty;
+
+    [System.ComponentModel.DataAnnotations.Required]
+    [System.ComponentModel.DataAnnotations.MinLength(6)]
+    public string Password { get; set; } = string.Empty;
+
+    [System.ComponentModel.DataAnnotations.Required]
+    public string FirstName { get; set; } = string.Empty;
+
+    [System.ComponentModel.DataAnnotations.Required]
+    public string LastName { get; set; } = string.Empty;
+
+    [System.ComponentModel.DataAnnotations.Required]
+    public UserRole ReviewerType { get; set; }
+}
+
+public class UpdateReviewerEmailRequest
+{
+    [System.ComponentModel.DataAnnotations.Required]
+    [System.ComponentModel.DataAnnotations.EmailAddress]
+    public string Email { get; set; } = string.Empty;
+}
+
+public class ResetReviewerPasswordRequest
+{
+    [System.ComponentModel.DataAnnotations.MinLength(6)]
+    public string? Password { get; set; }
+}
+
+public class ResetReviewerPasswordResponse
+{
+    public string? TemporaryPassword { get; set; }
+}
+
+public class UpdateReviewerTypeRequest
+{
+    [System.ComponentModel.DataAnnotations.Required]
+    public UserRole ReviewerType { get; set; }
+}

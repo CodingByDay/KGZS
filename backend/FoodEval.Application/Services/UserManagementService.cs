@@ -207,6 +207,166 @@ public class UserManagementService : IUserManagementService
         return await GetUserByIdAsync(id, cancellationToken) ?? throw new InvalidOperationException("Failed to update user profile");
     }
 
+    public async Task<IEnumerable<ReviewerDto>> GetReviewersAsync(CancellationToken cancellationToken = default)
+    {
+        var users = await _userRepository.GetAllAsync(cancellationToken);
+        var reviewers = users.Where(u => u.UserType == UserType.CommissionUser);
+        
+        return reviewers.Select(u => new ReviewerDto
+        {
+            Id = u.Id,
+            Email = u.Email,
+            FirstName = u.FirstName,
+            LastName = u.LastName,
+            ReviewerType = u.PrimaryRole,
+            IsActive = u.IsActive,
+            CreatedAt = u.CreatedAt,
+            LastLoginAt = u.LastLoginAt
+        });
+    }
+
+    public async Task<ReviewerDto> CreateReviewerAsync(CreateReviewerRequest request, CancellationToken cancellationToken = default)
+    {
+        // Validate reviewer type is one of the commission roles
+        if (request.ReviewerType != UserRole.CommissionChair && 
+            request.ReviewerType != UserRole.CommissionMember && 
+            request.ReviewerType != UserRole.CommissionTrainee)
+        {
+            throw new ArgumentException("ReviewerType must be CommissionChair, CommissionMember, or CommissionTrainee");
+        }
+
+        // Check if email already exists
+        var existingUser = await _userRepository.GetByEmailAsync(request.Email, cancellationToken);
+        if (existingUser != null)
+            throw new InvalidOperationException("User with this email already exists");
+
+        var user = new User
+        {
+            Id = Guid.NewGuid(),
+            Email = request.Email,
+            FirstName = request.FirstName,
+            LastName = request.LastName,
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
+            UserType = UserType.CommissionUser,
+            OrganizationId = null, // Commission users can be global or org-scoped, but for now we'll allow null
+            PrimaryRole = request.ReviewerType,
+            IsActive = true,
+            EmailVerified = false,
+            CreatedAt = DateTimeOffset.UtcNow
+        };
+
+        var created = await _userRepository.CreateAsync(user, cancellationToken);
+        
+        return new ReviewerDto
+        {
+            Id = created.Id,
+            Email = created.Email,
+            FirstName = created.FirstName,
+            LastName = created.LastName,
+            ReviewerType = created.PrimaryRole,
+            IsActive = created.IsActive,
+            CreatedAt = created.CreatedAt,
+            LastLoginAt = created.LastLoginAt
+        };
+    }
+
+    public async Task<ReviewerDto> UpdateReviewerEmailAsync(Guid id, UpdateReviewerEmailRequest request, CancellationToken cancellationToken = default)
+    {
+        var user = await _userRepository.GetByIdAsync(id, cancellationToken);
+        if (user == null)
+            throw new KeyNotFoundException($"Reviewer with id {id} not found");
+
+        if (user.UserType != UserType.CommissionUser)
+            throw new InvalidOperationException("User is not a reviewer");
+
+        // Check if new email already exists (excluding current user)
+        var existingUser = await _userRepository.GetByEmailAsync(request.Email, cancellationToken);
+        if (existingUser != null && existingUser.Id != id)
+            throw new InvalidOperationException("User with this email already exists");
+
+        user.Email = request.Email;
+        user.EmailVerified = false; // Reset email verification when email is changed
+
+        await _userRepository.UpdateAsync(user, cancellationToken);
+        
+        return new ReviewerDto
+        {
+            Id = user.Id,
+            Email = user.Email,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            ReviewerType = user.PrimaryRole,
+            IsActive = user.IsActive,
+            CreatedAt = user.CreatedAt,
+            LastLoginAt = user.LastLoginAt
+        };
+    }
+
+    public async Task<ResetReviewerPasswordResponse> ResetReviewerPasswordAsync(Guid id, ResetReviewerPasswordRequest request, CancellationToken cancellationToken = default)
+    {
+        var user = await _userRepository.GetByIdAsync(id, cancellationToken);
+        if (user == null)
+            throw new KeyNotFoundException($"Reviewer with id {id} not found");
+
+        if (user.UserType != UserType.CommissionUser)
+            throw new InvalidOperationException("User is not a reviewer");
+
+        string newPassword;
+        if (!string.IsNullOrWhiteSpace(request.Password))
+        {
+            newPassword = request.Password;
+        }
+        else
+        {
+            // Generate temporary password
+            var random = new Random();
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
+            newPassword = new string(Enumerable.Repeat(chars, 12)
+                .Select(s => s[random.Next(s.Length)]).ToArray());
+        }
+
+        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
+        await _userRepository.UpdateAsync(user, cancellationToken);
+
+        return new ResetReviewerPasswordResponse
+        {
+            TemporaryPassword = string.IsNullOrWhiteSpace(request.Password) ? newPassword : null
+        };
+    }
+
+    public async Task<ReviewerDto> UpdateReviewerTypeAsync(Guid id, UpdateReviewerTypeRequest request, CancellationToken cancellationToken = default)
+    {
+        var user = await _userRepository.GetByIdAsync(id, cancellationToken);
+        if (user == null)
+            throw new KeyNotFoundException($"Reviewer with id {id} not found");
+
+        if (user.UserType != UserType.CommissionUser)
+            throw new InvalidOperationException("User is not a reviewer");
+
+        // Validate reviewer type is one of the commission roles
+        if (request.ReviewerType != UserRole.CommissionChair && 
+            request.ReviewerType != UserRole.CommissionMember && 
+            request.ReviewerType != UserRole.CommissionTrainee)
+        {
+            throw new ArgumentException("ReviewerType must be CommissionChair, CommissionMember, or CommissionTrainee");
+        }
+
+        user.PrimaryRole = request.ReviewerType;
+        await _userRepository.UpdateAsync(user, cancellationToken);
+        
+        return new ReviewerDto
+        {
+            Id = user.Id,
+            Email = user.Email,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            ReviewerType = user.PrimaryRole,
+            IsActive = user.IsActive,
+            CreatedAt = user.CreatedAt,
+            LastLoginAt = user.LastLoginAt
+        };
+    }
+
     private static UserDto MapToDto(User user, Dictionary<Guid, Organization> organizations)
     {
         return new UserDto

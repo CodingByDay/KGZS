@@ -247,10 +247,86 @@
       "lastUpdated": "Zadnja posodobitev"
     }
   },
+  "reviewers": {
+    "pageTitle": "Upravljanje ocenjevalcev",
+    "pageSubtitle": "Upravljajte uporabnike komisij",
+    "addButton": "Dodaj uporabnika komisije",
+    "table": {
+      "name": "Ime",
+      "email": "E-pošta",
+      "reviewerType": "Tip ocenjevalca",
+      "status": "Status",
+      "createdAt": "Ustvarjen",
+      "actions": "Dejanja",
+      "noData": "Ni ocenjevalcev"
+    },
+    "reviewerTypes": {
+      "CommissionChair": "Predsednik komisije",
+      "CommissionMember": "Člen komisije",
+      "CommissionTrainee": "Vajenec"
+    },
+    "createModal": {
+      "title": "Ustvari uporabnika komisije",
+      "email": "E-pošta",
+      "password": "Geslo",
+      "firstName": "Ime",
+      "lastName": "Priimek",
+      "reviewerType": "Tip ocenjevalca",
+      "reviewerTypeRequired": "Tip ocenjevalca je obvezen",
+      "emailRequired": "E-pošta je obvezna",
+      "passwordRequired": "Geslo mora imeti vsaj 6 znakov",
+      "firstNameRequired": "Ime je obvezno",
+      "lastNameRequired": "Priimek je obvezen",
+      "cancel": "Prekliči",
+      "create": "Ustvari"
+    },
+    "emailModal": {
+      "title": "Spremeni e-pošto",
+      "description": "Posodabljanje e-pošte za {{name}}",
+      "newEmail": "Nova e-pošta",
+      "emailRequired": "E-pošta je obvezna",
+      "cancel": "Prekliči",
+      "update": "Posodobi"
+    },
+    "passwordModal": {
+      "title": "Ponastavi geslo",
+      "description": "Ponastavitev gesla za {{name}}",
+      "newPassword": "Novo geslo (pustite prazno za samodejno generirano)",
+      "confirmPassword": "Potrdite geslo",
+      "passwordMinLength": "Geslo mora imeti vsaj 6 znakov",
+      "passwordsMismatch": "Gesli se ne ujemata",
+      "temporaryPassword": "Začasno geslo",
+      "temporaryPasswordWarning": "To geslo bo prikazano samo enkrat. Prosimo, shranite ga na varno.",
+      "copyPassword": "Kopiraj geslo",
+      "cancel": "Prekliči",
+      "reset": "Ponastavi geslo"
+    },
+    "typeModal": {
+      "title": "Spremeni tip ocenjevalca",
+      "description": "Posodabljanje tipa ocenjevalca za {{name}}",
+      "reviewerType": "Tip ocenjevalca",
+      "reviewerTypeRequired": "Tip ocenjevalca je obvezen",
+      "cancel": "Prekliči",
+      "update": "Posodobi"
+    },
+    "messages": {
+      "loadError": "Napaka pri nalaganju ocenjevalcev",
+      "createSuccess": "Ocenjevalec uspešno ustvarjen",
+      "createError": "Napaka pri ustvarjanju ocenjevalca",
+      "updateEmailSuccess": "E-pošta uspešno posodobljena",
+      "updateEmailError": "Napaka pri posodabljanju e-pošte",
+      "updatePasswordSuccess": "Geslo uspešno posodobljeno",
+      "updatePasswordError": "Napaka pri posodabljanju gesla",
+      "updateTypeSuccess": "Tip ocenjevalca uspešno posodobljen",
+      "updateTypeError": "Napaka pri posodabljanju tipa ocenjevalca"
+    }
+  },
   "common": {
     "loading": "Nalaganje...",
     "cancel": "Prekliči",
-    "save": "Shrani"
+    "save": "Shrani",
+    "active": "Aktiven",
+    "inactive": "Neaktiven"
   },
   "language": {
     "sl": "Slovenščina",

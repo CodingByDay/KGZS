@@ -11,6 +11,7 @@ import { ProtocolsPage } from '@/pages/ProtocolsPage';
 import { AdminPage } from '@/pages/AdminPage';
 import { UsersManagementPage } from '@/pages/UsersManagementPage';
 import { SuperAdminsPage } from '@/pages/SuperAdminsPage';
+import { ReviewersPage } from '@/pages/ReviewersPage';
 import { ProfilePage } from '@/pages/ProfilePage';
 import { RegisterFarmPage } from '@/pages/RegisterFarmPage';
 import { ForbiddenPage } from '@/pages/ForbiddenPage';
@@ -108,6 +109,14 @@ export function AppRouter() {
           element={
             <ProtectedRoute>
               <SuperAdminsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/app/admin/reviewers"
+          element={
+            <ProtectedRoute>
+              <ReviewersPage />
             </ProtectedRoute>
           }
         />
