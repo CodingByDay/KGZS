@@ -382,4 +382,21 @@ public class UserManagementService : IUserManagementService
             LastLoginAt = user.LastLoginAt
         };
     }
+
+    public async Task DeleteUserAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        await _userRepository.DeleteAsync(id, cancellationToken);
+    }
+
+    public async Task DeleteReviewerAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        var user = await _userRepository.GetByIdAsync(id, cancellationToken);
+        if (user == null)
+            throw new KeyNotFoundException($"Reviewer with id {id} not found");
+
+        if (user.UserType != UserType.CommissionUser)
+            throw new InvalidOperationException("User is not a reviewer");
+
+        await _userRepository.DeleteAsync(id, cancellationToken);
+    }
 }

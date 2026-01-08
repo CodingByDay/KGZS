@@ -4,6 +4,9 @@ import { AppShell } from '@/app/components/AppShell';
 import { UserType, UserTypeLabels } from '@/domain/enums/UserType';
 import { UserRole } from '@/domain/enums/UserRole';
 import { getRoleDisplayInfo, getRoleLabel } from '@/domain/enums/UserRoleDisplay';
+import { useTranslation } from 'react-i18next';
+import { HiPencil, HiTrash, HiKey } from 'react-icons/hi2';
+import { ApiError } from '@/infrastructure/api/apiClient';
 
 interface UserDto {
   id: string;
@@ -16,6 +19,7 @@ interface UserDto {
   primaryRole: UserRole;
   isActive: boolean;
   createdAt: string;
+  phoneNumber?: string;
 }
 
 interface CreateUserRequest {
@@ -29,6 +33,20 @@ interface CreateUserRequest {
   primaryRole: UserRole;
 }
 
+interface UpdateProfileRequest {
+  firstName: string;
+  lastName: string;
+  phoneNumber?: string;
+}
+
+interface UpdateEmailRequest {
+  email: string;
+}
+
+interface UpdatePasswordRequest {
+  password: string;
+}
+
 interface OrganizationDto {
   id: string;
   name: string;
@@ -39,20 +57,40 @@ interface OrganizationDto {
   createdAt: string;
 }
 
+interface Toast {
+  id: number;
+  type: 'success' | 'error';
+  message: string;
+}
+
 export function UsersManagementPage() {
+  const { t } = useTranslation();
   const [users, setUsers] = useState<UserDto[]>([]);
   const [organizations, setOrganizations] = useState<OrganizationDto[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<UserDto | null>(null);
   const [filterUserType, setFilterUserType] = useState<string>('all');
   const [filterRole, setFilterRole] = useState<string>('all');
+  const [toasts, setToasts] = useState<Toast[]>([]);
 
   useEffect(() => {
     loadData();
   }, []);
 
+  const addToast = (type: Toast['type'], message: string) => {
+    setToasts((prev) => [...prev, { id: Date.now(), type, message }]);
+    setTimeout(() => {
+      setToasts((prev) => prev.slice(1));
+    }, 3000);
+  };
+
   const loadData = async () => {
     try {
+      setLoading(true);
       const [usersData, orgsData] = await Promise.all([
         apiClient.get<UserDto[]>('/api/admin/users'),
         apiClient.get<OrganizationDto[]>('/api/organizations').catch(() => []),
@@ -61,6 +99,7 @@ export function UsersManagementPage() {
       setOrganizations(orgsData || []);
     } catch (error) {
       console.error('Failed to load data:', error);
+      addToast('error', 'Failed to load users');
     } finally {
       setLoading(false);
     }
@@ -70,10 +109,57 @@ export function UsersManagementPage() {
     try {
       await apiClient.post('/api/admin/users', userData);
       setShowCreateModal(false);
-      loadData();
+      await loadData();
+      addToast('success', 'User created successfully');
     } catch (error) {
-      console.error('Failed to create user:', error);
-      alert('Failed to create user');
+      const apiError = error as ApiError;
+      addToast('error', apiError.message || 'Failed to create user');
+    }
+  };
+
+  const handleUpdateProfile = async (data: UpdateProfileRequest & UpdateEmailRequest) => {
+    if (!selectedUser) return;
+    try {
+      await apiClient.put(`/api/admin/users/${selectedUser.id}/profile`, {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        phoneNumber: data.phoneNumber,
+      });
+      await apiClient.put(`/api/admin/users/${selectedUser.id}/email`, { email: data.email });
+      setShowEditModal(false);
+      setSelectedUser(null);
+      await loadData();
+      addToast('success', 'User updated successfully');
+    } catch (error) {
+      const apiError = error as ApiError;
+      addToast('error', apiError.message || 'Failed to update user');
+    }
+  };
+
+  const handleUpdatePassword = async (data: UpdatePasswordRequest) => {
+    if (!selectedUser) return;
+    try {
+      await apiClient.put(`/api/admin/users/${selectedUser.id}/password`, data);
+      setShowPasswordModal(false);
+      setSelectedUser(null);
+      addToast('success', 'Password updated successfully');
+    } catch (error) {
+      const apiError = error as ApiError;
+      addToast('error', apiError.message || 'Failed to update password');
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!selectedUser) return;
+    try {
+      await apiClient.delete(`/api/admin/users/${selectedUser.id}`);
+      setShowDeleteModal(false);
+      setSelectedUser(null);
+      await loadData();
+      addToast('success', 'User deleted successfully');
+    } catch (error) {
+      const apiError = error as ApiError;
+      addToast('error', apiError.message || 'Failed to delete user');
     }
   };
 
@@ -87,7 +173,7 @@ export function UsersManagementPage() {
     return (
       <AppShell>
         <div className="flex items-center justify-center h-64">
-          <div className="text-gray-500">Loading...</div>
+          <div className="text-gray-500">{t('common.loading')}</div>
         </div>
       </AppShell>
     );
@@ -96,6 +182,19 @@ export function UsersManagementPage() {
   return (
     <AppShell>
       <div className="space-y-6">
+        {/* Toasts */}
+        <div className="fixed top-4 right-4 z-50 space-y-2">
+          {toasts.map((toast) => (
+            <div
+              key={toast.id}
+              className={`px-4 py-2 rounded shadow text-sm ${
+                toast.type === 'success' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'
+              }`}
+            >
+              {toast.message}
+            </div>
+          ))}
+        </div>
         <div className="flex justify-between items-center">
           <h1 className="text-3xl font-bold text-gray-900">User Management</h1>
           <button
@@ -144,6 +243,7 @@ export function UsersManagementPage() {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Role</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Organization</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
@@ -182,6 +282,40 @@ export function UsersManagementPage() {
                         {user.isActive ? 'Active' : 'Inactive'}
                       </span>
                     </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <div className="flex items-center gap-3">
+                        <button
+                          onClick={() => {
+                            setSelectedUser(user);
+                            setShowEditModal(true);
+                          }}
+                          className="p-2 text-blue-600 hover:text-blue-900 hover:bg-blue-50 rounded transition-colors"
+                          title="Edit User"
+                        >
+                          <HiPencil className="w-5 h-5" />
+                        </button>
+                        <button
+                          onClick={() => {
+                            setSelectedUser(user);
+                            setShowPasswordModal(true);
+                          }}
+                          className="p-2 text-orange-600 hover:text-orange-900 hover:bg-orange-50 rounded transition-colors"
+                          title="Reset Password"
+                        >
+                          <HiKey className="w-5 h-5" />
+                        </button>
+                        <button
+                          onClick={() => {
+                            setSelectedUser(user);
+                            setShowDeleteModal(true);
+                          }}
+                          className="p-2 text-red-600 hover:text-red-900 hover:bg-red-50 rounded transition-colors"
+                          title="Delete User"
+                        >
+                          <HiTrash className="w-5 h-5" />
+                        </button>
+                      </div>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -194,6 +328,39 @@ export function UsersManagementPage() {
             organizations={organizations}
             onClose={() => setShowCreateModal(false)}
             onSubmit={handleCreateUser}
+          />
+        )}
+
+        {showEditModal && selectedUser && (
+          <UpdateProfileModal
+            user={selectedUser}
+            onClose={() => {
+              setShowEditModal(false);
+              setSelectedUser(null);
+            }}
+            onSubmit={handleUpdateProfile}
+          />
+        )}
+
+        {showPasswordModal && selectedUser && (
+          <UpdatePasswordModal
+            user={selectedUser}
+            onClose={() => {
+              setShowPasswordModal(false);
+              setSelectedUser(null);
+            }}
+            onSubmit={handleUpdatePassword}
+          />
+        )}
+
+        {showDeleteModal && selectedUser && (
+          <DeleteModal
+            user={selectedUser}
+            onClose={() => {
+              setShowDeleteModal(false);
+              setSelectedUser(null);
+            }}
+            onConfirm={handleDelete}
           />
         )}
       </div>
@@ -357,6 +524,258 @@ function CreateUserModal({
             </button>
           </div>
         </form>
+      </div>
+    </div>
+  );
+}
+
+function UpdateProfileModal({
+  user,
+  onClose,
+  onSubmit,
+}: {
+  user: UserDto;
+  onClose: () => void;
+  onSubmit: (data: UpdateProfileRequest & UpdateEmailRequest) => void;
+}) {
+  const { t } = useTranslation();
+  const [formData, setFormData] = useState({
+    firstName: user.firstName,
+    lastName: user.lastName,
+    email: user.email,
+    phoneNumber: user.phoneNumber || '',
+  });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validate = (): boolean => {
+    const newErrors: Record<string, string> = {};
+    if (!formData.firstName) newErrors.firstName = 'First name is required';
+    if (!formData.lastName) newErrors.lastName = 'Last name is required';
+    if (!formData.email) newErrors.email = 'Email is required';
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (validate()) {
+      onSubmit({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phoneNumber: formData.phoneNumber || undefined,
+      });
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg p-6 w-full max-w-md">
+        <h2 className="text-2xl font-bold mb-4">Edit User</h2>
+        <p className="text-sm text-gray-600 mb-4">
+          Update profile information for {user.firstName} {user.lastName}
+        </p>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              First Name
+            </label>
+            <input
+              type="text"
+              value={formData.firstName}
+              onChange={(e) => {
+                setFormData({ ...formData, firstName: e.target.value });
+                setErrors({ ...errors, firstName: '' });
+              }}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+            />
+            {errors.firstName && <p className="text-red-600 text-sm mt-1">{errors.firstName}</p>}
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Last Name
+            </label>
+            <input
+              type="text"
+              value={formData.lastName}
+              onChange={(e) => {
+                setFormData({ ...formData, lastName: e.target.value });
+                setErrors({ ...errors, lastName: '' });
+              }}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+            />
+            {errors.lastName && <p className="text-red-600 text-sm mt-1">{errors.lastName}</p>}
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Phone Number <span className="text-gray-500 text-xs">({t('common.optional')})</span>
+            </label>
+            <input
+              type="tel"
+              value={formData.phoneNumber}
+              onChange={(e) => {
+                setFormData({ ...formData, phoneNumber: e.target.value });
+              }}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Email
+            </label>
+            <input
+              type="email"
+              value={formData.email}
+              onChange={(e) => {
+                setFormData({ ...formData, email: e.target.value });
+                setErrors({ ...errors, email: '' });
+              }}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+            />
+            {errors.email && <p className="text-red-600 text-sm mt-1">{errors.email}</p>}
+          </div>
+          <div className="flex justify-end space-x-3 mt-6">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              Update
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+function UpdatePasswordModal({
+  user,
+  onClose,
+  onSubmit,
+}: {
+  user: UserDto;
+  onClose: () => void;
+  onSubmit: (data: UpdatePasswordRequest) => void;
+}) {
+  const { t } = useTranslation();
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!password) {
+      setError('Password is required');
+      return;
+    }
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters');
+      return;
+    }
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+    onSubmit({ password });
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg p-6 w-full max-w-md">
+        <h2 className="text-2xl font-bold mb-4">Reset Password</h2>
+        <p className="text-sm text-gray-600 mb-4">
+          Reset password for {user.firstName} {user.lastName}
+        </p>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              New Password
+            </label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                setError('');
+              }}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Confirm Password
+            </label>
+            <input
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => {
+                setConfirmPassword(e.target.value);
+                setError('');
+              }}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+            />
+            {error && <p className="text-red-600 text-sm mt-1">{error}</p>}
+          </div>
+          <div className="flex justify-end space-x-3 mt-6">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700"
+            >
+              Reset Password
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+function DeleteModal({
+  user,
+  onClose,
+  onConfirm,
+}: {
+  user: UserDto;
+  onClose: () => void;
+  onConfirm: () => void;
+}) {
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg p-6 w-full max-w-md">
+        <h2 className="text-2xl font-bold mb-4 text-red-600">Delete User</h2>
+        <p className="text-sm text-gray-600 mb-4">
+          Are you sure you want to delete {user.firstName} {user.lastName}? This action cannot be undone.
+        </p>
+        <div className="flex justify-end space-x-3 mt-6">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={onConfirm}
+            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+          >
+            Delete
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { AppShell } from '@/app/components/AppShell';
-import { reviewerService, ReviewerDto, CreateReviewerRequest, UpdateReviewerEmailRequest, ResetReviewerPasswordRequest, UpdateReviewerTypeRequest } from '@/application/services/ReviewerService';
+import { reviewerService, ReviewerDto, CreateReviewerRequest, UpdateReviewerEmailRequest, ResetReviewerPasswordRequest, UpdateReviewerProfileRequest } from '@/application/services/ReviewerService';
 import { ApiError } from '@/infrastructure/api/apiClient';
 import { useTranslation } from 'react-i18next';
-import { UserRole } from '@/domain/enums/UserRole';
+import { HiPencil, HiTrash, HiKey } from 'react-icons/hi2';
 
 interface Toast {
   id: number;
@@ -18,9 +18,9 @@ export function ReviewersPage() {
   const [error, setError] = useState('');
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
-  const [showTypeModal, setShowTypeModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedReviewer, setSelectedReviewer] = useState<ReviewerDto | null>(null);
 
   useEffect(() => {
@@ -61,17 +61,41 @@ export function ReviewersPage() {
     }
   };
 
-  const handleUpdateEmail = async (data: UpdateReviewerEmailRequest) => {
+  const handleUpdateProfile = async (data: UpdateReviewerProfileRequest) => {
     if (!selectedReviewer) return;
     try {
-      await reviewerService.updateReviewerEmail(selectedReviewer.id, data);
-      setShowEmailModal(false);
+      // Update profile (firstName, lastName, phoneNumber)
+      await reviewerService.updateReviewerProfile(selectedReviewer.id, {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        phoneNumber: data.phoneNumber,
+      });
+      // Update email separately if it changed
+      if (data.email !== selectedReviewer.email) {
+        await reviewerService.updateReviewerEmail(selectedReviewer.id, { email: data.email });
+      }
+      setShowEditModal(false);
       setSelectedReviewer(null);
       await loadReviewers();
-      addToast('success', t('reviewers.messages.updateEmailSuccess'));
+      addToast('success', t('reviewers.messages.updateProfileSuccess'));
     } catch (err) {
       const apiError = err as ApiError;
-      addToast('error', apiError.message || t('reviewers.messages.updateEmailError'));
+      addToast('error', apiError.message || t('reviewers.messages.updateProfileError'));
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!selectedReviewer) return;
+    try {
+      await reviewerService.deleteReviewer(selectedReviewer.id);
+      setShowDeleteModal(false);
+      setSelectedReviewer(null);
+      await loadReviewers();
+      addToast('success', t('reviewers.messages.deleteSuccess'));
+    } catch (err) {
+      const apiError = err as ApiError;
+      addToast('error', apiError.message || t('reviewers.messages.deleteError'));
     }
   };
 
@@ -85,7 +109,6 @@ export function ReviewersPage() {
       
       // If temporary password was generated, show it
       if (response.temporaryPassword) {
-        // We'll handle this in the modal component
         return response.temporaryPassword;
       }
       return null;
@@ -94,25 +117,6 @@ export function ReviewersPage() {
       addToast('error', apiError.message || t('reviewers.messages.updatePasswordError'));
       return null;
     }
-  };
-
-  const handleUpdateType = async (data: UpdateReviewerTypeRequest) => {
-    if (!selectedReviewer) return;
-    try {
-      await reviewerService.updateReviewerType(selectedReviewer.id, data);
-      setShowTypeModal(false);
-      setSelectedReviewer(null);
-      await loadReviewers();
-      addToast('success', t('reviewers.messages.updateTypeSuccess'));
-    } catch (err) {
-      const apiError = err as ApiError;
-      addToast('error', apiError.message || t('reviewers.messages.updateTypeError'));
-    }
-  };
-
-  const getReviewerTypeLabel = (type: UserRole): string => {
-    const key = `reviewers.reviewerTypes.${type}`;
-    return t(key);
   };
 
   if (loading) {
@@ -171,7 +175,7 @@ export function ReviewersPage() {
                   {t('reviewers.table.email')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  {t('reviewers.table.reviewerType')}
+                  {t('reviewers.table.phoneNumber')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   {t('reviewers.table.status')}
@@ -203,9 +207,7 @@ export function ReviewersPage() {
                       <div className="text-sm text-gray-900">{reviewer.email}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">
-                        {getReviewerTypeLabel(reviewer.reviewerType)}
-                      </div>
+                      <div className="text-sm text-gray-900">{reviewer.phoneNumber || '-'}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
@@ -220,33 +222,38 @@ export function ReviewersPage() {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <button
-                        onClick={() => {
-                          setSelectedReviewer(reviewer);
-                          setShowEmailModal(true);
-                        }}
-                        className="text-blue-600 hover:text-blue-900 mr-4"
-                      >
-                        {t('reviewers.emailModal.title')}
-                      </button>
-                      <button
-                        onClick={() => {
-                          setSelectedReviewer(reviewer);
-                          setShowPasswordModal(true);
-                        }}
-                        className="text-orange-600 hover:text-orange-900 mr-4"
-                      >
-                        {t('reviewers.passwordModal.title')}
-                      </button>
-                      <button
-                        onClick={() => {
-                          setSelectedReviewer(reviewer);
-                          setShowTypeModal(true);
-                        }}
-                        className="text-purple-600 hover:text-purple-900"
-                      >
-                        {t('reviewers.typeModal.title')}
-                      </button>
+                      <div className="flex items-center gap-3">
+                        <button
+                          onClick={() => {
+                            setSelectedReviewer(reviewer);
+                            setShowEditModal(true);
+                          }}
+                          className="p-2 text-blue-600 hover:text-blue-900 hover:bg-blue-50 rounded transition-colors"
+                          title={t('reviewers.editModal.title')}
+                        >
+                          <HiPencil className="w-5 h-5" />
+                        </button>
+                        <button
+                          onClick={() => {
+                            setSelectedReviewer(reviewer);
+                            setShowPasswordModal(true);
+                          }}
+                          className="p-2 text-orange-600 hover:text-orange-900 hover:bg-orange-50 rounded transition-colors"
+                          title={t('reviewers.passwordModal.title')}
+                        >
+                          <HiKey className="w-5 h-5" />
+                        </button>
+                        <button
+                          onClick={() => {
+                            setSelectedReviewer(reviewer);
+                            setShowDeleteModal(true);
+                          }}
+                          className="p-2 text-red-600 hover:text-red-900 hover:bg-red-50 rounded transition-colors"
+                          title={t('reviewers.deleteModal.title')}
+                        >
+                          <HiTrash className="w-5 h-5" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -263,15 +270,15 @@ export function ReviewersPage() {
           />
         )}
 
-        {/* Email Modal */}
-        {showEmailModal && selectedReviewer && (
-          <UpdateEmailModal
+        {/* Edit Profile Modal */}
+        {showEditModal && selectedReviewer && (
+          <UpdateProfileModal
             reviewer={selectedReviewer}
             onClose={() => {
-              setShowEmailModal(false);
+              setShowEditModal(false);
               setSelectedReviewer(null);
             }}
-            onSubmit={handleUpdateEmail}
+            onSubmit={handleUpdateProfile}
           />
         )}
 
@@ -287,15 +294,15 @@ export function ReviewersPage() {
           />
         )}
 
-        {/* Type Modal */}
-        {showTypeModal && selectedReviewer && (
-          <UpdateTypeModal
+        {/* Delete Modal */}
+        {showDeleteModal && selectedReviewer && (
+          <DeleteModal
             reviewer={selectedReviewer}
             onClose={() => {
-              setShowTypeModal(false);
+              setShowDeleteModal(false);
               setSelectedReviewer(null);
             }}
-            onSubmit={handleUpdateType}
+            onConfirm={handleDelete}
           />
         )}
       </div>
@@ -316,7 +323,7 @@ function CreateReviewerModal({
     password: '',
     firstName: '',
     lastName: '',
-    reviewerType: UserRole.CommissionMember,
+    phoneNumber: '',
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -333,7 +340,10 @@ function CreateReviewerModal({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validate()) {
-      onSubmit(formData);
+      onSubmit({
+        ...formData,
+        phoneNumber: formData.phoneNumber || undefined,
+      });
     }
   };
 
@@ -342,30 +352,6 @@ function CreateReviewerModal({
       <div className="bg-white rounded-lg p-6 w-full max-w-md">
         <h2 className="text-2xl font-bold mb-4">{t('reviewers.createModal.title')}</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              {t('reviewers.createModal.email')}
-            </label>
-            <input
-              type="email"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-            />
-            {errors.email && <p className="text-red-600 text-sm mt-1">{errors.email}</p>}
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              {t('reviewers.createModal.password')}
-            </label>
-            <input
-              type="password"
-              value={formData.password}
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-            />
-            {errors.password && <p className="text-red-600 text-sm mt-1">{errors.password}</p>}
-          </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               {t('reviewers.createModal.firstName')}
@@ -392,18 +378,38 @@ function CreateReviewerModal({
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              {t('reviewers.createModal.reviewerType')}
+              {t('reviewers.createModal.phoneNumber')} <span className="text-gray-500 text-xs">({t('common.optional')})</span>
             </label>
-            <select
-              value={formData.reviewerType}
-              onChange={(e) => setFormData({ ...formData, reviewerType: e.target.value as UserRole })}
+            <input
+              type="tel"
+              value={formData.phoneNumber}
+              onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option value={UserRole.CommissionChair}>{t('reviewers.reviewerTypes.CommissionChair')}</option>
-              <option value={UserRole.CommissionMember}>{t('reviewers.reviewerTypes.CommissionMember')}</option>
-              <option value={UserRole.CommissionTrainee}>{t('reviewers.reviewerTypes.CommissionTrainee')}</option>
-            </select>
-            {errors.reviewerType && <p className="text-red-600 text-sm mt-1">{errors.reviewerType}</p>}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              {t('reviewers.createModal.email')}
+            </label>
+            <input
+              type="email"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+            />
+            {errors.email && <p className="text-red-600 text-sm mt-1">{errors.email}</p>}
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              {t('reviewers.createModal.password')}
+            </label>
+            <input
+              type="password"
+              value={formData.password}
+              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+            />
+            {errors.password && <p className="text-red-600 text-sm mt-1">{errors.password}</p>}
           </div>
           <div className="flex justify-end space-x-3 mt-6">
             <button
@@ -426,50 +432,106 @@ function CreateReviewerModal({
   );
 }
 
-function UpdateEmailModal({
+function UpdateProfileModal({
   reviewer,
   onClose,
   onSubmit,
 }: {
   reviewer: ReviewerDto;
   onClose: () => void;
-  onSubmit: (data: UpdateReviewerEmailRequest) => void;
+  onSubmit: (data: UpdateReviewerProfileRequest) => void;
 }) {
   const { t } = useTranslation();
-  const [email, setEmail] = useState(reviewer.email);
-  const [error, setError] = useState('');
+  const [formData, setFormData] = useState<UpdateReviewerProfileRequest>({
+    firstName: reviewer.firstName,
+    lastName: reviewer.lastName,
+    email: reviewer.email,
+    phoneNumber: reviewer.phoneNumber || '',
+  });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validate = (): boolean => {
+    const newErrors: Record<string, string> = {};
+    if (!formData.firstName) newErrors.firstName = t('reviewers.editModal.firstNameRequired');
+    if (!formData.lastName) newErrors.lastName = t('reviewers.editModal.lastNameRequired');
+    if (!formData.email) newErrors.email = t('reviewers.editModal.emailRequired');
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) {
-      setError(t('reviewers.emailModal.emailRequired'));
-      return;
+    if (validate()) {
+      onSubmit({
+        ...formData,
+        phoneNumber: formData.phoneNumber || undefined,
+      });
     }
-    onSubmit({ email });
   };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-4">{t('reviewers.emailModal.title')}</h2>
+        <h2 className="text-2xl font-bold mb-4">{t('reviewers.editModal.title')}</h2>
         <p className="text-sm text-gray-600 mb-4">
-          {t('reviewers.emailModal.description', { name: `${reviewer.firstName} ${reviewer.lastName}` })}
+          {t('reviewers.editModal.description', { name: `${reviewer.firstName} ${reviewer.lastName}` })}
         </p>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              {t('reviewers.emailModal.newEmail')}
+              {t('reviewers.editModal.firstName')}
             </label>
             <input
-              type="email"
-              value={email}
+              type="text"
+              value={formData.firstName}
               onChange={(e) => {
-                setEmail(e.target.value);
-                setError('');
+                setFormData({ ...formData, firstName: e.target.value });
+                if (errors.firstName) setErrors({ ...errors, firstName: '' });
               }}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
             />
-            {error && <p className="text-red-600 text-sm mt-1">{error}</p>}
+            {errors.firstName && <p className="text-red-600 text-sm mt-1">{errors.firstName}</p>}
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              {t('reviewers.editModal.lastName')}
+            </label>
+            <input
+              type="text"
+              value={formData.lastName}
+              onChange={(e) => {
+                setFormData({ ...formData, lastName: e.target.value });
+                if (errors.lastName) setErrors({ ...errors, lastName: '' });
+              }}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+            />
+            {errors.lastName && <p className="text-red-600 text-sm mt-1">{errors.lastName}</p>}
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              {t('reviewers.editModal.phoneNumber')} <span className="text-gray-500 text-xs">({t('common.optional')})</span>
+            </label>
+            <input
+              type="tel"
+              value={formData.phoneNumber}
+              onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              {t('reviewers.editModal.email')}
+            </label>
+            <input
+              type="email"
+              value={formData.email}
+              onChange={(e) => {
+                setFormData({ ...formData, email: e.target.value });
+                if (errors.email) setErrors({ ...errors, email: '' });
+              }}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+            />
+            {errors.email && <p className="text-red-600 text-sm mt-1">{errors.email}</p>}
           </div>
           <div className="flex justify-end space-x-3 mt-6">
             <button
@@ -477,13 +539,13 @@ function UpdateEmailModal({
               onClick={onClose}
               className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
             >
-              {t('reviewers.emailModal.cancel')}
+              {t('reviewers.editModal.cancel')}
             </button>
             <button
               type="submit"
               className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
             >
-              {t('reviewers.emailModal.update')}
+              {t('reviewers.editModal.save')}
             </button>
           </div>
         </form>
@@ -552,7 +614,7 @@ function ResetPasswordModal({
                 onClick={copyToClipboard}
                 className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm"
               >
-                {passwordCopied ? '✓ Kopirano' : t('reviewers.passwordModal.copyPassword')}
+                {passwordCopied ? '✓ ' + t('reviewers.passwordModal.copied') : t('reviewers.passwordModal.copyPassword')}
               </button>
             </div>
           </div>
@@ -627,70 +689,40 @@ function ResetPasswordModal({
   );
 }
 
-function UpdateTypeModal({
+function DeleteModal({
   reviewer,
   onClose,
-  onSubmit,
+  onConfirm,
 }: {
   reviewer: ReviewerDto;
   onClose: () => void;
-  onSubmit: (data: UpdateReviewerTypeRequest) => void;
+  onConfirm: () => void;
 }) {
   const { t } = useTranslation();
-  const [reviewerType, setReviewerType] = useState<UserRole>(reviewer.reviewerType);
-  const [error, setError] = useState('');
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!reviewerType) {
-      setError(t('reviewers.typeModal.reviewerTypeRequired'));
-      return;
-    }
-    onSubmit({ reviewerType });
-  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-4">{t('reviewers.typeModal.title')}</h2>
+        <h2 className="text-2xl font-bold mb-4 text-red-600">{t('reviewers.deleteModal.title')}</h2>
         <p className="text-sm text-gray-600 mb-4">
-          {t('reviewers.typeModal.description', { name: `${reviewer.firstName} ${reviewer.lastName}` })}
+          {t('reviewers.deleteModal.description', { name: `${reviewer.firstName} ${reviewer.lastName}` })}
         </p>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              {t('reviewers.typeModal.reviewerType')}
-            </label>
-            <select
-              value={reviewerType}
-              onChange={(e) => {
-                setReviewerType(e.target.value as UserRole);
-                setError('');
-              }}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option value={UserRole.CommissionChair}>{t('reviewers.reviewerTypes.CommissionChair')}</option>
-              <option value={UserRole.CommissionMember}>{t('reviewers.reviewerTypes.CommissionMember')}</option>
-              <option value={UserRole.CommissionTrainee}>{t('reviewers.reviewerTypes.CommissionTrainee')}</option>
-            </select>
-            {error && <p className="text-red-600 text-sm mt-1">{error}</p>}
-          </div>
-          <div className="flex justify-end space-x-3 mt-6">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
-            >
-              {t('reviewers.typeModal.cancel')}
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
-            >
-              {t('reviewers.typeModal.update')}
-            </button>
-          </div>
-        </form>
+        <div className="flex justify-end space-x-3 mt-6">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+          >
+            {t('reviewers.deleteModal.cancel')}
+          </button>
+          <button
+            type="button"
+            onClick={onConfirm}
+            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+          >
+            {t('reviewers.deleteModal.confirm')}
+          </button>
+        </div>
       </div>
     </div>
   );

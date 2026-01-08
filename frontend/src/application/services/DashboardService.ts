@@ -21,7 +21,7 @@ export class DashboardService {
     try {
       const [evaluations, categories, productSamples, commissions, protocols] = await Promise.all([
         apiClient.get<any[]>('/api/evaluations').catch(() => []),
-        apiClient.get<any[]>('/api/categories').catch(() => []),
+        apiClient.get<any[]>('/api/groups').catch(() => []),
         apiClient.get<any[]>('/api/productsamples').catch(() => []),
         apiClient.get<any[]>('/api/commissions').catch(() => []),
         apiClient.get<any[]>('/api/protocols').catch(() => []),

@@ -5,7 +5,7 @@
   "nav": {
     "dashboard": "Nadzorna plošča",
     "productSamples": "Vzorci",
-    "categories": "Kategorije",
+    "categories": "Skupine",
     "commissions": "Komisije",
     "evaluations": "Ocenjevanja",
     "protocols": "Zapisniki",
@@ -76,6 +76,19 @@
       "cancel": "Prekliči",
       "update": "Posodobi"
     },
+    "editModal": {
+      "title": "Uredi uporabnika",
+      "description": "Posodabljanje podatkov za {{name}}",
+      "firstName": "Ime",
+      "lastName": "Priimek",
+      "phoneNumber": "Telefonska številka",
+      "email": "E-pošta",
+      "firstNameRequired": "Ime je obvezno",
+      "lastNameRequired": "Priimek je obvezen",
+      "emailRequired": "E-pošta je obvezna",
+      "cancel": "Prekliči",
+      "update": "Posodobi"
+    },
     "passwordModal": {
       "title": "Ponastavi geslo",
       "description": "Ponastavitev gesla za {{name}}",
@@ -86,6 +99,12 @@
       "passwordsMismatch": "Gesli se ne ujemata",
       "cancel": "Prekliči",
       "reset": "Ponastavi geslo"
+    },
+    "deleteModal": {
+      "title": "Izbriši uporabnika",
+      "description": "Ali ste prepričani, da želite izbrisati {{name}}? To dejanje ni mogoče razveljaviti.",
+      "cancel": "Prekliči",
+      "confirm": "Izbriši"
     },
     "messages": {
       "loadError": "Napaka pri nalaganju sistemskih skrbnikov",
@@ -168,7 +187,7 @@
   },
   "categories": {
     "title": "Skupine živil",
-    "subtitle": "Kategorije predstavljajo različne skupine živil za ocenjevanje",
+    "subtitle": "Skupine predstavljajo različne skupine živil za ocenjevanje",
     "createButton": "Ustvari novo skupino",
     "edit": "Uredi",
     "createModal": {
@@ -191,35 +210,99 @@
       "save": "Shrani spremembe"
     },
     "messages": {
-      "loadError": "Nalaganje kategorij ni uspelo",
-      "createError": "Ustvarjanje kategorije ni uspelo",
-      "updateError": "Posodabljanje kategorije ni uspelo"
+      "loadError": "Nalaganje skupin ni uspelo",
+      "createError": "Ustvarjanje skupine ni uspelo",
+      "updateError": "Posodabljanje skupine ni uspelo",
+      "deleteError": "Brisanje skupine ni uspelo",
+      "deleteConfirm": "Ali ste prepričani, da želite izbrisati to skupino?",
+      "createSuccess": "Skupina uspešno ustvarjena",
+      "noGroups": "Ni skupin. Ustvarite prvo skupino."
     },
-    "messages": {
-      "createSuccess": "Kategorija uspešno ustvarjena",
-      "createError": "Napaka pri ustvarjanju kategorije",
-      "loadError": "Napaka pri nalaganju kategorij"
+    "subgroups": {
+      "title": "Podskupine",
+      "subtitle": "Upravljajte podskupine znotraj skupin",
+      "noSubgroups": "Ni podskupin",
+      "addSubgroup": "Dodaj podskupino",
+      "createModal": {
+        "title": "Ustvari podskupino",
+        "name": "Ime podskupine",
+        "nameRequired": "Ime podskupine je obvezno",
+        "description": "Opis",
+        "group": "Skupina",
+        "groupRequired": "Skupina je obvezna",
+        "cancel": "Prekliči",
+        "create": "Ustvari"
+      },
+      "editModal": {
+        "title": "Uredi podskupino",
+        "save": "Shrani spremembe"
+      },
+      "messages": {
+        "loadError": "Nalaganje podskupin ni uspelo",
+        "createError": "Ustvarjanje podskupine ni uspelo",
+        "updateError": "Posodabljanje podskupine ni uspelo",
+        "deleteError": "Brisanje podskupine ni uspelo",
+        "deleteConfirm": "Ali ste prepričani, da želite izbrisati to podskupino?",
+        "createSuccess": "Podskupina uspešno ustvarjena",
+        "updateSuccess": "Podskupina uspešno posodobljena",
+        "deleteSuccess": "Podskupina uspešno izbrisana"
+      }
+    },
+    "mainMember": {
+      "label": "Glavni člen skupine",
+      "description": "Glavni člen skupine lahko začne ocenjevanje, če predsednik komisije ni prisoten"
     }
   },
   "commissions": {
     "title": "Komisije",
-    "createButton": "Ustvari novo",
+    "subtitle": "Upravljajte komisije za ocenjevanje in njihove člane",
+    "createButton": "Ustvari novo komisijo",
+    "table": {
+      "name": "Ime",
+      "description": "Opis",
+      "members": "Člani",
+      "membersCount": "članov",
+      "status": "Status",
+      "actions": "Dejanja",
+      "edit": "Uredi",
+      "delete": "Izbriši"
+    },
     "createModal": {
       "title": "Ustvari komisijo",
       "name": "Ime",
       "nameRequired": "Ime je obvezno",
       "description": "Opis",
-      "evaluationEvent": "Dogodek ocenjevanja",
-      "evaluationEventRequired": "Dogodek ocenjevanja je obvezen",
-      "category": "Kategorija",
-      "categoryRequired": "Kategorija je obvezna",
+      "members": "Člani",
+      "membersDescription": "Dodajte ocenjevalce v to komisijo in dodelite njihove vloge",
+      "searchUsers": "Iskanje uporabnikov...",
+      "noMembers": "Ni dodanih članov",
+      "atLeastOneMember": "Vsaj en član je obvezen",
+      "exactlyOneMainMember": "Natančno en glavni člen je obvezen",
+      "maxOnePresident": "Največ en predsednik je dovoljen",
       "cancel": "Prekliči",
       "create": "Ustvari"
+    },
+    "editModal": {
+      "title": "Uredi komisijo",
+      "status": "Status",
+      "save": "Shrani spremembe"
+    },
+    "roles": {
+      "MainMember": "Glavni člen",
+      "President": "Predsednik",
+      "Member": "Člen",
+      "Trainee": "Vajenec"
     },
     "messages": {
       "createSuccess": "Komisija uspešno ustvarjena",
       "createError": "Napaka pri ustvarjanju komisije",
-      "loadError": "Napaka pri nalaganju komisij"
+      "updateSuccess": "Komisija uspešno posodobljena",
+      "updateError": "Napaka pri posodabljanju komisije",
+      "deleteSuccess": "Komisija uspešno izbrisana",
+      "deleteError": "Napaka pri brisanju komisije",
+      "deleteConfirm": "Ali ste prepričani, da želite izbrisati to komisijo?",
+      "loadError": "Napaka pri nalaganju komisij",
+      "noCommissions": "Ni komisij. Ustvarite prvo komisijo."
     }
   },
   "dashboard": {
@@ -228,7 +311,7 @@
     "statistics": {
       "title": "Statistika sistema",
       "evaluations": "Dogodki ocenjevanja",
-      "categories": "Kategorije",
+      "categories": "Skupine",
       "productSamples": "Vzorci živil",
       "commissions": "Komisije",
       "protocols": "Zapisniki"
@@ -254,31 +337,38 @@
     "table": {
       "name": "Ime",
       "email": "E-pošta",
-      "reviewerType": "Tip ocenjevalca",
+      "phoneNumber": "Telefonska številka",
       "status": "Status",
       "createdAt": "Ustvarjen",
       "actions": "Dejanja",
       "noData": "Ni ocenjevalcev"
     },
-    "reviewerTypes": {
-      "CommissionChair": "Predsednik komisije",
-      "CommissionMember": "Člen komisije",
-      "CommissionTrainee": "Vajenec"
-    },
     "createModal": {
       "title": "Ustvari uporabnika komisije",
-      "email": "E-pošta",
-      "password": "Geslo",
       "firstName": "Ime",
       "lastName": "Priimek",
-      "reviewerType": "Tip ocenjevalca",
-      "reviewerTypeRequired": "Tip ocenjevalca je obvezen",
+      "phoneNumber": "Telefonska številka",
+      "email": "E-pošta",
+      "password": "Geslo",
       "emailRequired": "E-pošta je obvezna",
       "passwordRequired": "Geslo mora imeti vsaj 6 znakov",
       "firstNameRequired": "Ime je obvezno",
       "lastNameRequired": "Priimek je obvezen",
       "cancel": "Prekliči",
       "create": "Ustvari"
+    },
+    "editModal": {
+      "title": "Uredi ocenjevalca",
+      "description": "Posodabljanje podatkov za {{name}}",
+      "firstName": "Ime",
+      "lastName": "Priimek",
+      "phoneNumber": "Telefonska številka",
+      "email": "E-pošta",
+      "firstNameRequired": "Ime je obvezno",
+      "lastNameRequired": "Priimek je obvezen",
+      "emailRequired": "E-pošta je obvezna",
+      "cancel": "Prekliči",
+      "save": "Shrani spremembe"
     },
     "emailModal": {
       "title": "Spremeni e-pošto",
@@ -298,27 +388,28 @@
       "temporaryPassword": "Začasno geslo",
       "temporaryPasswordWarning": "To geslo bo prikazano samo enkrat. Prosimo, shranite ga na varno.",
       "copyPassword": "Kopiraj geslo",
+      "copied": "Kopirano",
       "cancel": "Prekliči",
       "reset": "Ponastavi geslo"
     },
-    "typeModal": {
-      "title": "Spremeni tip ocenjevalca",
-      "description": "Posodabljanje tipa ocenjevalca za {{name}}",
-      "reviewerType": "Tip ocenjevalca",
-      "reviewerTypeRequired": "Tip ocenjevalca je obvezen",
+    "deleteModal": {
+      "title": "Izbriši ocenjevalca",
+      "description": "Ali ste prepričani, da želite izbrisati {{name}}? To dejanje ni mogoče razveljaviti.",
       "cancel": "Prekliči",
-      "update": "Posodobi"
+      "confirm": "Izbriši"
     },
     "messages": {
       "loadError": "Napaka pri nalaganju ocenjevalcev",
       "createSuccess": "Ocenjevalec uspešno ustvarjen",
       "createError": "Napaka pri ustvarjanju ocenjevalca",
+      "updateProfileSuccess": "Ocenjevalec uspešno posodobljen",
+      "updateProfileError": "Napaka pri posodabljanju ocenjevalca",
       "updateEmailSuccess": "E-pošta uspešno posodobljena",
       "updateEmailError": "Napaka pri posodabljanju e-pošte",
       "updatePasswordSuccess": "Geslo uspešno posodobljeno",
       "updatePasswordError": "Napaka pri posodabljanju gesla",
-      "updateTypeSuccess": "Tip ocenjevalca uspešno posodobljen",
-      "updateTypeError": "Napaka pri posodabljanju tipa ocenjevalca"
+      "deleteSuccess": "Ocenjevalec uspešno izbrisan",
+      "deleteError": "Napaka pri brisanju ocenjevalca"
     }
   },
   "common": {
@@ -326,7 +417,12 @@
     "cancel": "Prekliči",
     "save": "Shrani",
     "active": "Aktiven",
-    "inactive": "Neaktiven"
+    "inactive": "Neaktiven",
+    "none": "Brez",
+    "select": "Izberi...",
+    "delete": "Izbriši",
+    "actions": "Dejanja",
+    "optional": "neobvezno"
   },
   "language": {
     "sl": "Slovenščina",

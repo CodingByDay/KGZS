@@ -28,6 +28,12 @@ export interface UpdatePasswordRequest {
   password: string;
 }
 
+export interface UpdateProfileRequest {
+  firstName: string;
+  lastName: string;
+  phoneNumber?: string;
+}
+
 export class SuperAdminService {
   async getSuperAdmins(): Promise<SuperAdminDto[]> {
     return apiClient.get<SuperAdminDto[]>('/api/admin/superadmins');
@@ -37,12 +43,20 @@ export class SuperAdminService {
     return apiClient.post<SuperAdminDto>('/api/admin/superadmins', request);
   }
 
+  async updateUserProfile(userId: string, request: UpdateProfileRequest): Promise<SuperAdminDto> {
+    return apiClient.put<SuperAdminDto>(`/api/admin/superadmins/${userId}/profile`, request);
+  }
+
   async updateUserEmail(userId: string, request: UpdateEmailRequest): Promise<SuperAdminDto> {
-    return apiClient.put<SuperAdminDto>(`/api/admin/users/${userId}/email`, request);
+    return apiClient.put<SuperAdminDto>(`/api/admin/superadmins/${userId}/email`, request);
   }
 
   async updateUserPassword(userId: string, request: UpdatePasswordRequest): Promise<void> {
-    return apiClient.put<void>(`/api/admin/users/${userId}/password`, request);
+    return apiClient.put<void>(`/api/admin/superadmins/${userId}/password`, request);
+  }
+
+  async deleteUser(userId: string): Promise<void> {
+    return apiClient.delete<void>(`/api/admin/superadmins/${userId}`);
   }
 }
 

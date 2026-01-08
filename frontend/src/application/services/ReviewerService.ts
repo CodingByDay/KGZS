@@ -6,7 +6,7 @@ export interface ReviewerDto {
   email: string;
   firstName: string;
   lastName: string;
-  reviewerType: UserRole;
+  phoneNumber?: string;
   isActive: boolean;
   createdAt: string;
   lastLoginAt?: string;
@@ -17,11 +17,18 @@ export interface CreateReviewerRequest {
   password: string;
   firstName: string;
   lastName: string;
-  reviewerType: UserRole;
+  phoneNumber?: string;
 }
 
 export interface UpdateReviewerEmailRequest {
   email: string;
+}
+
+export interface UpdateReviewerProfileRequest {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber?: string;
 }
 
 export interface ResetReviewerPasswordRequest {
@@ -30,10 +37,6 @@ export interface ResetReviewerPasswordRequest {
 
 export interface ResetReviewerPasswordResponse {
   temporaryPassword?: string;
-}
-
-export interface UpdateReviewerTypeRequest {
-  reviewerType: UserRole;
 }
 
 export class ReviewerService {
@@ -53,8 +56,12 @@ export class ReviewerService {
     return apiClient.post<ResetReviewerPasswordResponse>(`/api/admin/reviewers/${userId}/reset-password`, request);
   }
 
-  async updateReviewerType(userId: string, request: UpdateReviewerTypeRequest): Promise<ReviewerDto> {
-    return apiClient.put<ReviewerDto>(`/api/admin/reviewers/${userId}/reviewer-type`, request);
+  async updateReviewerProfile(userId: string, request: UpdateReviewerProfileRequest): Promise<ReviewerDto> {
+    return apiClient.put<ReviewerDto>(`/api/admin/reviewers/${userId}/profile`, request);
+  }
+
+  async deleteReviewer(userId: string): Promise<void> {
+    return apiClient.delete<void>(`/api/admin/reviewers/${userId}`);
   }
 }
 

@@ -60,4 +60,15 @@ public class UserRepository : IUserRepository
         _dbContext.Users.Update(user);
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
+
+    public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        var user = await GetByIdAsync(id, cancellationToken);
+        if (user != null)
+        {
+            // Soft delete by setting IsActive to false
+            user.IsActive = false;
+            await _dbContext.SaveChangesAsync(cancellationToken);
+        }
+    }
 }

@@ -3,50 +3,54 @@ import { useTranslation } from 'react-i18next';
 import { apiClient } from '@/infrastructure/api/apiClient';
 import { AppShell } from '@/app/components/AppShell';
 import { ApiError } from '@/infrastructure/api/apiClient';
+import { HiPencil, HiTrash, HiPlus, HiFolder, HiFolderOpen } from 'react-icons/hi2';
 
-interface CategoryReviewer {
-  id: string;
-  userId: string;
-  userName: string;
-  userEmail: string;
-  assignedAt: string;
-}
-
-interface Category {
+interface Group {
   id: string;
   name: string;
   description?: string;
   evaluationEventId?: string;
-  reviewers?: CategoryReviewer[];
 }
 
-interface User {
+interface Subgroup {
   id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  role: string;
-}
-
-interface CreateCategoryRequest {
+  categoryId: string;
+  categoryName: string;
   name: string;
   description?: string;
-  reviewerUserIds: string[];
+  createdAt: string;
 }
 
-interface UpdateCategoryRequest {
+interface CreateGroupRequest {
   name: string;
   description?: string;
-  reviewerUserIds: string[];
+}
+
+interface UpdateGroupRequest {
+  name: string;
+  description?: string;
+}
+
+interface CreateSubgroupRequest {
+  categoryId: string;
+  name: string;
+  description?: string;
+}
+
+interface UpdateSubgroupRequest {
+  name: string;
+  description?: string;
 }
 
 export function CategoriesPage() {
   const { t } = useTranslation();
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [users, setUsers] = useState<User[]>([]);
+  const [groups, setGroups] = useState<Group[]>([]);
+  const [subgroups, setSubgroups] = useState<Subgroup[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  const [showCreateGroupModal, setShowCreateGroupModal] = useState(false);
+  const [editingGroup, setEditingGroup] = useState<Group | null>(null);
+  const [showCreateSubgroupModal, setShowCreateSubgroupModal] = useState(false);
+  const [editingSubgroup, setEditingSubgroup] = useState<Subgroup | null>(null);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -55,12 +59,12 @@ export function CategoriesPage() {
 
   const loadData = async () => {
     try {
-      const [categoriesData, usersData] = await Promise.all([
-        apiClient.get<Category[]>('/api/categories'),
-        apiClient.get<User[]>('/api/admin/users').catch(() => []),
+      const [groupsData, subgroupsData] = await Promise.all([
+        apiClient.get<Group[]>('/api/groups'),
+        apiClient.get<Subgroup[]>('/api/subgroups'),
       ]);
-      setCategories(categoriesData);
-      setUsers(usersData);
+      setGroups(groupsData);
+      setSubgroups(subgroupsData);
     } catch (err) {
       const apiError = err as ApiError;
       setError(apiError.message || t('categories.messages.loadError'));
@@ -69,11 +73,15 @@ export function CategoriesPage() {
     }
   };
 
-  const handleCreateCategory = async (data: CreateCategoryRequest) => {
+  const handleCreateGroup = async (data: CreateGroupRequest) => {
     try {
-      await apiClient.post<Category>('/api/categories', data);
+      const requestData = {
+        name: data.name.trim(),
+        description: data.description?.trim() || null,
+      };
+      await apiClient.post<Group>('/api/groups', requestData);
       await loadData();
-      setShowCreateModal(false);
+      setShowCreateGroupModal(false);
       setError('');
     } catch (err) {
       const apiError = err as ApiError;
@@ -81,16 +89,81 @@ export function CategoriesPage() {
     }
   };
 
-  const handleUpdateCategory = async (id: string, data: UpdateCategoryRequest) => {
+  const handleUpdateGroup = async (id: string, data: UpdateGroupRequest) => {
     try {
-      await apiClient.put<Category>(`/api/categories/${id}`, data);
+      await apiClient.put<Group>(`/api/groups/${id}`, data);
       await loadData();
-      setEditingCategory(null);
+      setEditingGroup(null);
       setError('');
     } catch (err) {
       const apiError = err as ApiError;
       setError(apiError.message || t('categories.messages.updateError'));
     }
+  };
+
+  const handleDeleteGroup = async (id: string) => {
+    const confirmMessage = t('categories.messages.deleteConfirm') || 'Are you sure you want to delete this group?';
+    if (!confirm(confirmMessage)) {
+      return;
+    }
+    try {
+      await apiClient.delete(`/api/groups/${id}`);
+      await loadData();
+      setError('');
+    } catch (err) {
+      const apiError = err as ApiError;
+      setError(apiError.message || t('categories.messages.deleteError'));
+    }
+  };
+
+  const handleCreateSubgroup = async (data: CreateSubgroupRequest) => {
+    try {
+      const requestData = {
+        categoryId: data.categoryId,
+        name: data.name.trim(),
+        description: data.description?.trim() || null,
+      };
+      console.log('Creating subgroup with data:', requestData);
+      await apiClient.post<Subgroup>('/api/subgroups', requestData);
+      await loadData();
+      setShowCreateSubgroupModal(false);
+      setError('');
+    } catch (err) {
+      console.error('Error creating subgroup:', err);
+      const apiError = err as ApiError;
+      setError(apiError.message || t('categories.subgroups.messages.createError'));
+    }
+  };
+
+  const handleUpdateSubgroup = async (id: string, data: UpdateSubgroupRequest) => {
+    try {
+      await apiClient.put<Subgroup>(`/api/subgroups/${id}`, data);
+      await loadData();
+      setEditingSubgroup(null);
+      setError('');
+    } catch (err) {
+      const apiError = err as ApiError;
+      setError(apiError.message || t('categories.subgroups.messages.updateError'));
+    }
+  };
+
+  const handleDeleteSubgroup = async (id: string) => {
+    const confirmMessage = t('categories.subgroups.messages.deleteConfirm') || 'Are you sure you want to delete this subgroup?';
+    if (!confirm(confirmMessage)) {
+      return;
+    }
+    try {
+      await apiClient.delete(`/api/subgroups/${id}`);
+      await loadData();
+      setError('');
+    } catch (err) {
+      const apiError = err as ApiError;
+      setError(apiError.message || t('categories.subgroups.messages.deleteError'));
+    }
+  };
+
+  const getSubgroupsForGroup = (groupId: string) => {
+    return subgroups.filter(sg => sg.categoryId === groupId);
   };
 
   if (loading) {
@@ -107,15 +180,7 @@ export function CategoriesPage() {
     <AppShell>
       <div className="space-y-6">
         <div>
-          <div className="flex justify-between items-center">
-            <h1 className="text-3xl font-bold text-gray-900">{t('categories.title')}</h1>
-            <button
-              onClick={() => setShowCreateModal(true)}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              {t('categories.createButton')}
-            </button>
-          </div>
+          <h1 className="text-3xl font-bold text-gray-900">{t('categories.title')}</h1>
           <p className="mt-1 text-gray-600">{t('categories.subtitle')}</p>
         </div>
 
@@ -125,72 +190,226 @@ export function CategoriesPage() {
           </div>
         )}
 
-        <div className="bg-white rounded-lg shadow overflow-hidden">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Food Group Name</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Description</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Reviewers</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {categories.map((category) => (
-                <tr key={category.id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{category.name}</td>
-                  <td className="px-6 py-4 text-sm text-gray-500">{category.description || '-'}</td>
-                  <td className="px-6 py-4 text-sm text-gray-500">
-                    {category.reviewers && category.reviewers.length > 0 ? (
-                      <div className="flex flex-wrap gap-1">
-                        {category.reviewers.map((reviewer) => (
-                          <span
-                            key={reviewer.id}
-                            className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-blue-100 text-blue-800"
-                            title={reviewer.userEmail}
-                          >
-                            {reviewer.userName}
-                          </span>
-                        ))}
-                      </div>
-                    ) : (
-                      <span className="text-gray-400">-</span>
-                    )}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <button
-                      onClick={() => setEditingCategory(category)}
-                      className="text-blue-600 hover:text-blue-900"
-                    >
-                      {t('categories.edit')}
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        {/* Groups Card */}
+        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+          <div className="bg-gradient-to-b from-blue-900 to-blue-800 px-6 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <HiFolder className="w-8 h-8 text-blue-100" />
+                <div>
+                  <h2 className="text-xl font-semibold text-white">{t('categories.title')}</h2>
+                  <p className="text-blue-100 text-sm">{t('categories.subtitle')}</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowCreateGroupModal(true)}
+                className="px-4 py-2 bg-white text-blue-900 rounded-lg hover:bg-blue-50 transition-colors flex items-center gap-2 font-medium"
+              >
+                <HiPlus className="w-5 h-5" />
+                {t('categories.createButton')}
+              </button>
+            </div>
+          </div>
+
+          <div className="p-6">
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      {t('categories.createModal.name')}
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      {t('categories.createModal.description')}
+                    </th>
+                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      {t('common.actions') || 'Actions'}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {groups.length === 0 ? (
+                    <tr>
+                      <td colSpan={3} className="px-6 py-8 text-center text-gray-500">
+                        {t('categories.messages.noGroups') || 'No groups found. Create your first group.'}
+                      </td>
+                    </tr>
+                  ) : (
+                    groups.map((group) => {
+                      const groupSubgroups = getSubgroupsForGroup(group.id);
+
+                      return (
+                        <tr key={group.id} className="hover:bg-gray-50">
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-medium text-gray-900">{group.name}</span>
+                              {groupSubgroups.length > 0 && (
+                                <span className="px-2 py-0.5 text-xs font-medium bg-green-100 text-green-800 rounded">
+                                  {groupSubgroups.length} {t('categories.subgroups.title').toLowerCase()}
+                                </span>
+                              )}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4">
+                            <div className="text-sm text-gray-500">{group.description || '-'}</div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <div className="flex items-center justify-end gap-2">
+                              <button
+                                onClick={() => setEditingGroup(group)}
+                                className="p-2 text-blue-600 hover:text-blue-900 hover:bg-blue-50 rounded"
+                                title={t('categories.edit')}
+                              >
+                                <HiPencil className="w-5 h-5" />
+                              </button>
+                              <button
+                                onClick={() => handleDeleteGroup(group.id)}
+                                className="p-2 text-red-600 hover:text-red-900 hover:bg-red-50 rounded"
+                                title={t('common.delete')}
+                              >
+                                <HiTrash className="w-5 h-5" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
 
-        {showCreateModal && (
-          <CreateCategoryModal
-            users={users}
+        {/* Subgroups Card */}
+        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+          <div className="bg-gradient-to-b from-green-900 to-green-800 px-6 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <HiFolderOpen className="w-8 h-8 text-green-100" />
+                <div>
+                  <h2 className="text-xl font-semibold text-white">{t('categories.subgroups.title')}</h2>
+                  <p className="text-green-100 text-sm">
+                    {t('categories.subgroups.subtitle') || 'Manage subgroups within groups'}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowCreateSubgroupModal(true)}
+                className="px-4 py-2 bg-white text-green-900 rounded-lg hover:bg-green-50 transition-colors flex items-center gap-2 font-medium"
+              >
+                <HiPlus className="w-5 h-5" />
+                {t('categories.subgroups.addSubgroup')}
+              </button>
+            </div>
+          </div>
+
+          <div className="p-6">
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      {t('categories.subgroups.createModal.group')}
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      {t('categories.subgroups.createModal.name')}
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      {t('categories.subgroups.createModal.description')}
+                    </th>
+                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      {t('common.actions') || 'Actions'}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {subgroups.length === 0 ? (
+                    <tr>
+                      <td colSpan={4} className="px-6 py-8 text-center text-gray-500">
+                        {t('categories.subgroups.noSubgroups')}
+                      </td>
+                    </tr>
+                  ) : (
+                    subgroups.map((subgroup) => (
+                      <tr key={subgroup.id} className="hover:bg-gray-50">
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm font-medium text-gray-900">{subgroup.categoryName}</div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm font-medium text-gray-900">{subgroup.name}</div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="text-sm text-gray-500">{subgroup.description || '-'}</div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                          <div className="flex items-center justify-end gap-2">
+                            <button
+                              onClick={() => setEditingSubgroup(subgroup)}
+                              className="p-2 text-blue-600 hover:text-blue-900 hover:bg-blue-50 rounded"
+                              title={t('categories.edit')}
+                            >
+                              <HiPencil className="w-5 h-5" />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteSubgroup(subgroup.id)}
+                              className="p-2 text-red-600 hover:text-red-900 hover:bg-red-50 rounded"
+                              title={t('common.delete')}
+                            >
+                              <HiTrash className="w-5 h-5" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        {/* Modals */}
+        {showCreateGroupModal && (
+          <CreateGroupModal
             onClose={() => {
-              setShowCreateModal(false);
+              setShowCreateGroupModal(false);
               setError('');
             }}
-            onSubmit={handleCreateCategory}
+            onSubmit={handleCreateGroup}
           />
         )}
 
-        {editingCategory && (
-          <EditCategoryModal
-            category={editingCategory}
-            users={users}
+        {editingGroup && (
+          <EditGroupModal
+            group={editingGroup}
             onClose={() => {
-              setEditingCategory(null);
+              setEditingGroup(null);
               setError('');
             }}
-            onSubmit={(data) => handleUpdateCategory(editingCategory.id, data)}
+            onSubmit={(data) => handleUpdateGroup(editingGroup.id, data)}
+          />
+        )}
+
+        {showCreateSubgroupModal && (
+          <CreateSubgroupModal
+            groups={groups}
+            onClose={() => {
+              setShowCreateSubgroupModal(false);
+              setError('');
+            }}
+            onSubmit={handleCreateSubgroup}
+          />
+        )}
+
+        {editingSubgroup && (
+          <EditSubgroupModal
+            subgroup={editingSubgroup}
+            onClose={() => {
+              setEditingSubgroup(null);
+              setError('');
+            }}
+            onSubmit={(data) => handleUpdateSubgroup(editingSubgroup.id, data)}
           />
         )}
       </div>
@@ -198,20 +417,17 @@ export function CategoriesPage() {
   );
 }
 
-function CreateCategoryModal({
-  users,
+function CreateGroupModal({
   onClose,
   onSubmit,
 }: {
-  users: User[];
   onClose: () => void;
-  onSubmit: (data: CreateCategoryRequest) => void;
+  onSubmit: (data: CreateGroupRequest) => void;
 }) {
   const { t } = useTranslation();
-  const [formData, setFormData] = useState<CreateCategoryRequest>({
+  const [formData, setFormData] = useState<CreateGroupRequest>({
     name: '',
     description: '',
-    reviewerUserIds: [],
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -228,15 +444,15 @@ function CreateCategoryModal({
     e.preventDefault();
     if (validate()) {
       onSubmit({
-        ...formData,
-        description: formData.description || undefined,
+        name: formData.name.trim(),
+        description: formData.description?.trim() || undefined,
       });
     }
   };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-lg p-6 max-w-md w-full">
         <h2 className="text-2xl font-bold mb-4">{t('categories.createModal.title')}</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -270,65 +486,6 @@ function CreateCategoryModal({
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-1">
-              {t('categories.createModal.reviewers')}
-            </label>
-            <p className="text-xs text-gray-500 mb-2">{t('categories.createModal.reviewersDescription')}</p>
-            <div className="border border-gray-300 rounded-lg p-3 max-h-48 overflow-y-auto">
-              {(() => {
-                const reviewerUsers = users.filter((user) => 
-                  user.role === 'CommissionMember' || 
-                  user.role === 'CommissionChair' || 
-                  user.role === 'CommissionTrainee' ||
-                  user.role === 'EvaluationOrganizer'
-                );
-                return reviewerUsers.length === 0 ? (
-                  <p className="text-sm text-gray-500">{t('categories.createModal.noReviewers')}</p>
-                ) : (
-                  <div className="space-y-2">
-                    {reviewerUsers.map((user) => (
-                    <label
-                      key={user.id}
-                      className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded cursor-pointer"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={formData.reviewerUserIds.includes(user.id)}
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            setFormData({
-                              ...formData,
-                              reviewerUserIds: [...formData.reviewerUserIds, user.id],
-                            });
-                          } else {
-                            setFormData({
-                              ...formData,
-                              reviewerUserIds: formData.reviewerUserIds.filter((id) => id !== user.id),
-                            });
-                          }
-                        }}
-                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                      />
-                      <div className="flex-1">
-                        <span className="text-sm font-medium text-gray-900">
-                          {user.firstName} {user.lastName}
-                        </span>
-                        <span className="text-xs text-gray-500 ml-2">({user.email})</span>
-                      </div>
-                    </label>
-                    ))}
-                  </div>
-                );
-              })()}
-            </div>
-            {formData.reviewerUserIds.length > 0 && (
-              <p className="mt-1 text-xs text-gray-500">
-                {formData.reviewerUserIds.length} {formData.reviewerUserIds.length === 1 ? 'reviewer' : 'reviewers'} selected
-              </p>
-            )}
-          </div>
-
           <div className="flex gap-3 pt-4">
             <button
               type="button"
@@ -350,22 +507,19 @@ function CreateCategoryModal({
   );
 }
 
-function EditCategoryModal({
-  category,
-  users,
+function EditGroupModal({
+  group,
   onClose,
   onSubmit,
 }: {
-  category: Category;
-  users: User[];
+  group: Group;
   onClose: () => void;
-  onSubmit: (data: UpdateCategoryRequest) => void;
+  onSubmit: (data: UpdateGroupRequest) => void;
 }) {
   const { t } = useTranslation();
-  const [formData, setFormData] = useState<UpdateCategoryRequest>({
-    name: category.name,
-    description: category.description || '',
-    reviewerUserIds: category.reviewers?.map(r => r.userId) || [],
+  const [formData, setFormData] = useState<UpdateGroupRequest>({
+    name: group.name,
+    description: group.description || '',
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -382,15 +536,15 @@ function EditCategoryModal({
     e.preventDefault();
     if (validate()) {
       onSubmit({
-        ...formData,
-        description: formData.description || undefined,
+        name: formData.name.trim(),
+        description: formData.description?.trim() || undefined,
       });
     }
   };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-lg p-6 max-w-md w-full">
         <h2 className="text-2xl font-bold mb-4">{t('categories.editModal.title')}</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -424,65 +578,6 @@ function EditCategoryModal({
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-1">
-              {t('categories.createModal.reviewers')}
-            </label>
-            <p className="text-xs text-gray-500 mb-2">{t('categories.createModal.reviewersDescription')}</p>
-            <div className="border border-gray-300 rounded-lg p-3 max-h-48 overflow-y-auto">
-              {(() => {
-                const reviewerUsers = users.filter((user) => 
-                  user.role === 'CommissionMember' || 
-                  user.role === 'CommissionChair' || 
-                  user.role === 'CommissionTrainee' ||
-                  user.role === 'EvaluationOrganizer'
-                );
-                return reviewerUsers.length === 0 ? (
-                  <p className="text-sm text-gray-500">{t('categories.createModal.noReviewers')}</p>
-                ) : (
-                  <div className="space-y-2">
-                    {reviewerUsers.map((user) => (
-                      <label
-                        key={user.id}
-                        className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded cursor-pointer"
-                      >
-                        <input
-                          type="checkbox"
-                          checked={formData.reviewerUserIds.includes(user.id)}
-                          onChange={(e) => {
-                            if (e.target.checked) {
-                              setFormData({
-                                ...formData,
-                                reviewerUserIds: [...formData.reviewerUserIds, user.id],
-                              });
-                            } else {
-                              setFormData({
-                                ...formData,
-                                reviewerUserIds: formData.reviewerUserIds.filter((id) => id !== user.id),
-                              });
-                            }
-                          }}
-                          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                        />
-                        <div className="flex-1">
-                          <span className="text-sm font-medium text-gray-900">
-                            {user.firstName} {user.lastName}
-                          </span>
-                          <span className="text-xs text-gray-500 ml-2">({user.email})</span>
-                        </div>
-                      </label>
-                    ))}
-                  </div>
-                );
-              })()}
-            </div>
-            {formData.reviewerUserIds.length > 0 && (
-              <p className="mt-1 text-xs text-gray-500">
-                {formData.reviewerUserIds.length} {formData.reviewerUserIds.length === 1 ? 'reviewer' : 'reviewers'} selected
-              </p>
-            )}
-          </div>
-
           <div className="flex gap-3 pt-4">
             <button
               type="button"
@@ -496,6 +591,219 @@ function EditCategoryModal({
               className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
             >
               {t('categories.editModal.save')}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+function CreateSubgroupModal({
+  groups,
+  onClose,
+  onSubmit,
+}: {
+  groups: Group[];
+  onClose: () => void;
+  onSubmit: (data: CreateSubgroupRequest) => void;
+}) {
+  const { t } = useTranslation();
+  const [formData, setFormData] = useState<CreateSubgroupRequest>({
+    categoryId: '',
+    name: '',
+    description: '',
+  });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validate = (): boolean => {
+    const newErrors: Record<string, string> = {};
+    if (!formData.name.trim()) {
+      newErrors.name = t('categories.subgroups.createModal.nameRequired');
+    }
+    if (!formData.categoryId) {
+      newErrors.categoryId = t('categories.subgroups.createModal.groupRequired');
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (validate()) {
+      onSubmit({
+        ...formData,
+        description: formData.description?.trim() || undefined,
+      });
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg p-6 max-w-md w-full">
+        <h2 className="text-2xl font-bold mb-4">{t('categories.subgroups.createModal.title')}</h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium mb-1">
+              {t('categories.subgroups.createModal.group')} *
+            </label>
+            <select
+              value={formData.categoryId}
+              onChange={(e) => {
+                setFormData({ ...formData, categoryId: e.target.value });
+                if (errors.categoryId) setErrors({ ...errors, categoryId: '' });
+              }}
+              className={`w-full px-3 py-2 border rounded-lg ${
+                errors.categoryId ? 'border-red-500' : 'border-gray-300'
+              }`}
+              required
+            >
+              <option value="">{t('common.select') || 'Select...'}</option>
+              {groups.map((group) => (
+                <option key={group.id} value={group.id}>
+                  {group.name}
+                </option>
+              ))}
+            </select>
+            {errors.categoryId && <p className="mt-1 text-sm text-red-600">{errors.categoryId}</p>}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">
+              {t('categories.subgroups.createModal.name')} *
+            </label>
+            <input
+              type="text"
+              value={formData.name}
+              onChange={(e) => {
+                setFormData({ ...formData, name: e.target.value });
+                if (errors.name) setErrors({ ...errors, name: '' });
+              }}
+              className={`w-full px-3 py-2 border rounded-lg ${
+                errors.name ? 'border-red-500' : 'border-gray-300'
+              }`}
+              required
+            />
+            {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">
+              {t('categories.subgroups.createModal.description')}
+            </label>
+            <textarea
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+              rows={3}
+            />
+          </div>
+
+          <div className="flex gap-3 pt-4">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
+            >
+              {t('categories.subgroups.createModal.cancel')}
+            </button>
+            <button
+              type="submit"
+              className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+            >
+              {t('categories.subgroups.createModal.create')}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+function EditSubgroupModal({
+  subgroup,
+  onClose,
+  onSubmit,
+}: {
+  subgroup: Subgroup;
+  onClose: () => void;
+  onSubmit: (data: UpdateSubgroupRequest) => void;
+}) {
+  const { t } = useTranslation();
+  const [formData, setFormData] = useState<UpdateSubgroupRequest>({
+    name: subgroup.name,
+    description: subgroup.description || '',
+  });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validate = (): boolean => {
+    const newErrors: Record<string, string> = {};
+    if (!formData.name.trim()) {
+      newErrors.name = t('categories.subgroups.createModal.nameRequired');
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (validate()) {
+      onSubmit({
+        ...formData,
+        description: formData.description?.trim() || undefined,
+      });
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg p-6 max-w-md w-full">
+        <h2 className="text-2xl font-bold mb-4">{t('categories.subgroups.editModal.title')}</h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium mb-1">
+              {t('categories.subgroups.createModal.name')} *
+            </label>
+            <input
+              type="text"
+              value={formData.name}
+              onChange={(e) => {
+                setFormData({ ...formData, name: e.target.value });
+                if (errors.name) setErrors({ ...errors, name: '' });
+              }}
+              className={`w-full px-3 py-2 border rounded-lg ${
+                errors.name ? 'border-red-500' : 'border-gray-300'
+              }`}
+              required
+            />
+            {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">
+              {t('categories.subgroups.createModal.description')}
+            </label>
+            <textarea
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+              rows={3}
+            />
+          </div>
+
+          <div className="flex gap-3 pt-4">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
+            >
+              {t('categories.subgroups.createModal.cancel')}
+            </button>
+            <button
+              type="submit"
+              className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+            >
+              {t('categories.subgroups.editModal.save')}
             </button>
           </div>
         </form>

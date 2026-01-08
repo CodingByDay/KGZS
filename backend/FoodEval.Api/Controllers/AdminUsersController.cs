@@ -101,4 +101,32 @@ public class AdminUsersController : ControllerBase
             return NotFound();
         }
     }
+
+    [HttpPut("{id}/profile")]
+    public async Task<ActionResult<UserDto>> UpdateUserProfile(Guid id, [FromBody] UpdateProfileRequest request, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var updated = await _service.UpdateUserProfileAsync(id, request, cancellationToken);
+            return Ok(updated);
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<ActionResult> DeleteUser(Guid id, CancellationToken cancellationToken)
+    {
+        try
+        {
+            await _service.DeleteUserAsync(id, cancellationToken);
+            return NoContent();
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
+    }
 }

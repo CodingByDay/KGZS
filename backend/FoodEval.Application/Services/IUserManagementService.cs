@@ -13,6 +13,7 @@ public interface IUserManagementService
     Task<UserDto> UpdateUserEmailAsync(Guid id, UpdateEmailRequest request, CancellationToken cancellationToken = default);
     Task UpdateUserPasswordAsync(Guid id, UpdatePasswordRequest request, CancellationToken cancellationToken = default);
     Task<UserDto> UpdateUserProfileAsync(Guid id, UpdateProfileRequest request, CancellationToken cancellationToken = default);
+    Task DeleteUserAsync(Guid id, CancellationToken cancellationToken = default);
     
     // Reviewer management
     Task<IEnumerable<ReviewerDto>> GetReviewersAsync(CancellationToken cancellationToken = default);
@@ -20,4 +21,5 @@ public interface IUserManagementService
     Task<ReviewerDto> UpdateReviewerEmailAsync(Guid id, UpdateReviewerEmailRequest request, CancellationToken cancellationToken = default);
     Task<ReviewerDto> UpdateReviewerProfileAsync(Guid id, UpdateReviewerProfileRequest request, CancellationToken cancellationToken = default);
     Task<ResetReviewerPasswordResponse> ResetReviewerPasswordAsync(Guid id, ResetReviewerPasswordRequest request, CancellationToken cancellationToken = default);
+    Task DeleteReviewerAsync(Guid id, CancellationToken cancellationToken = default);
 }

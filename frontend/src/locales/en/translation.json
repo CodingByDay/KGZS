@@ -5,7 +5,7 @@
   "nav": {
     "dashboard": "Dashboard",
     "productSamples": "Product Samples",
-    "categories": "Categories",
+    "categories": "Groups",
     "commissions": "Commissions",
     "evaluations": "Evaluations",
     "protocols": "Protocols",
@@ -76,6 +76,19 @@
       "cancel": "Cancel",
       "update": "Update"
     },
+    "editModal": {
+      "title": "Edit User",
+      "description": "Updating profile information for {{name}}",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "phoneNumber": "Phone Number",
+      "email": "Email",
+      "firstNameRequired": "First name is required",
+      "lastNameRequired": "Last name is required",
+      "emailRequired": "Email is required",
+      "cancel": "Cancel",
+      "update": "Update"
+    },
     "passwordModal": {
       "title": "Reset Password",
       "description": "Resetting password for {{name}}",
@@ -87,6 +100,12 @@
       "cancel": "Cancel",
       "reset": "Reset Password"
     },
+    "deleteModal": {
+      "title": "Delete User",
+      "description": "Are you sure you want to delete {{name}}? This action cannot be undone.",
+      "cancel": "Cancel",
+      "confirm": "Delete"
+    },
     "messages": {
       "loadError": "Failed to load system administrators",
       "createSuccess": "System administrator created successfully",
@@ -94,7 +113,11 @@
       "updateEmailSuccess": "Email updated successfully",
       "updateEmailError": "Failed to update email",
       "updatePasswordSuccess": "Password updated successfully",
-      "updatePasswordError": "Failed to update password"
+      "updatePasswordError": "Failed to update password",
+      "updateProfileSuccess": "Profile updated successfully",
+      "updateProfileError": "Failed to update profile",
+      "deleteSuccess": "User deleted successfully",
+      "deleteError": "Failed to delete user"
     }
   },
   "profile": {
@@ -168,11 +191,11 @@
   },
   "categories": {
     "title": "Food Groups",
-    "subtitle": "Categories represent different food groups for evaluation",
+    "subtitle": "Groups represent different food groups for evaluation",
     "createButton": "Create New Food Group",
     "edit": "Edit",
     "createModal": {
-      "title": "Create Food Group Category",
+      "title": "Create Food Group",
       "name": "Food Group Name",
       "nameRequired": "Food group name is required",
       "description": "Description",
@@ -187,39 +210,103 @@
       "create": "Create"
     },
     "editModal": {
-      "title": "Edit Food Group Category",
+      "title": "Edit Food Group",
       "save": "Save Changes"
     },
     "messages": {
-      "loadError": "Failed to load categories",
-      "createError": "Failed to create category",
-      "updateError": "Failed to update category"
+      "loadError": "Failed to load groups",
+      "createError": "Failed to create group",
+      "updateError": "Failed to update group",
+      "deleteError": "Failed to delete group",
+      "deleteConfirm": "Are you sure you want to delete this group?",
+      "createSuccess": "Group created successfully",
+      "noGroups": "No groups found. Create your first group."
     },
-    "messages": {
-      "createSuccess": "Category created successfully",
-      "createError": "Failed to create category",
-      "loadError": "Failed to load categories"
+    "subgroups": {
+      "title": "Subgroups",
+      "subtitle": "Manage subgroups within groups",
+      "noSubgroups": "No subgroups",
+      "addSubgroup": "Add Subgroup",
+      "createModal": {
+        "title": "Create Subgroup",
+        "name": "Subgroup Name",
+        "nameRequired": "Subgroup name is required",
+        "description": "Description",
+        "group": "Group",
+        "groupRequired": "Group is required",
+        "cancel": "Cancel",
+        "create": "Create"
+      },
+      "editModal": {
+        "title": "Edit Subgroup",
+        "save": "Save Changes"
+      },
+      "messages": {
+        "loadError": "Failed to load subgroups",
+        "createError": "Failed to create subgroup",
+        "updateError": "Failed to update subgroup",
+        "deleteError": "Failed to delete subgroup",
+        "deleteConfirm": "Are you sure you want to delete this subgroup?",
+        "createSuccess": "Subgroup created successfully",
+        "updateSuccess": "Subgroup updated successfully",
+        "deleteSuccess": "Subgroup deleted successfully"
+      }
+    },
+    "mainMember": {
+      "label": "Main Member of Group",
+      "description": "Main member of group can start evaluation if commission president is not present"
     }
   },
   "commissions": {
     "title": "Commissions",
-    "createButton": "Create New",
+    "subtitle": "Manage evaluation commissions and their members",
+    "createButton": "Create New Commission",
+    "table": {
+      "name": "Name",
+      "description": "Description",
+      "members": "Members",
+      "membersCount": "members",
+      "status": "Status",
+      "actions": "Actions",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
     "createModal": {
       "title": "Create Commission",
       "name": "Name",
       "nameRequired": "Name is required",
       "description": "Description",
-      "evaluationEvent": "Evaluation Event",
-      "evaluationEventRequired": "Evaluation event is required",
-      "category": "Category",
-      "categoryRequired": "Category is required",
+      "members": "Members",
+      "membersDescription": "Add reviewers to this commission and assign their roles",
+      "searchUsers": "Search users...",
+      "noMembers": "No members added yet",
+      "atLeastOneMember": "At least one member is required",
+      "exactlyOneMainMember": "Exactly one Main Member is required",
+      "maxOnePresident": "At most one President is allowed",
       "cancel": "Cancel",
       "create": "Create"
+    },
+    "editModal": {
+      "title": "Edit Commission",
+      "status": "Status",
+      "save": "Save Changes"
+    },
+    "roles": {
+      "MainMember": "Main Member",
+      "President": "President",
+      "Member": "Member",
+      "Trainee": "Trainee"
     },
     "messages": {
       "createSuccess": "Commission created successfully",
       "createError": "Failed to create commission",
-      "loadError": "Failed to load commissions"
+      "updateSuccess": "Commission updated successfully",
+      "updateError": "Failed to update commission",
+      "deleteSuccess": "Commission deleted successfully",
+      "deleteError": "Failed to delete commission",
+      "deleteConfirm": "Are you sure you want to delete this commission?",
+      "loadError": "Failed to load commissions",
+      "noCommissions": "No commissions found. Create your first commission."
     }
   },
   "dashboard": {
@@ -228,7 +315,7 @@
     "statistics": {
       "title": "System Statistics",
       "evaluations": "Evaluation Events",
-      "categories": "Categories",
+      "categories": "Groups",
       "productSamples": "Product Samples",
       "commissions": "Commissions",
       "protocols": "Protocols"
@@ -254,31 +341,38 @@
     "table": {
       "name": "Name",
       "email": "Email",
-      "reviewerType": "Reviewer Type",
+      "phoneNumber": "Phone Number",
       "status": "Status",
       "createdAt": "Created",
       "actions": "Actions",
       "noData": "No reviewers found"
     },
-    "reviewerTypes": {
-      "CommissionChair": "Commission Chair",
-      "CommissionMember": "Commission Member",
-      "CommissionTrainee": "Trainee"
-    },
     "createModal": {
       "title": "Create Commission User",
-      "email": "Email",
-      "password": "Password",
       "firstName": "First Name",
       "lastName": "Last Name",
-      "reviewerType": "Reviewer Type",
-      "reviewerTypeRequired": "Reviewer type is required",
+      "phoneNumber": "Phone Number",
+      "email": "Email",
+      "password": "Password",
       "emailRequired": "Email is required",
       "passwordRequired": "Password must be at least 6 characters",
       "firstNameRequired": "First name is required",
       "lastNameRequired": "Last name is required",
       "cancel": "Cancel",
       "create": "Create"
+    },
+    "editModal": {
+      "title": "Edit Reviewer",
+      "description": "Updating information for {{name}}",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "phoneNumber": "Phone Number",
+      "email": "Email",
+      "firstNameRequired": "First name is required",
+      "lastNameRequired": "Last name is required",
+      "emailRequired": "Email is required",
+      "cancel": "Cancel",
+      "save": "Save Changes"
     },
     "emailModal": {
       "title": "Change Email",
@@ -298,27 +392,28 @@
       "temporaryPassword": "Temporary Password",
       "temporaryPasswordWarning": "This password will only be shown once. Please save it securely.",
       "copyPassword": "Copy Password",
+      "copied": "Copied",
       "cancel": "Cancel",
       "reset": "Reset Password"
     },
-    "typeModal": {
-      "title": "Change Reviewer Type",
-      "description": "Updating reviewer type for {{name}}",
-      "reviewerType": "Reviewer Type",
-      "reviewerTypeRequired": "Reviewer type is required",
+    "deleteModal": {
+      "title": "Delete Reviewer",
+      "description": "Are you sure you want to delete {{name}}? This action cannot be undone.",
       "cancel": "Cancel",
-      "update": "Update"
+      "confirm": "Delete"
     },
     "messages": {
       "loadError": "Failed to load reviewers",
       "createSuccess": "Reviewer created successfully",
       "createError": "Failed to create reviewer",
+      "updateProfileSuccess": "Reviewer updated successfully",
+      "updateProfileError": "Failed to update reviewer",
       "updateEmailSuccess": "Email updated successfully",
       "updateEmailError": "Failed to update email",
       "updatePasswordSuccess": "Password updated successfully",
       "updatePasswordError": "Failed to update password",
-      "updateTypeSuccess": "Reviewer type updated successfully",
-      "updateTypeError": "Failed to update reviewer type"
+      "deleteSuccess": "Reviewer deleted successfully",
+      "deleteError": "Failed to delete reviewer"
     }
   },
   "common": {
@@ -326,7 +421,12 @@
     "cancel": "Cancel",
     "save": "Save",
     "active": "Active",
-    "inactive": "Inactive"
+    "inactive": "Inactive",
+    "none": "None",
+    "select": "Select...",
+    "delete": "Delete",
+    "actions": "Actions",
+    "optional": "optional"
   },
   "language": {
     "sl": "Slovenian",

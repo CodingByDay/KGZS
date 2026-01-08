@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { AppShell } from '@/app/components/AppShell';
-import { superAdminService, SuperAdminDto, CreateSuperAdminRequest, UpdateEmailRequest, UpdatePasswordRequest } from '@/application/services/SuperAdminService';
+import { superAdminService, SuperAdminDto, CreateSuperAdminRequest, UpdateEmailRequest, UpdatePasswordRequest, UpdateProfileRequest } from '@/application/services/SuperAdminService';
 import { ApiError } from '@/infrastructure/api/apiClient';
 import { useTranslation } from 'react-i18next';
+import { HiPencil, HiTrash, HiKey } from 'react-icons/hi2';
 
 interface Toast {
   id: number;
@@ -17,8 +18,9 @@ export function SuperAdminsPage() {
   const [error, setError] = useState('');
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState<SuperAdminDto | null>(null);
 
   useEffect(() => {
@@ -58,17 +60,22 @@ export function SuperAdminsPage() {
     }
   };
 
-  const handleUpdateEmail = async (data: UpdateEmailRequest) => {
+  const handleUpdateProfile = async (data: UpdateProfileRequest & UpdateEmailRequest) => {
     if (!selectedUser) return;
     try {
-      await superAdminService.updateUserEmail(selectedUser.id, data);
-      setShowEmailModal(false);
+      await superAdminService.updateUserProfile(selectedUser.id, {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        phoneNumber: data.phoneNumber,
+      });
+      await superAdminService.updateUserEmail(selectedUser.id, { email: data.email });
+      setShowEditModal(false);
       setSelectedUser(null);
       await loadSuperAdmins();
-      addToast('success', t('superAdmin.messages.updateEmailSuccess'));
+      addToast('success', t('superAdmin.messages.updateProfileSuccess'));
     } catch (err) {
       const apiError = err as ApiError;
-      addToast('error', apiError.message || t('superAdmin.messages.updateEmailError'));
+      addToast('error', apiError.message || t('superAdmin.messages.updateProfileError'));
     }
   };
 
@@ -85,10 +92,24 @@ export function SuperAdminsPage() {
     }
   };
 
+  const handleDelete = async () => {
+    if (!selectedUser) return;
+    try {
+      await superAdminService.deleteUser(selectedUser.id);
+      setShowDeleteModal(false);
+      setSelectedUser(null);
+      await loadSuperAdmins();
+      addToast('success', t('superAdmin.messages.deleteSuccess'));
+    } catch (err) {
+      const apiError = err as ApiError;
+      addToast('error', apiError.message || t('superAdmin.messages.deleteError'));
+    }
+  };
+
   if (loading) {
     return (
       <AppShell>
-          <div className="flex items-center justify-center h-64">
+        <div className="flex items-center justify-center h-64">
           <div className="text-gray-500">{t('common.loading')}</div>
         </div>
       </AppShell>
@@ -172,24 +193,38 @@ export function SuperAdminsPage() {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <button
-                        onClick={() => {
-                          setSelectedUser(admin);
-                          setShowEmailModal(true);
-                        }}
-                        className="text-blue-600 hover:text-blue-900 mr-4"
-                      >
-                        {t('superAdmin.emailModal.title')}
-                      </button>
-                      <button
-                        onClick={() => {
-                          setSelectedUser(admin);
-                          setShowPasswordModal(true);
-                        }}
-                        className="text-orange-600 hover:text-orange-900"
-                      >
-                        {t('superAdmin.passwordModal.title')}
-                      </button>
+                      <div className="flex items-center gap-3">
+                        <button
+                          onClick={() => {
+                            setSelectedUser(admin);
+                            setShowEditModal(true);
+                          }}
+                          className="p-2 text-blue-600 hover:text-blue-900 hover:bg-blue-50 rounded transition-colors"
+                          title={t('superAdmin.editModal.title')}
+                        >
+                          <HiPencil className="w-5 h-5" />
+                        </button>
+                        <button
+                          onClick={() => {
+                            setSelectedUser(admin);
+                            setShowPasswordModal(true);
+                          }}
+                          className="p-2 text-orange-600 hover:text-orange-900 hover:bg-orange-50 rounded transition-colors"
+                          title={t('superAdmin.passwordModal.title')}
+                        >
+                          <HiKey className="w-5 h-5" />
+                        </button>
+                        <button
+                          onClick={() => {
+                            setSelectedUser(admin);
+                            setShowDeleteModal(true);
+                          }}
+                          className="p-2 text-red-600 hover:text-red-900 hover:bg-red-50 rounded transition-colors"
+                          title={t('superAdmin.deleteModal.title')}
+                        >
+                          <HiTrash className="w-5 h-5" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -206,15 +241,15 @@ export function SuperAdminsPage() {
           />
         )}
 
-        {/* Email Modal */}
-        {showEmailModal && selectedUser && (
-          <UpdateEmailModal
+        {/* Edit Modal */}
+        {showEditModal && selectedUser && (
+          <UpdateProfileModal
             user={selectedUser}
             onClose={() => {
-              setShowEmailModal(false);
+              setShowEditModal(false);
               setSelectedUser(null);
             }}
-            onSubmit={handleUpdateEmail}
+            onSubmit={handleUpdateProfile}
           />
         )}
 
@@ -227,6 +262,18 @@ export function SuperAdminsPage() {
               setSelectedUser(null);
             }}
             onSubmit={handleUpdatePassword}
+          />
+        )}
+
+        {/* Delete Modal */}
+        {showDeleteModal && selectedUser && (
+          <DeleteModal
+            user={selectedUser}
+            onClose={() => {
+              setShowDeleteModal(false);
+              setSelectedUser(null);
+            }}
+            onConfirm={handleDelete}
           />
         )}
       </div>
@@ -274,30 +321,6 @@ function CreateSuperAdminModal({
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              {t('superAdmin.createModal.email')}
-            </label>
-            <input
-              type="email"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-            />
-            {errors.email && <p className="text-red-600 text-sm mt-1">{errors.email}</p>}
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              {t('superAdmin.createModal.password')}
-            </label>
-            <input
-              type="password"
-              value={formData.password}
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-            />
-            {errors.password && <p className="text-red-600 text-sm mt-1">{errors.password}</p>}
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
               {t('superAdmin.createModal.firstName')}
             </label>
             <input
@@ -320,13 +343,37 @@ function CreateSuperAdminModal({
             />
             {errors.lastName && <p className="text-red-600 text-sm mt-1">{errors.lastName}</p>}
           </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              {t('superAdmin.createModal.email')}
+            </label>
+            <input
+              type="email"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+            />
+            {errors.email && <p className="text-red-600 text-sm mt-1">{errors.email}</p>}
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              {t('superAdmin.createModal.password')}
+            </label>
+            <input
+              type="password"
+              value={formData.password}
+              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+            />
+            {errors.password && <p className="text-red-600 text-sm mt-1">{errors.password}</p>}
+          </div>
           <div className="flex justify-end space-x-3 mt-6">
             <button
               type="button"
               onClick={onClose}
               className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
-              >
-                {t('superAdmin.createModal.cancel')}
+            >
+              {t('superAdmin.createModal.cancel')}
             </button>
             <button
               type="submit"
@@ -341,64 +388,124 @@ function CreateSuperAdminModal({
   );
 }
 
-function UpdateEmailModal({
+function UpdateProfileModal({
   user,
   onClose,
   onSubmit,
 }: {
   user: SuperAdminDto;
   onClose: () => void;
-  onSubmit: (data: UpdateEmailRequest) => void;
+  onSubmit: (data: UpdateProfileRequest & UpdateEmailRequest) => void;
 }) {
   const { t } = useTranslation();
-  const [email, setEmail] = useState(user.email);
-  const [error, setError] = useState('');
+  const [formData, setFormData] = useState({
+    firstName: user.firstName,
+    lastName: user.lastName,
+    email: user.email,
+    phoneNumber: '',
+  });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validate = (): boolean => {
+    const newErrors: Record<string, string> = {};
+    if (!formData.firstName) newErrors.firstName = t('superAdmin.editModal.firstNameRequired');
+    if (!formData.lastName) newErrors.lastName = t('superAdmin.editModal.lastNameRequired');
+    if (!formData.email) newErrors.email = t('superAdmin.editModal.emailRequired');
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) {
-      setError(t('superAdmin.emailModal.emailRequired'));
-      return;
+    if (validate()) {
+      onSubmit({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phoneNumber: formData.phoneNumber || undefined,
+      });
     }
-    onSubmit({ email });
   };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-4">{t('superAdmin.emailModal.title')}</h2>
+        <h2 className="text-2xl font-bold mb-4">{t('superAdmin.editModal.title')}</h2>
         <p className="text-sm text-gray-600 mb-4">
-          {t('superAdmin.emailModal.description', { name: `${user.firstName} ${user.lastName}` })}
+          {t('superAdmin.editModal.description', { name: `${user.firstName} ${user.lastName}` })}
         </p>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              {t('superAdmin.emailModal.newEmail')}
+              {t('superAdmin.editModal.firstName')}
             </label>
             <input
-              type="email"
-              value={email}
+              type="text"
+              value={formData.firstName}
               onChange={(e) => {
-                setEmail(e.target.value);
-                setError('');
+                setFormData({ ...formData, firstName: e.target.value });
+                setErrors({ ...errors, firstName: '' });
               }}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
             />
-            {error && <p className="text-red-600 text-sm mt-1">{error}</p>}
+            {errors.firstName && <p className="text-red-600 text-sm mt-1">{errors.firstName}</p>}
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              {t('superAdmin.editModal.lastName')}
+            </label>
+            <input
+              type="text"
+              value={formData.lastName}
+              onChange={(e) => {
+                setFormData({ ...formData, lastName: e.target.value });
+                setErrors({ ...errors, lastName: '' });
+              }}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+            />
+            {errors.lastName && <p className="text-red-600 text-sm mt-1">{errors.lastName}</p>}
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              {t('superAdmin.editModal.phoneNumber')} <span className="text-gray-500 text-xs">({t('common.optional')})</span>
+            </label>
+            <input
+              type="tel"
+              value={formData.phoneNumber}
+              onChange={(e) => {
+                setFormData({ ...formData, phoneNumber: e.target.value });
+              }}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              {t('superAdmin.editModal.email')}
+            </label>
+            <input
+              type="email"
+              value={formData.email}
+              onChange={(e) => {
+                setFormData({ ...formData, email: e.target.value });
+                setErrors({ ...errors, email: '' });
+              }}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+            />
+            {errors.email && <p className="text-red-600 text-sm mt-1">{errors.email}</p>}
           </div>
           <div className="flex justify-end space-x-3 mt-6">
             <button
               type="button"
               onClick={onClose}
               className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
-              >
-                {t('superAdmin.emailModal.cancel')}
+            >
+              {t('superAdmin.editModal.cancel')}
             </button>
             <button
               type="submit"
               className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
             >
-              {t('superAdmin.emailModal.update')}
+              {t('superAdmin.editModal.update')}
             </button>
           </div>
         </form>
@@ -480,8 +587,8 @@ function UpdatePasswordModal({
               type="button"
               onClick={onClose}
               className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
-              >
-                {t('superAdmin.passwordModal.cancel')}
+            >
+              {t('superAdmin.passwordModal.cancel')}
             </button>
             <button
               type="submit"
@@ -491,6 +598,45 @@ function UpdatePasswordModal({
             </button>
           </div>
         </form>
+      </div>
+    </div>
+  );
+}
+
+function DeleteModal({
+  user,
+  onClose,
+  onConfirm,
+}: {
+  user: SuperAdminDto;
+  onClose: () => void;
+  onConfirm: () => void;
+}) {
+  const { t } = useTranslation();
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg p-6 w-full max-w-md">
+        <h2 className="text-2xl font-bold mb-4 text-red-600">{t('superAdmin.deleteModal.title')}</h2>
+        <p className="text-sm text-gray-600 mb-4">
+          {t('superAdmin.deleteModal.description', { name: `${user.firstName} ${user.lastName}` })}
+        </p>
+        <div className="flex justify-end space-x-3 mt-6">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+          >
+            {t('superAdmin.deleteModal.cancel')}
+          </button>
+          <button
+            type="button"
+            onClick={onConfirm}
+            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+          >
+            {t('superAdmin.deleteModal.confirm')}
+          </button>
+        </div>
       </div>
     </div>
   );
