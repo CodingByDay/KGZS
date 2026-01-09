@@ -19,6 +19,9 @@ import { ProfilePage } from '@/pages/ProfilePage';
 import { RegisterFarmPage } from '@/pages/RegisterFarmPage';
 import { ForbiddenPage } from '@/pages/ForbiddenPage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
+import { PrijavePage } from '@/pages/PrijavePage';
+import { PrijavaDetailPage } from '@/pages/PrijavaDetailPage';
+import { AdminPrijavePage } from '@/pages/AdminPrijavePage';
 import { ProtectedRoute } from '@/app/components/ProtectedRoute';
 import { RoleProtectedRoute } from '@/app/components/RoleProtectedRoute';
 import { UserType } from '@/domain/enums/UserType';
@@ -39,6 +42,22 @@ export function AppRouter() {
         />
         <Route
           path="/app/productsamples"
+          element={
+            <ProtectedRoute>
+              <ProductSamplesPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/app/productsamples/new"
+          element={
+            <ProtectedRoute>
+              <ProductSamplesPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/app/productsamples/:id"
           element={
             <ProtectedRoute>
               <ProductSamplesPage />
@@ -110,10 +129,42 @@ export function AppRouter() {
           }
         />
         <Route
+          path="/app/prijave"
+          element={
+            <ProtectedRoute>
+              <PrijavePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/app/prijave/new"
+          element={
+            <ProtectedRoute>
+              <PrijavaDetailPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/app/prijave/:id"
+          element={
+            <ProtectedRoute>
+              <PrijavaDetailPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/app/admin"
           element={
             <ProtectedRoute>
               <AdminPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/app/admin/prijave"
+          element={
+            <ProtectedRoute>
+              <AdminPrijavePage />
             </ProtectedRoute>
           }
         />

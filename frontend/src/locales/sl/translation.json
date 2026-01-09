@@ -11,6 +11,7 @@
     "protocols": "Zapisniki",
     "payments": "Plačila",
     "products": "Izdelki",
+    "prijave": "Prijave",
     "kmetije": "Kmetije",
     "admin": "Admin",
     "profile": "Profil",
@@ -574,6 +575,77 @@
       "deleteError": "Napaka pri brisanju ocenjevalca"
     }
   },
+  "prijave": {
+    "pageTitle": "Prijave",
+    "pageSubtitle": "Upravljajte svoje prijave",
+    "addButton": "Nova prijava",
+    "createTitle": "Nova prijava",
+    "editTitle": "Uredi prijavo",
+    "details": "Podrobnosti",
+    "edit": "Uredi",
+    "pay": "Plačaj",
+    "table": {
+      "item": "Izdelek",
+      "dueDate": "Rok ocenjevanja",
+      "status": "Status",
+      "paymentMethod": "Način plačila",
+      "paymentStatus": "Status plačila",
+      "createdAt": "Ustvarjeno",
+      "organization": "Organizacija",
+      "fromDate": "Od datuma",
+      "toDate": "Do datuma"
+    },
+    "form": {
+      "item": "Izdelek",
+      "reviewDueDate": "Rok ocenjevanja"
+    },
+    "status": {
+      "label": "Status",
+      "pendingPayment": "Čaka na plačilo",
+      "pendingAdminConfirmation": "Čaka na potrditev",
+      "pendingReview": "Čaka na ocenjevanje",
+      "rejected": "Zavrnjeno",
+      "cancelled": "Preklicano"
+    },
+    "payment": {
+      "title": "Plačilo",
+      "description": "Izberite način plačila:",
+      "stripe": "Stripe",
+      "card": "Kartično plačilo",
+      "bankTransfer": "Nakazilo",
+      "bankTransferInstructions": "Navodila za nakazilo",
+      "iban": "IBAN",
+      "reference": "Referenca",
+      "recipient": "Prejemnik",
+      "amount": "Znesek",
+      "uploadReceipt": "Naloži potrdilo",
+      "receipt": "Potrdilo",
+      "viewReceipt": "Prikaži potrdilo"
+    },
+    "admin": {
+      "pageTitle": "Upravljanje prijav",
+      "pageSubtitle": "Pregled in potrditev plačil",
+      "confirmPayment": "Potrdi plačilo",
+      "rejectPayment": "Zavrni plačilo",
+      "confirm": "Potrdi",
+      "reject": "Zavrni",
+      "notes": "Opombe (neobvezno)",
+      "reason": "Razlog"
+    },
+    "deleteModal": {
+      "title": "Izbriši prijavo",
+      "description": "Ali ste prepričani, da želite izbrisati prijavo za {{itemName}}? To dejanje ni mogoče razveljaviti."
+    },
+    "messages": {
+      "loadError": "Napaka pri nalaganju prijav",
+      "createSuccess": "Prijava uspešno ustvarjena",
+      "updateSuccess": "Prijava uspešno posodobljena",
+      "saveError": "Napaka pri shranjevanju prijave",
+      "deleteSuccess": "Prijava uspešno izbrisana",
+      "deleteError": "Napaka pri brisanju prijave",
+      "receiptUploaded": "Potrdilo uspešno naloženo"
+    }
+  },
   "common": {
     "loading": "Nalaganje...",
     "cancel": "Prekliči",
@@ -592,6 +664,9 @@
     "all": "Vsi",
     "noResults": "Ni rezultatov",
     "uploading": "Nalaganje...",
+    "upload": "Naloži",
+    "view": "Prikaži",
+    "close": "Zapri",
     "placeholders": {
       "name": "Vnesite ime",
       "email": "Vnesite e-pošto",

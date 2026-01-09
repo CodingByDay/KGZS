@@ -34,6 +34,8 @@ public class FoodEvalDbContext : DbContext
     public DbSet<User> Users { get; set; }
     public DbSet<Organization> Organizations { get; set; }
     public DbSet<RefreshToken> RefreshTokens { get; set; }
+    public DbSet<Prijava> Prijave { get; set; }
+    public DbSet<PrijavaPayment> PrijavaPayments { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -98,6 +100,37 @@ public class FoodEvalDbContext : DbContext
             .HasOne(p => p.Subcategory)
             .WithMany()
             .HasForeignKey(p => p.SubcategoryId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // PrijavaPayment: Money precision
+        modelBuilder.Entity<PrijavaPayment>()
+            .Property(x => x.Amount)
+            .HasPrecision(18, 2);
+
+        // Prijava: Foreign key relationships
+        modelBuilder.Entity<Prijava>()
+            .HasOne(p => p.Organization)
+            .WithMany()
+            .HasForeignKey(p => p.OrganizationId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Prijava>()
+            .HasOne(p => p.Item)
+            .WithMany()
+            .HasForeignKey(p => p.ItemId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // PrijavaPayment: Foreign key relationships
+        modelBuilder.Entity<PrijavaPayment>()
+            .HasOne(pp => pp.Prijava)
+            .WithMany()
+            .HasForeignKey(pp => pp.PrijavaId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<PrijavaPayment>()
+            .HasOne(pp => pp.AdminConfirmedByUser)
+            .WithMany()
+            .HasForeignKey(pp => pp.AdminConfirmedByUserId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 

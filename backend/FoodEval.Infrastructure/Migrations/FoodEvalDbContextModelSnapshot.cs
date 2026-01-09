@@ -604,6 +604,94 @@ namespace FoodEval.Infrastructure.Migrations
                     b.ToTable("Payments");
                 });
 
+            modelBuilder.Entity("FoodEval.Domain.Entities.Prijava", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("ItemId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("OrganizationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("ReviewDueDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ItemId");
+
+                    b.HasIndex("OrganizationId");
+
+                    b.ToTable("Prijave");
+                });
+
+            modelBuilder.Entity("FoodEval.Domain.Entities.PrijavaPayment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("AdminConfirmedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid?>("AdminConfirmedByUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal?>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("BankTransferReceiptUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Currency")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PaymentIntentId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PaymentMethod")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PaymentStatus")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("PrijavaId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ProviderSessionId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AdminConfirmedByUserId");
+
+                    b.HasIndex("PrijavaId");
+
+                    b.ToTable("PrijavaPayments");
+                });
+
             modelBuilder.Entity("FoodEval.Domain.Entities.Product", b =>
                 {
                     b.Property<Guid>("Id")
@@ -960,6 +1048,43 @@ namespace FoodEval.Infrastructure.Migrations
                         .HasForeignKey("CommissionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("FoodEval.Domain.Entities.Prijava", b =>
+                {
+                    b.HasOne("FoodEval.Domain.Entities.Product", "Item")
+                        .WithMany()
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("FoodEval.Domain.Entities.Organization", "Organization")
+                        .WithMany()
+                        .HasForeignKey("OrganizationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Item");
+
+                    b.Navigation("Organization");
+                });
+
+            modelBuilder.Entity("FoodEval.Domain.Entities.PrijavaPayment", b =>
+                {
+                    b.HasOne("FoodEval.Domain.Entities.User", "AdminConfirmedByUser")
+                        .WithMany()
+                        .HasForeignKey("AdminConfirmedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("FoodEval.Domain.Entities.Prijava", "Prijava")
+                        .WithMany()
+                        .HasForeignKey("PrijavaId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("AdminConfirmedByUser");
+
+                    b.Navigation("Prijava");
                 });
 
             modelBuilder.Entity("FoodEval.Domain.Entities.Product", b =>

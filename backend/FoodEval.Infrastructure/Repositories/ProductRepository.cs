@@ -60,7 +60,7 @@ public class ProductRepository : IProductRepository
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<IEnumerable<Product>> SearchByOrganizationIdAsync(Guid organizationId, string? searchTerm, Guid? categoryId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<Product>> SearchByOrganizationIdAsync(Guid organizationId, string? searchTerm, Guid? categoryId, Guid? subcategoryId, CancellationToken cancellationToken = default)
     {
         var query = _dbContext.Products
             .Include(p => p.Organization)
@@ -79,6 +79,11 @@ public class ProductRepository : IProductRepository
         if (categoryId.HasValue)
         {
             query = query.Where(p => p.CategoryId == categoryId.Value);
+        }
+
+        if (subcategoryId.HasValue)
+        {
+            query = query.Where(p => p.SubcategoryId == subcategoryId.Value);
         }
 
         return await query

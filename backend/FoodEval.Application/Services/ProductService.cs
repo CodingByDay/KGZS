@@ -31,9 +31,9 @@ public class ProductService : IProductService
         return MapToDto(product);
     }
 
-    public async Task<IEnumerable<ProductDto>> GetByOrganizationIdAsync(Guid organizationId, string? searchTerm, Guid? categoryId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<ProductDto>> GetByOrganizationIdAsync(Guid organizationId, string? searchTerm, Guid? categoryId, Guid? subcategoryId, CancellationToken cancellationToken = default)
     {
-        var products = await _productRepository.SearchByOrganizationIdAsync(organizationId, searchTerm, categoryId, cancellationToken);
+        var products = await _productRepository.SearchByOrganizationIdAsync(organizationId, searchTerm, categoryId, subcategoryId, cancellationToken);
         return products.Select(MapToDto);
     }
 

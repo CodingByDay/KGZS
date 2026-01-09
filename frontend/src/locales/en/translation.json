@@ -11,6 +11,7 @@
     "protocols": "Protocols",
     "payments": "Payments",
     "products": "Products",
+    "prijave": "Applications",
     "kmetije": "Farms",
     "admin": "Admin",
     "profile": "Profile",
@@ -494,6 +495,77 @@
       "deleteError": "Failed to delete reviewer"
     }
   },
+  "prijave": {
+    "pageTitle": "Applications",
+    "pageSubtitle": "Manage your applications",
+    "addButton": "New Application",
+    "createTitle": "New Application",
+    "editTitle": "Edit Application",
+    "details": "Details",
+    "edit": "Edit",
+    "pay": "Pay",
+    "table": {
+      "item": "Item",
+      "dueDate": "Review Due Date",
+      "status": "Status",
+      "paymentMethod": "Payment Method",
+      "paymentStatus": "Payment Status",
+      "createdAt": "Created",
+      "organization": "Organization",
+      "fromDate": "From Date",
+      "toDate": "To Date"
+    },
+    "form": {
+      "item": "Item",
+      "reviewDueDate": "Review Due Date"
+    },
+    "status": {
+      "label": "Status",
+      "pendingPayment": "Pending Payment",
+      "pendingAdminConfirmation": "Pending Admin Confirmation",
+      "pendingReview": "Pending Review",
+      "rejected": "Rejected",
+      "cancelled": "Cancelled"
+    },
+    "payment": {
+      "title": "Payment",
+      "description": "Choose a payment method:",
+      "stripe": "Stripe",
+      "card": "Card Payment",
+      "bankTransfer": "Bank Transfer",
+      "bankTransferInstructions": "Bank Transfer Instructions",
+      "iban": "IBAN",
+      "reference": "Reference",
+      "recipient": "Recipient",
+      "amount": "Amount",
+      "uploadReceipt": "Upload Receipt",
+      "receipt": "Receipt",
+      "viewReceipt": "View Receipt"
+    },
+    "admin": {
+      "pageTitle": "Applications Management",
+      "pageSubtitle": "Review and confirm payments",
+      "confirmPayment": "Confirm Payment",
+      "rejectPayment": "Reject Payment",
+      "confirm": "Confirm",
+      "reject": "Reject",
+      "notes": "Notes (optional)",
+      "reason": "Reason"
+    },
+    "deleteModal": {
+      "title": "Delete Application",
+      "description": "Are you sure you want to delete the application for {{itemName}}? This action cannot be undone."
+    },
+    "messages": {
+      "loadError": "Failed to load applications",
+      "createSuccess": "Application created successfully",
+      "updateSuccess": "Application updated successfully",
+      "saveError": "Failed to save application",
+      "deleteSuccess": "Application deleted successfully",
+      "deleteError": "Failed to delete application",
+      "receiptUploaded": "Receipt uploaded successfully"
+    }
+  },
   "common": {
     "loading": "Loading...",
     "cancel": "Cancel",
@@ -512,6 +584,9 @@
     "all": "All",
     "noResults": "No results found",
     "uploading": "Uploading...",
+    "upload": "Upload",
+    "view": "View",
+    "close": "Close",
     "placeholders": {
       "name": "Enter name",
       "email": "Enter email",

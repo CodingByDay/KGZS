@@ -127,7 +127,17 @@ export function AppShell({ children }: AppShellProps) {
     });
   };
 
-  const isActive = (path: string) => location.pathname.startsWith(path);
+  const isActive = (path: string) => {
+    const currentPath = location.pathname;
+    // Exact match for products and prijave to avoid false positives
+    if (path === '/app/products') {
+      return currentPath === '/app/products' || (currentPath.startsWith('/app/products/') && !currentPath.startsWith('/app/prijave'));
+    }
+    if (path === '/app/prijave') {
+      return currentPath === '/app/prijave' || currentPath.startsWith('/app/prijave/');
+    }
+    return currentPath.startsWith(path);
+  };
 
   const changeLanguage = (lang: 'sl' | 'en') => {
     i18n.changeLanguage(lang);
@@ -171,13 +181,24 @@ export function AppShell({ children }: AppShellProps) {
                 <Link
                   to="/app/products"
                   className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all ${
-                    isActive('/app/products') 
+                    isActive('/app/products')
                       ? 'bg-blue-700 text-white shadow-md' 
                       : 'text-blue-100 hover:bg-blue-700/50 hover:text-white'
                   }`}
                 >
                   <HiArchiveBox className="w-5 h-5" />
                   <span className="font-medium">{t('nav.products')}</span>
+                </Link>
+                <Link
+                  to="/app/prijave"
+                  className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all ${
+                    isActive('/app/prijave')
+                      ? 'bg-blue-700 text-white shadow-md' 
+                      : 'text-blue-100 hover:bg-blue-700/50 hover:text-white'
+                  }`}
+                >
+                  <HiDocumentText className="w-5 h-5" />
+                  <span className="font-medium">{t('nav.prijave') || 'Prijave'}</span>
                 </Link>
                 <Link
                   to="/app/evaluations"
@@ -294,6 +315,17 @@ export function AppShell({ children }: AppShellProps) {
                     >
                       <HiBuildingOffice className="w-5 h-5" />
                       <span className="font-medium">{t('nav.kmetije')}</span>
+                    </Link>
+                    <Link
+                      to="/app/admin/prijave"
+                      className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all ${
+                        isActive('/app/admin/prijave') 
+                          ? 'bg-blue-700 text-white shadow-md' 
+                          : 'text-blue-100 hover:bg-blue-700/50 hover:text-white'
+                      }`}
+                    >
+                      <HiDocumentText className="w-5 h-5" />
+                      <span className="font-medium">{t('nav.prijave') || 'Prijave'}</span>
                     </Link>
                     <Link
                       to="/app/admin"

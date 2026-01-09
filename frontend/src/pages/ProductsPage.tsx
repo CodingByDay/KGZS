@@ -505,9 +505,11 @@ function CreateProductModal({
       onSubmit({
         name: formData.name.trim(),
         categoryId: formData.categoryId,
+        subcategoryId: formData.subcategoryId || undefined,
         description: formData.description?.trim() || undefined,
         unit: formData.unit?.trim() || undefined,
-      });
+        imageUrl: formData.imageUrl || undefined,
+      }, imageFile || undefined);
     }
   };
 

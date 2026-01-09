@@ -23,6 +23,7 @@ public class OrgProductsController : ControllerBase
     public async Task<ActionResult<IEnumerable<ProductDto>>> GetProducts(
         [FromQuery] string? search,
         [FromQuery] Guid? categoryId,
+        [FromQuery] Guid? subcategoryId,
         CancellationToken cancellationToken)
     {
         var organizationIdClaim = User.FindFirst("OrganizationId")?.Value;
@@ -30,7 +31,7 @@ public class OrgProductsController : ControllerBase
         if (organizationIdClaim == null || !Guid.TryParse(organizationIdClaim, out var organizationId))
             return BadRequest(new { message = "User does not belong to an organization" });
 
-        var products = await _productService.GetByOrganizationIdAsync(organizationId, search, categoryId, cancellationToken);
+        var products = await _productService.GetByOrganizationIdAsync(organizationId, search, categoryId, subcategoryId, cancellationToken);
         return Ok(products);
     }
 
