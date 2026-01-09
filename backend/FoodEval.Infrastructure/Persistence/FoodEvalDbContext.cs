@@ -26,6 +26,7 @@ public class FoodEvalDbContext : DbContext
     public DbSet<ExpertEvaluation> ExpertEvaluations { get; set; }
     public DbSet<Notification> Notifications { get; set; }
     public DbSet<Payment> Payments { get; set; }
+    public DbSet<Product> Products { get; set; }
     public DbSet<ProductSample> ProductSamples { get; set; }
     public DbSet<Protocol> Protocols { get; set; }
     public DbSet<ScoringPolicy> ScoringPolicies { get; set; }
@@ -74,6 +75,30 @@ public class FoodEvalDbContext : DbContext
             .HasIndex(o => o.MidNumber)
             .IsUnique()
             .HasFilter("[IsActive] = 1");
+
+        // Product: Unique name per organization (optional business rule - can be removed if names can repeat)
+        modelBuilder.Entity<Product>()
+            .HasIndex(p => new { p.OrganizationId, p.Name })
+            .IsUnique();
+
+        // Product: Foreign key relationships
+        modelBuilder.Entity<Product>()
+            .HasOne(p => p.Organization)
+            .WithMany()
+            .HasForeignKey(p => p.OrganizationId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Product>()
+            .HasOne(p => p.Category)
+            .WithMany()
+            .HasForeignKey(p => p.CategoryId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Product>()
+            .HasOne(p => p.Subcategory)
+            .WithMany()
+            .HasForeignKey(p => p.SubcategoryId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 
 }

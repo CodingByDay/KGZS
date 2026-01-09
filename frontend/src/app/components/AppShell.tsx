@@ -18,7 +18,8 @@ import {
   HiDocumentText,
   HiShieldCheck,
   HiBuildingOffice,
-  HiBanknotes
+  HiBanknotes,
+  HiArchiveBox
 } from 'react-icons/hi2';
 import SI from 'country-flag-icons/react/3x2/SI';
 import GB from 'country-flag-icons/react/3x2/GB';
@@ -166,6 +167,17 @@ export function AppShell({ children }: AppShellProps) {
                 >
                   <HiCube className="w-5 h-5" />
                   <span className="font-medium">{t('nav.productSamples')}</span>
+                </Link>
+                <Link
+                  to="/app/products"
+                  className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all ${
+                    isActive('/app/products') 
+                      ? 'bg-blue-700 text-white shadow-md' 
+                      : 'text-blue-100 hover:bg-blue-700/50 hover:text-white'
+                  }`}
+                >
+                  <HiArchiveBox className="w-5 h-5" />
+                  <span className="font-medium">{t('nav.products')}</span>
                 </Link>
                 <Link
                   to="/app/evaluations"

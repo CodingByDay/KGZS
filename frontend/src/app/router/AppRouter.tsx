@@ -9,6 +9,7 @@ import { EvaluationsPage } from '@/pages/EvaluationsPage';
 import { EvaluationDetailPage } from '@/pages/EvaluationDetailPage';
 import { ProtocolsPage } from '@/pages/ProtocolsPage';
 import { PaymentsPage } from '@/pages/PaymentsPage';
+import { ProductsPage } from '@/pages/ProductsPage';
 import { AdminPage } from '@/pages/AdminPage';
 import { UsersManagementPage } from '@/pages/UsersManagementPage';
 import { SuperAdminsPage } from '@/pages/SuperAdminsPage';
@@ -97,6 +98,14 @@ export function AppRouter() {
           element={
             <ProtectedRoute>
               <PaymentsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/app/products"
+          element={
+            <ProtectedRoute>
+              <ProductsPage />
             </ProtectedRoute>
           }
         />

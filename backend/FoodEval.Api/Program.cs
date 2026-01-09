@@ -127,6 +127,7 @@ builder.Services.AddScoped<IExpertEvaluationService, ExpertEvaluationService>();
 builder.Services.AddScoped<IEvaluationNotificationService, EvaluationNotificationService>();
 builder.Services.AddScoped<IUserManagementService, UserManagementService>();
 builder.Services.AddScoped<IOrganizationService, OrganizationService>();
+builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 // Repositories
@@ -143,6 +144,7 @@ builder.Services.AddScoped<IEvaluationSessionRepository, EvaluationSessionReposi
 builder.Services.AddScoped<IExpertEvaluationRepository, ExpertEvaluationRepository>();
 builder.Services.AddScoped<IScoringPolicyRepository, ScoringPolicyRepository>();
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
 var app = builder.Build();
 

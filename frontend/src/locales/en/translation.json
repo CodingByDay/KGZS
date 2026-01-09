@@ -10,6 +10,7 @@
     "evaluations": "Evaluations",
     "protocols": "Protocols",
     "payments": "Payments",
+    "products": "Products",
     "kmetije": "Farms",
     "admin": "Admin",
     "profile": "Profile",
@@ -195,6 +196,60 @@
       "cancel": "Cancel",
       "submit": "Register Organization",
       "submitting": "Registering..."
+    }
+  },
+  "products": {
+    "pageTitle": "Products",
+    "pageSubtitle": "Manage your organization's products",
+    "addButton": "Add Product",
+    "table": {
+      "name": "Name",
+      "category": "Category",
+      "description": "Description",
+      "unit": "Unit",
+      "createdAt": "Created",
+      "actions": "Actions"
+    },
+    "createModal": {
+      "title": "Create Product",
+      "name": "Name",
+      "namePlaceholder": "Enter product name",
+      "category": "Category",
+      "selectCategory": "Select category",
+      "subcategory": "Subcategory",
+      "selectSubcategory": "Select subcategory",
+      "description": "Description",
+      "descriptionPlaceholder": "Enter product description",
+      "unit": "Unit",
+      "unitPlaceholder": "e.g. kg, L, pcs",
+      "image": "Image",
+      "uploadImage": "Click to upload image",
+      "nameRequired": "Name is required",
+      "categoryRequired": "Category is required",
+      "imageUploadError": "Error uploading image",
+      "noCategories": "No categories available",
+      "noSubcategories": "No subcategories for this category"
+    },
+    "editModal": {
+      "title": "Edit Product"
+    },
+    "deleteModal": {
+      "title": "Delete Product",
+      "message": "Are you sure you want to delete product \"{{name}}\"? This action cannot be undone."
+    },
+    "actions": {
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "messages": {
+      "loadError": "Error loading products",
+      "createSuccess": "Product created successfully",
+      "createError": "Error creating product",
+      "updateSuccess": "Product updated successfully",
+      "updateError": "Error updating product",
+      "deleteSuccess": "Product deleted successfully",
+      "deleteError": "Error deleting product",
+      "noProducts": "No products. Create your first product."
     }
   },
   "payments": {
@@ -443,6 +498,7 @@
     "loading": "Loading...",
     "cancel": "Cancel",
     "save": "Save",
+    "create": "Create",
     "active": "Active",
     "inactive": "Inactive",
     "none": "None",
@@ -455,6 +511,7 @@
     "search": "Search...",
     "all": "All",
     "noResults": "No results found",
+    "uploading": "Uploading...",
     "placeholders": {
       "name": "Enter name",
       "email": "Enter email",

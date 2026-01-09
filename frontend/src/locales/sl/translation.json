@@ -10,6 +10,7 @@
     "evaluations": "Ocenjevanja",
     "protocols": "Zapisniki",
     "payments": "Plačila",
+    "products": "Izdelki",
     "kmetije": "Kmetije",
     "admin": "Admin",
     "profile": "Profil",
@@ -128,6 +129,60 @@
       "removeMemberSuccess": "Član uspešno odstranjen",
       "removeMemberError": "Napaka pri odstranjevanju člana",
       "removeMemberConfirm": "Ali ste prepričani, da želite odstraniti tega člana?"
+    }
+  },
+  "products": {
+    "pageTitle": "Izdelki",
+    "pageSubtitle": "Upravljajte izdelke vaše organizacije",
+    "addButton": "Dodaj izdelek",
+    "table": {
+      "name": "Ime",
+      "category": "Kategorija",
+      "description": "Opis",
+      "unit": "Enota",
+      "createdAt": "Ustvarjeno",
+      "actions": "Dejanja"
+    },
+    "createModal": {
+      "title": "Ustvari izdelek",
+      "name": "Ime",
+      "namePlaceholder": "Vnesite ime izdelka",
+      "category": "Kategorija",
+      "selectCategory": "Izberite kategorijo",
+      "subcategory": "Podkategorija",
+      "selectSubcategory": "Izberite podkategorijo",
+      "description": "Opis",
+      "descriptionPlaceholder": "Vnesite opis izdelka",
+      "unit": "Enota",
+      "unitPlaceholder": "npr. kg, L, kos",
+      "image": "Slika",
+      "uploadImage": "Kliknite za nalaganje slike",
+      "nameRequired": "Ime je obvezno",
+      "categoryRequired": "Kategorija je obvezna",
+      "imageUploadError": "Napaka pri nalaganju slike",
+      "noCategories": "Ni na voljo kategorij",
+      "noSubcategories": "Ni podkategorij za to kategorijo"
+    },
+    "editModal": {
+      "title": "Uredi izdelek"
+    },
+    "deleteModal": {
+      "title": "Izbriši izdelek",
+      "message": "Ali ste prepričani, da želite izbrisati izdelek \"{{name}}\"? To dejanje ni mogoče razveljaviti."
+    },
+    "actions": {
+      "edit": "Uredi",
+      "delete": "Izbriši"
+    },
+    "messages": {
+      "loadError": "Napaka pri nalaganju izdelkov",
+      "createSuccess": "Izdelek uspešno ustvarjen",
+      "createError": "Napaka pri ustvarjanju izdelka",
+      "updateSuccess": "Izdelek uspešno posodobljen",
+      "updateError": "Napaka pri posodabljanju izdelka",
+      "deleteSuccess": "Izdelek uspešno izbrisan",
+      "deleteError": "Napaka pri brisanju izdelka",
+      "noProducts": "Ni izdelkov. Ustvarite prvi izdelek."
     }
   },
   "payments": {
@@ -523,6 +578,7 @@
     "loading": "Nalaganje...",
     "cancel": "Prekliči",
     "save": "Shrani",
+    "create": "Ustvari",
     "active": "Aktiven",
     "inactive": "Neaktiven",
     "none": "Brez",
@@ -535,6 +591,7 @@
     "search": "Išči...",
     "all": "Vsi",
     "noResults": "Ni rezultatov",
+    "uploading": "Nalaganje...",
     "placeholders": {
       "name": "Vnesite ime",
       "email": "Vnesite e-pošto",

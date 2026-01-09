@@ -793,19 +793,11 @@ function MembersModal({
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-lg w-full max-w-4xl max-h-[90vh] flex flex-col">
         <div className="p-6 border-b border-gray-200 flex-shrink-0">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-2xl font-bold">{t('organizations.membersModal.title')}</h2>
-              <p className="text-sm text-gray-600 mt-1">
-                {t('organizations.membersModal.description', { name: organization.name })}
-              </p>
-            </div>
-            <button
-              onClick={onClose}
-              className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors"
-            >
-              <HiXMark className="w-6 h-6" />
-            </button>
+          <div>
+            <h2 className="text-2xl font-bold">{t('organizations.membersModal.title')}</h2>
+            <p className="text-sm text-gray-600 mt-1">
+              {t('organizations.membersModal.description', { name: organization.name })}
+            </p>
           </div>
         </div>
 
