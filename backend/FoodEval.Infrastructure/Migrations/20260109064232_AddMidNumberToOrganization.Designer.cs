@@ -4,6 +4,7 @@ using FoodEval.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FoodEval.Infrastructure.Migrations
 {
     [DbContext(typeof(FoodEvalDbContext))]
-    partial class FoodEvalDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260109064232_AddMidNumberToOrganization")]
+    partial class AddMidNumberToOrganization
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -540,7 +543,7 @@ namespace FoodEval.Infrastructure.Migrations
 
                     b.Property<string>("MidNumber")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -553,10 +556,6 @@ namespace FoodEval.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("MidNumber")
-                        .IsUnique()
-                        .HasFilter("[IsActive] = 1");
 
                     b.ToTable("Organizations");
                 });

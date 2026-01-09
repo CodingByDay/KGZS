@@ -15,7 +15,8 @@ import {
   HiUserGroup,
   HiClipboardDocumentCheck,
   HiDocumentText,
-  HiShieldCheck
+  HiShieldCheck,
+  HiBuildingOffice
 } from 'react-icons/hi2';
 import SI from 'country-flag-icons/react/3x2/SI';
 import GB from 'country-flag-icons/react/3x2/GB';
@@ -172,17 +173,30 @@ export function AppShell({ children }: AppShellProps) {
               <span className="font-medium">{t('nav.protocols')}</span>
             </Link>
             {isSuperAdmin && (
-              <Link
-                to="/app/admin"
-                className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all ${
-                  isActive('/app/admin') 
-                    ? 'bg-blue-700 text-white shadow-md' 
-                    : 'text-blue-100 hover:bg-blue-700/50 hover:text-white'
-                }`}
-              >
-                <HiShieldCheck className="w-5 h-5" />
-                <span className="font-medium">{t('nav.admin')}</span>
-              </Link>
+              <>
+                <Link
+                  to="/app/admin/organizations"
+                  className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all ${
+                    isActive('/app/admin/organizations') 
+                      ? 'bg-blue-700 text-white shadow-md' 
+                      : 'text-blue-100 hover:bg-blue-700/50 hover:text-white'
+                  }`}
+                >
+                  <HiBuildingOffice className="w-5 h-5" />
+                  <span className="font-medium">{t('nav.kmetije')}</span>
+                </Link>
+                <Link
+                  to="/app/admin"
+                  className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all ${
+                    isActive('/app/admin') 
+                      ? 'bg-blue-700 text-white shadow-md' 
+                      : 'text-blue-100 hover:bg-blue-700/50 hover:text-white'
+                  }`}
+                >
+                  <HiShieldCheck className="w-5 h-5" />
+                  <span className="font-medium">{t('nav.admin')}</span>
+                </Link>
+              </>
             )}
           </nav>
           {/* User Profile Card - Fixed at bottom */}

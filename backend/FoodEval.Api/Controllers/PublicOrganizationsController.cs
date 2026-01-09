@@ -22,6 +22,11 @@ public class PublicOrganizationsController : ControllerBase
         [FromBody] RegisterOrganizationRequest request,
         CancellationToken cancellationToken)
     {
+        if (!ModelState.IsValid)
+        {
+            return ValidationProblem(ModelState);
+        }
+
         try
         {
             var result = await _service.RegisterOrganizationAsync(request, cancellationToken);

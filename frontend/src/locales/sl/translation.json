@@ -9,6 +9,7 @@
     "commissions": "Komisije",
     "evaluations": "Ocenjevanja",
     "protocols": "Zapisniki",
+    "kmetije": "Kmetije",
     "admin": "Admin",
     "profile": "Profil",
     "logout": "Odjava"
@@ -43,6 +44,90 @@
     "userManagementDescription": "Upravljajte uporabnike, vloge in organizacije",
     "superAdminManagementTitle": "Upravljanje sistemskih skrbnikov",
     "superAdminManagementDescription": "Dodajanje in urejanje sistemskih skrbnikov"
+  },
+  "organizations": {
+    "pageTitle": "Organizacije / Vasi",
+    "pageSubtitle": "Upravljajte organizacije in vasi",
+    "addButton": "Dodaj organizacijo",
+    "table": {
+      "name": "Ime",
+      "midNumber": "MID številka",
+      "village": "Vas",
+      "email": "E-pošta",
+      "members": "Člani",
+      "createdAt": "Ustvarjeno",
+      "actions": "Dejanja"
+    },
+    "createModal": {
+      "title": "Ustvari organizacijo",
+      "name": "Ime",
+      "midNumber": "MID številka",
+      "village": "Vas",
+      "address": "Naslov",
+      "email": "E-pošta",
+      "phone": "Telefon",
+      "nameRequired": "Ime je obvezno",
+      "midNumberRequired": "MID številka je obvezna",
+      "midNumberInvalid": "MID številka lahko vsebuje samo črke, številke in vezaje",
+      "midNumberMaxLength": "MID številka ne sme biti daljša od 50 znakov",
+      "midNumberHelp": "MID številka lahko vsebuje samo črke, številke in vezaje",
+      "cancel": "Prekliči",
+      "create": "Ustvari"
+    },
+    "editModal": {
+      "title": "Uredi organizacijo",
+      "name": "Ime",
+      "midNumber": "MID številka",
+      "village": "Vas",
+      "address": "Naslov",
+      "email": "E-pošta",
+      "phone": "Telefon",
+      "nameRequired": "Ime je obvezno",
+      "midNumberRequired": "MID številka je obvezna",
+      "midNumberInvalid": "MID številka lahko vsebuje samo črke, številke in vezaje",
+      "midNumberMaxLength": "MID številka ne sme biti daljša od 50 znakov",
+      "midNumberHelp": "MID številka lahko vsebuje samo črke, številke in vezaje",
+      "cancel": "Prekliči",
+      "update": "Posodobi"
+    },
+    "deleteModal": {
+      "title": "Izbriši organizacijo",
+      "description": "Ali ste prepričani, da želite izbrisati {{name}}? To dejanje ni mogoče razveljaviti.",
+      "cancel": "Prekliči",
+      "confirm": "Izbriši"
+    },
+    "membersModal": {
+      "title": "Člani organizacije",
+      "description": "Upravljanje članov za {{name}}",
+      "name": "Ime",
+      "email": "E-pošta",
+      "userType": "Tip uporabnika",
+      "role": "Vloga",
+      "status": "Status",
+      "actions": "Dejanja",
+      "noMembers": "Ni članov",
+      "removeMember": "Odstrani člana",
+      "close": "Zapri"
+    },
+    "actions": {
+      "edit": "Uredi",
+      "delete": "Izbriši",
+      "members": "Člani"
+    },
+    "messages": {
+      "loadError": "Napaka pri nalaganju organizacij",
+      "createSuccess": "Organizacija uspešno ustvarjena",
+      "createError": "Napaka pri ustvarjanju organizacije",
+      "updateSuccess": "Organizacija uspešno posodobljena",
+      "updateError": "Napaka pri posodabljanju organizacije",
+      "deleteSuccess": "Organizacija uspešno izbrisana",
+      "deleteError": "Napaka pri brisanju organizacije",
+      "noOrganizations": "Ni organizacij",
+      "loadMembersError": "Napaka pri nalaganju članov",
+      "removeMemberSuccess": "Član uspešno odstranjen",
+      "removeMemberError": "Napaka pri odstranjevanju člana",
+      "removeMemberConfirm": "Ali ste prepričani, da želite odstraniti tega člana?"
+    }
   },
   "superAdmin": {
     "pageTitle": "Upravljanje sistemskih skrbnikov",
@@ -161,6 +246,9 @@
     "redirectNotice": "Preusmeritev na prijavno stran...",
     "organizationInfo": "Podatki organizacije",
     "organizationName": "Ime organizacije",
+    "midNumber": "MID številka vasi",
+    "midNumberPlaceholder": "MID številka",
+    "midNumberHelp": "MID številka lahko vsebuje samo črke, številke in vezaje",
     "village": "Vas",
     "address": "Naslov",
     "email": "E-pošta",
@@ -173,6 +261,9 @@
     "adminLastName": "Priimek skrbnika",
     "errors": {
       "organizationNameRequired": "Ime organizacije je obvezno",
+      "midNumberRequired": "MID številka je obvezna",
+      "midNumberInvalid": "MID številka lahko vsebuje samo črke, številke in vezaje",
+      "midNumberMaxLength": "MID številka ne sme biti daljša od 50 znakov",
       "adminEmailRequired": "E-pošta skrbnika je obvezna",
       "adminPasswordRequired": "Geslo mora imeti vsaj 6 znakov",
       "adminFirstNameRequired": "Ime skrbnika je obvezno",

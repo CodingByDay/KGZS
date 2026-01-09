@@ -68,6 +68,12 @@ public class FoodEvalDbContext : DbContext
         // UserType validation constraint (1 = GlobalAdmin, 2 = OrganizationAdmin, 3 = OrganizationUser, 4 = CommissionUser, 5 = InterestedParty)
         modelBuilder.Entity<User>()
             .ToTable(t => t.HasCheckConstraint("CK_Users_UserType", "UserType IN (1, 2, 3, 4, 5)"));
+
+        // MID Number unique constraint (only for active organizations)
+        modelBuilder.Entity<Organization>()
+            .HasIndex(o => o.MidNumber)
+            .IsUnique()
+            .HasFilter("[IsActive] = 1");
     }
 
 }

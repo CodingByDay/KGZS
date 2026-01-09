@@ -24,7 +24,9 @@ public class OrganizationService : IOrganizationService
     public async Task<IEnumerable<OrganizationDto>> GetAllOrganizationsAsync(CancellationToken cancellationToken = default)
     {
         var organizations = await _organizationRepository.GetAllAsync(cancellationToken);
-        return organizations.Select(MapToDto);
+        var allUsers = await _userRepository.GetAllAsync(cancellationToken);
+        
+        return organizations.Select(org => MapToDto(org, allUsers.Where(u => u.OrganizationId == org.Id).Count()));
     }
 
     public async Task<RegisterOrganizationResponse> RegisterOrganizationAsync(RegisterOrganizationRequest request, CancellationToken cancellationToken = default)
@@ -39,16 +41,23 @@ public class OrganizationService : IOrganizationService
             if (existingUser != null)
                 throw new InvalidOperationException("User with this email already exists");
 
+            // Check if MID number already exists
+            var existingOrg = await _organizationRepository.GetByMidNumberAsync(request.MidNumber, ct);
+            if (existingOrg != null)
+                throw new InvalidOperationException("Organization with this MID number already exists");
+
             // Create organization
             var organization = new Organization
             {
                 Id = Guid.NewGuid(),
                 Name = request.OrganizationName,
+                MidNumber = request.MidNumber,
                 Village = request.Village,
                 Address = request.Address,
                 Email = request.Email,
                 Phone = request.Phone,
-                CreatedAt = DateTimeOffset.UtcNow
+                CreatedAt = DateTimeOffset.UtcNow,
+                IsActive = true
             };
 
             createdOrganization = await _organizationRepository.CreateAsync(organization, ct);
@@ -81,11 +90,14 @@ public class OrganizationService : IOrganizationService
             {
                 Id = createdOrganization.Id,
                 Name = createdOrganization.Name,
+                MidNumber = createdOrganization.MidNumber,
                 Village = createdOrganization.Village,
                 Address = createdOrganization.Address,
                 Email = createdOrganization.Email,
                 Phone = createdOrganization.Phone,
-                CreatedAt = createdOrganization.CreatedAt
+                CreatedAt = createdOrganization.CreatedAt,
+                IsActive = createdOrganization.IsActive,
+                MemberCount = 1 // Admin user is the first member
             },
             AdminUser = new UserDto
             {
@@ -106,7 +118,72 @@ public class OrganizationService : IOrganizationService
     public async Task<OrganizationDto?> GetOrganizationByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var organization = await _organizationRepository.GetByIdAsync(id, cancellationToken);
-        return organization == null ? null : MapToDto(organization);
+        if (organization == null) return null;
+        
+        var memberCount = (await _userRepository.GetByOrganizationIdAsync(id, cancellationToken)).Count();
+        return MapToDto(organization, memberCount);
+    }
+
+    public async Task<OrganizationDto> CreateOrganizationAsync(CreateOrganizationRequest request, CancellationToken cancellationToken = default)
+    {
+        // Check if MID number already exists
+        var existingOrg = await _organizationRepository.GetByMidNumberAsync(request.MidNumber, cancellationToken);
+        if (existingOrg != null)
+            throw new InvalidOperationException("Organization with this MID number already exists");
+
+        var organization = new Organization
+        {
+            Id = Guid.NewGuid(),
+            Name = request.Name,
+            MidNumber = request.MidNumber,
+            Village = request.Village,
+            Address = request.Address,
+            Email = request.Email,
+            Phone = request.Phone,
+            CreatedAt = DateTimeOffset.UtcNow,
+            IsActive = true
+        };
+
+        var created = await _organizationRepository.CreateAsync(organization, cancellationToken);
+        return MapToDto(created, 0);
+    }
+
+    public async Task<OrganizationDto> UpdateOrganizationAsync(Guid id, UpdateOrganizationRequest request, CancellationToken cancellationToken = default)
+    {
+        var organization = await _organizationRepository.GetByIdAsync(id, cancellationToken);
+        if (organization == null)
+            throw new KeyNotFoundException("Organization not found");
+
+        // Check if MID number is being changed and if it conflicts with another organization
+        if (organization.MidNumber != request.MidNumber)
+        {
+            var existingOrg = await _organizationRepository.GetByMidNumberAsync(request.MidNumber, cancellationToken);
+            if (existingOrg != null && existingOrg.Id != id)
+                throw new InvalidOperationException("Organization with this MID number already exists");
+        }
+
+        organization.Name = request.Name;
+        organization.MidNumber = request.MidNumber;
+        organization.Village = request.Village;
+        organization.Address = request.Address;
+        organization.Email = request.Email;
+        organization.Phone = request.Phone;
+
+        await _organizationRepository.UpdateAsync(organization, cancellationToken);
+        
+        var memberCount = (await _userRepository.GetByOrganizationIdAsync(id, cancellationToken)).Count();
+        return MapToDto(organization, memberCount);
+    }
+
+    public async Task DeleteOrganizationAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        var organization = await _organizationRepository.GetByIdAsync(id, cancellationToken);
+        if (organization == null)
+            throw new KeyNotFoundException("Organization not found");
+
+        // Soft delete by setting IsActive to false
+        organization.IsActive = false;
+        await _organizationRepository.UpdateAsync(organization, cancellationToken);
     }
 
     public async Task<OrganizationDto> GetMyOrganizationAsync(Guid userId, CancellationToken cancellationToken = default)
@@ -119,7 +196,8 @@ public class OrganizationService : IOrganizationService
         if (organization == null)
             throw new KeyNotFoundException("Organization not found");
 
-        return MapToDto(organization);
+        var memberCount = (await _userRepository.GetByOrganizationIdAsync(user.OrganizationId.Value, cancellationToken)).Count();
+        return MapToDto(organization, memberCount);
     }
 
     public async Task<IEnumerable<UserDto>> GetOrganizationUsersAsync(Guid organizationId, CancellationToken cancellationToken = default)
@@ -184,17 +262,42 @@ public class OrganizationService : IOrganizationService
         return MapToDto(created, organizations);
     }
 
-    private static OrganizationDto MapToDto(Organization organization)
+    public async Task RemoveOrganizationMemberAsync(Guid organizationId, Guid userId, CancellationToken cancellationToken = default)
+    {
+        var organization = await _organizationRepository.GetByIdAsync(organizationId, cancellationToken);
+        if (organization == null)
+            throw new KeyNotFoundException("Organization not found");
+
+        var user = await _userRepository.GetByIdAsync(userId, cancellationToken);
+        if (user == null)
+            throw new KeyNotFoundException("User not found");
+
+        if (user.OrganizationId != organizationId)
+            throw new InvalidOperationException("User does not belong to this organization");
+
+        // Prevent removing the organization admin
+        if (user.UserType == UserType.OrganizationAdmin && user.PrimaryRole == UserRole.OrganizationAdmin)
+            throw new InvalidOperationException("Cannot remove the organization administrator");
+
+        // Soft delete the user (set IsActive to false)
+        user.IsActive = false;
+        await _userRepository.UpdateAsync(user, cancellationToken);
+    }
+
+    private static OrganizationDto MapToDto(Organization organization, int memberCount = 0)
     {
         return new OrganizationDto
         {
             Id = organization.Id,
             Name = organization.Name,
+            MidNumber = organization.MidNumber,
             Village = organization.Village,
             Address = organization.Address,
             Email = organization.Email,
             Phone = organization.Phone,
-            CreatedAt = organization.CreatedAt
+            CreatedAt = organization.CreatedAt,
+            IsActive = organization.IsActive,
+            MemberCount = memberCount
         };
     }
 

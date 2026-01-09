@@ -44,23 +44,104 @@ public class OrganizationDto
 {
     public Guid Id { get; set; }
     public string Name { get; set; } = string.Empty;
+    public string MidNumber { get; set; } = string.Empty;
     public string? Village { get; set; }
     public string? Address { get; set; }
     public string? Email { get; set; }
     public string? Phone { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
+    public bool IsActive { get; set; } = true;
+    public int MemberCount { get; set; } // Number of members in the organization
+}
+
+public class CreateOrganizationRequest
+{
+    [System.ComponentModel.DataAnnotations.Required]
+    [System.ComponentModel.DataAnnotations.StringLength(100)]
+    public string Name { get; set; } = string.Empty;
+
+    [System.ComponentModel.DataAnnotations.Required]
+    [System.ComponentModel.DataAnnotations.StringLength(50)]
+    [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Za-z0-9\-]+$", ErrorMessage = "MID number can only contain letters, numbers, and hyphens")]
+    public string MidNumber { get; set; } = string.Empty;
+
+    [System.ComponentModel.DataAnnotations.StringLength(100)]
+    public string? Village { get; set; }
+
+    [System.ComponentModel.DataAnnotations.StringLength(200)]
+    public string? Address { get; set; }
+
+    [System.ComponentModel.DataAnnotations.EmailAddress]
+    [System.ComponentModel.DataAnnotations.StringLength(100)]
+    public string? Email { get; set; }
+
+    [System.ComponentModel.DataAnnotations.StringLength(20)]
+    public string? Phone { get; set; }
+}
+
+public class UpdateOrganizationRequest
+{
+    [System.ComponentModel.DataAnnotations.Required]
+    [System.ComponentModel.DataAnnotations.StringLength(100)]
+    public string Name { get; set; } = string.Empty;
+
+    [System.ComponentModel.DataAnnotations.Required]
+    [System.ComponentModel.DataAnnotations.StringLength(50)]
+    [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Za-z0-9\-]+$", ErrorMessage = "MID number can only contain letters, numbers, and hyphens")]
+    public string MidNumber { get; set; } = string.Empty;
+
+    [System.ComponentModel.DataAnnotations.StringLength(100)]
+    public string? Village { get; set; }
+
+    [System.ComponentModel.DataAnnotations.StringLength(200)]
+    public string? Address { get; set; }
+
+    [System.ComponentModel.DataAnnotations.EmailAddress]
+    [System.ComponentModel.DataAnnotations.StringLength(100)]
+    public string? Email { get; set; }
+
+    [System.ComponentModel.DataAnnotations.StringLength(20)]
+    public string? Phone { get; set; }
 }
 
 public class RegisterOrganizationRequest
 {
+    [System.ComponentModel.DataAnnotations.Required]
+    [System.ComponentModel.DataAnnotations.StringLength(100)]
     public string OrganizationName { get; set; } = string.Empty;
+
+    [System.ComponentModel.DataAnnotations.Required]
+    [System.ComponentModel.DataAnnotations.StringLength(50)]
+    [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Za-z0-9\-]+$", ErrorMessage = "MID number can only contain letters, numbers, and hyphens")]
+    public string MidNumber { get; set; } = string.Empty;
+
+    [System.ComponentModel.DataAnnotations.StringLength(100)]
     public string? Village { get; set; }
+
+    [System.ComponentModel.DataAnnotations.StringLength(200)]
     public string? Address { get; set; }
+
+    [System.ComponentModel.DataAnnotations.EmailAddress]
+    [System.ComponentModel.DataAnnotations.StringLength(100)]
     public string? Email { get; set; }
+
+    [System.ComponentModel.DataAnnotations.StringLength(20)]
     public string? Phone { get; set; }
+
+    [System.ComponentModel.DataAnnotations.Required]
+    [System.ComponentModel.DataAnnotations.EmailAddress]
     public string AdminEmail { get; set; } = string.Empty;
+
+    [System.ComponentModel.DataAnnotations.Required]
+    [System.ComponentModel.DataAnnotations.MinLength(6)]
     public string AdminPassword { get; set; } = string.Empty;
+
+    [System.ComponentModel.DataAnnotations.Required]
+    [System.ComponentModel.DataAnnotations.StringLength(50)]
     public string AdminFirstName { get; set; } = string.Empty;
+
+    [System.ComponentModel.DataAnnotations.Required]
+    [System.ComponentModel.DataAnnotations.StringLength(50)]
     public string AdminLastName { get; set; } = string.Empty;
 }
 

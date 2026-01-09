@@ -19,9 +19,17 @@ public class OrganizationRepository : IOrganizationRepository
         return await _dbContext.Organizations.FindAsync(new object[] { id }, cancellationToken);
     }
 
+    public async Task<Organization?> GetByMidNumberAsync(string midNumber, CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.Organizations
+            .FirstOrDefaultAsync(o => o.MidNumber == midNumber && o.IsActive, cancellationToken);
+    }
+
     public async Task<IEnumerable<Organization>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        return await _dbContext.Organizations.ToListAsync(cancellationToken);
+        return await _dbContext.Organizations
+            .Where(o => o.IsActive)
+            .ToListAsync(cancellationToken);
     }
 
     public async Task<Organization> CreateAsync(Organization organization, CancellationToken cancellationToken = default)

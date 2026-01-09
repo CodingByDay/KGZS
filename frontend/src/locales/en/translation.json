@@ -9,6 +9,7 @@
     "commissions": "Commissions",
     "evaluations": "Evaluations",
     "protocols": "Protocols",
+    "kmetije": "Farms",
     "admin": "Admin",
     "profile": "Profile",
     "logout": "Logout"
@@ -165,6 +166,9 @@
     "redirectNotice": "Redirecting to login page...",
     "organizationInfo": "Organization Information",
     "organizationName": "Organization Name",
+    "midNumber": "Village MID Number",
+    "midNumberPlaceholder": "MID number",
+    "midNumberHelp": "MID number can only contain letters, numbers, and hyphens",
     "village": "Village",
     "address": "Address",
     "email": "Email",
@@ -177,6 +181,9 @@
     "adminLastName": "Admin Last Name",
     "errors": {
       "organizationNameRequired": "Organization name is required",
+      "midNumberRequired": "MID number is required",
+      "midNumberInvalid": "MID number can only contain letters, numbers, and hyphens",
+      "midNumberMaxLength": "MID number must not exceed 50 characters",
       "adminEmailRequired": "Admin email is required",
       "adminPasswordRequired": "Password must be at least 6 characters",
       "adminFirstNameRequired": "Admin first name is required",

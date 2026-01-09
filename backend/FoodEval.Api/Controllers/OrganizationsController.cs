@@ -25,6 +25,108 @@ public class OrganizationsController : ControllerBase
         return Ok(organizations);
     }
 
+    [HttpGet("{id}")]
+    [Authorize(Roles = "SuperAdmin")]
+    public async Task<ActionResult<OrganizationDto>> GetOrganizationById(Guid id, CancellationToken cancellationToken)
+    {
+        var organization = await _service.GetOrganizationByIdAsync(id, cancellationToken);
+        if (organization == null)
+            return NotFound();
+        return Ok(organization);
+    }
+
+    [HttpPost]
+    [Authorize(Roles = "SuperAdmin")]
+    public async Task<ActionResult<OrganizationDto>> CreateOrganization([FromBody] CreateOrganizationRequest request, CancellationToken cancellationToken)
+    {
+        if (!ModelState.IsValid)
+        {
+            return ValidationProblem(ModelState);
+        }
+
+        try
+        {
+            var created = await _service.CreateOrganizationAsync(request, cancellationToken);
+            return CreatedAtAction(nameof(GetOrganizationById), new { id = created.Id }, created);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
+    [HttpPut("{id}")]
+    [Authorize(Roles = "SuperAdmin")]
+    public async Task<ActionResult<OrganizationDto>> UpdateOrganization(Guid id, [FromBody] UpdateOrganizationRequest request, CancellationToken cancellationToken)
+    {
+        if (!ModelState.IsValid)
+        {
+            return ValidationProblem(ModelState);
+        }
+
+        try
+        {
+            var updated = await _service.UpdateOrganizationAsync(id, request, cancellationToken);
+            return Ok(updated);
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
+    [HttpDelete("{id}")]
+    [Authorize(Roles = "SuperAdmin")]
+    public async Task<ActionResult> DeleteOrganization(Guid id, CancellationToken cancellationToken)
+    {
+        try
+        {
+            await _service.DeleteOrganizationAsync(id, cancellationToken);
+            return NoContent();
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
+    }
+
+    [HttpGet("{id}/members")]
+    [Authorize(Roles = "SuperAdmin")]
+    public async Task<ActionResult<IEnumerable<UserDto>>> GetOrganizationMembers(Guid id, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var members = await _service.GetOrganizationUsersAsync(id, cancellationToken);
+            return Ok(members);
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
+    }
+
+    [HttpDelete("{id}/members/{userId}")]
+    [Authorize(Roles = "SuperAdmin")]
+    public async Task<ActionResult> RemoveOrganizationMember(Guid id, Guid userId, CancellationToken cancellationToken)
+    {
+        try
+        {
+            await _service.RemoveOrganizationMemberAsync(id, userId, cancellationToken);
+            return NoContent();
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
 
     [HttpGet("me")]
     [Authorize(Roles = "OrganizationAdmin")]

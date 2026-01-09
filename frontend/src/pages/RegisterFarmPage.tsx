@@ -12,6 +12,7 @@ export function RegisterFarmPage() {
   const [success, setSuccess] = useState(false);
   const [formData, setFormData] = useState<RegisterOrganizationRequest>({
     organizationName: '',
+    midNumber: '',
     village: '',
     address: '',
     email: '',
@@ -26,6 +27,13 @@ export function RegisterFarmPage() {
   const validate = (): boolean => {
     const newErrors: Record<string, string> = {};
     if (!formData.organizationName.trim()) newErrors.organizationName = t('registerFarm.errors.organizationNameRequired');
+    if (!formData.midNumber.trim()) newErrors.midNumber = t('registerFarm.errors.midNumberRequired');
+    if (formData.midNumber && !/^[A-Za-z0-9\-]+$/.test(formData.midNumber)) {
+      newErrors.midNumber = t('registerFarm.errors.midNumberInvalid');
+    }
+    if (formData.midNumber && formData.midNumber.length > 50) {
+      newErrors.midNumber = t('registerFarm.errors.midNumberMaxLength');
+    }
     if (!formData.adminEmail.trim()) newErrors.adminEmail = t('registerFarm.errors.adminEmailRequired');
     if (!formData.adminPassword || formData.adminPassword.length < 6) newErrors.adminPassword = t('registerFarm.errors.adminPasswordRequired');
     if (!formData.adminFirstName.trim()) newErrors.adminFirstName = t('registerFarm.errors.adminFirstNameRequired');
@@ -104,6 +112,23 @@ export function RegisterFarmPage() {
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                   />
                   {errors.organizationName && <p className="text-red-600 text-sm mt-1">{errors.organizationName}</p>}
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    {t('registerFarm.midNumber')} <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.midNumber}
+                    onChange={(e) => {
+                      setFormData({ ...formData, midNumber: e.target.value });
+                      setErrors({ ...errors, midNumber: '' });
+                    }}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    placeholder={t('registerFarm.midNumberPlaceholder') || 'MID number'}
+                  />
+                  {errors.midNumber && <p className="text-red-600 text-sm mt-1">{errors.midNumber}</p>}
+                  <p className="text-xs text-gray-500 mt-1">{t('registerFarm.midNumberHelp')}</p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
