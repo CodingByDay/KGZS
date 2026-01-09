@@ -338,6 +338,7 @@ export function ProfilePage() {
                     className={`mt-1 block w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 ${
                       formErrors.firstName ? 'border-red-500' : 'border-gray-300'
                     }`}
+                    placeholder={t('common.placeholders.firstName')}
                   />
                   {formErrors.firstName && (
                     <p className="mt-1 text-sm text-red-600">{formErrors.firstName}</p>
@@ -365,6 +366,7 @@ export function ProfilePage() {
                     className={`mt-1 block w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 ${
                       formErrors.lastName ? 'border-red-500' : 'border-gray-300'
                     }`}
+                    placeholder={t('common.placeholders.lastName')}
                   />
                   {formErrors.lastName && (
                     <p className="mt-1 text-sm text-red-600">{formErrors.lastName}</p>
@@ -386,7 +388,7 @@ export function ProfilePage() {
                   value={formData.phoneNumber}
                   onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                  placeholder={t('profile.phoneNumberPlaceholder')}
+                  placeholder={t('common.placeholders.phone')}
                 />
               ) : (
                 <p className="mt-1 text-sm text-gray-900">{user?.phoneNumber || ''}</p>

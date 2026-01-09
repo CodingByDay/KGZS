@@ -8,6 +8,7 @@ import { CommissionsPage } from '@/pages/CommissionsPage';
 import { EvaluationsPage } from '@/pages/EvaluationsPage';
 import { EvaluationDetailPage } from '@/pages/EvaluationDetailPage';
 import { ProtocolsPage } from '@/pages/ProtocolsPage';
+import { PaymentsPage } from '@/pages/PaymentsPage';
 import { AdminPage } from '@/pages/AdminPage';
 import { UsersManagementPage } from '@/pages/UsersManagementPage';
 import { SuperAdminsPage } from '@/pages/SuperAdminsPage';
@@ -18,6 +19,8 @@ import { RegisterFarmPage } from '@/pages/RegisterFarmPage';
 import { ForbiddenPage } from '@/pages/ForbiddenPage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
 import { ProtectedRoute } from '@/app/components/ProtectedRoute';
+import { RoleProtectedRoute } from '@/app/components/RoleProtectedRoute';
+import { UserType } from '@/domain/enums/UserType';
 
 export function AppRouter() {
   return (
@@ -44,17 +47,17 @@ export function AppRouter() {
         <Route
           path="/app/categories"
           element={
-            <ProtectedRoute>
+            <RoleProtectedRoute blockedUserTypes={[UserType.OrganizationAdmin, UserType.OrganizationUser]}>
               <CategoriesPage />
-            </ProtectedRoute>
+            </RoleProtectedRoute>
           }
         />
         <Route
           path="/app/commissions"
           element={
-            <ProtectedRoute>
+            <RoleProtectedRoute blockedUserTypes={[UserType.OrganizationAdmin, UserType.OrganizationUser]}>
               <CommissionsPage />
-            </ProtectedRoute>
+            </RoleProtectedRoute>
           }
         />
         <Route
@@ -86,6 +89,14 @@ export function AppRouter() {
           element={
             <ProtectedRoute>
               <ProtocolsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/app/payments"
+          element={
+            <ProtectedRoute>
+              <PaymentsPage />
             </ProtectedRoute>
           }
         />

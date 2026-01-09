@@ -4,11 +4,12 @@
   },
   "nav": {
     "dashboard": "Nadzorna plošča",
-    "productSamples": "Vzorci",
+    "productSamples": "Prijave",
     "categories": "Skupine",
     "commissions": "Komisije",
     "evaluations": "Ocenjevanja",
     "protocols": "Zapisniki",
+    "payments": "Plačila",
     "kmetije": "Kmetije",
     "admin": "Admin",
     "profile": "Profil",
@@ -127,6 +128,21 @@
       "removeMemberSuccess": "Član uspešno odstranjen",
       "removeMemberError": "Napaka pri odstranjevanju člana",
       "removeMemberConfirm": "Ali ste prepričani, da želite odstraniti tega člana?"
+    }
+  },
+  "payments": {
+    "pageTitle": "Plačila",
+    "table": {
+      "organization": "Organizacija",
+      "amount": "Znesek",
+      "status": "Status",
+      "dueDate": "Rok plačila",
+      "paidDate": "Datum plačila",
+      "invoiceNumber": "Številka računa"
+    },
+    "messages": {
+      "loadError": "Napaka pri nalaganju plačil",
+      "noPayments": "Ni plačil"
     }
   },
   "superAdmin": {
@@ -403,7 +419,7 @@
       "title": "Statistika sistema",
       "evaluations": "Dogodki ocenjevanja",
       "categories": "Skupine",
-      "productSamples": "Vzorci živil",
+      "productSamples": "Prijave",
       "commissions": "Komisije",
       "protocols": "Zapisniki"
     },
@@ -518,7 +534,21 @@
     "clearFilters": "Počisti filtre",
     "search": "Išči...",
     "all": "Vsi",
-    "noResults": "Ni rezultatov"
+    "noResults": "Ni rezultatov",
+    "placeholders": {
+      "name": "Vnesite ime",
+      "email": "Vnesite e-pošto",
+      "password": "Vnesite geslo",
+      "firstName": "Vnesite ime",
+      "lastName": "Vnesite priimek",
+      "phone": "Vnesite telefonsko številko",
+      "address": "Vnesite naslov",
+      "village": "Vnesite vas",
+      "description": "Vnesite opis",
+      "organizationName": "Vnesite ime organizacije",
+      "midNumber": "Vnesite MID številko",
+      "username": "Vnesite uporabniško ime"
+    }
   },
   "language": {
     "sl": "Slovenščina",

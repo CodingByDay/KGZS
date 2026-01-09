@@ -110,6 +110,7 @@ export function RegisterFarmPage() {
                     value={formData.organizationName}
                     onChange={(e) => setFormData({ ...formData, organizationName: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    placeholder={t('common.placeholders.organizationName')}
                   />
                   {errors.organizationName && <p className="text-red-600 text-sm mt-1">{errors.organizationName}</p>}
                 </div>
@@ -125,7 +126,7 @@ export function RegisterFarmPage() {
                       setErrors({ ...errors, midNumber: '' });
                     }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                    placeholder={t('registerFarm.midNumberPlaceholder') || 'MID number'}
+                    placeholder={t('common.placeholders.midNumber')}
                   />
                   {errors.midNumber && <p className="text-red-600 text-sm mt-1">{errors.midNumber}</p>}
                   <p className="text-xs text-gray-500 mt-1">{t('registerFarm.midNumberHelp')}</p>
@@ -139,6 +140,7 @@ export function RegisterFarmPage() {
                     value={formData.village}
                     onChange={(e) => setFormData({ ...formData, village: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    placeholder={t('common.placeholders.village')}
                   />
                 </div>
                 <div>
@@ -150,6 +152,7 @@ export function RegisterFarmPage() {
                     value={formData.address}
                     onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    placeholder={t('common.placeholders.address')}
                   />
                 </div>
                 <div>
@@ -161,6 +164,7 @@ export function RegisterFarmPage() {
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    placeholder={t('common.placeholders.email')}
                   />
                 </div>
                 <div>
@@ -172,6 +176,7 @@ export function RegisterFarmPage() {
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    placeholder={t('common.placeholders.phone')}
                   />
                 </div>
               </div>
@@ -191,6 +196,7 @@ export function RegisterFarmPage() {
                     value={formData.adminEmail}
                     onChange={(e) => setFormData({ ...formData, adminEmail: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    placeholder={t('common.placeholders.email')}
                   />
                   {errors.adminEmail && <p className="text-red-600 text-sm mt-1">{errors.adminEmail}</p>}
                 </div>
@@ -203,6 +209,7 @@ export function RegisterFarmPage() {
                     value={formData.adminPassword}
                     onChange={(e) => setFormData({ ...formData, adminPassword: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    placeholder={t('common.placeholders.password')}
                   />
                   {errors.adminPassword && <p className="text-red-600 text-sm mt-1">{errors.adminPassword}</p>}
                 </div>
@@ -216,6 +223,7 @@ export function RegisterFarmPage() {
                       value={formData.adminFirstName}
                       onChange={(e) => setFormData({ ...formData, adminFirstName: e.target.value })}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                      placeholder={t('common.placeholders.firstName')}
                     />
                     {errors.adminFirstName && <p className="text-red-600 text-sm mt-1">{errors.adminFirstName}</p>}
                   </div>
@@ -228,6 +236,7 @@ export function RegisterFarmPage() {
                       value={formData.adminLastName}
                       onChange={(e) => setFormData({ ...formData, adminLastName: e.target.value })}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                      placeholder={t('common.placeholders.lastName')}
                     />
                     {errors.adminLastName && <p className="text-red-600 text-sm mt-1">{errors.adminLastName}</p>}
                   </div>

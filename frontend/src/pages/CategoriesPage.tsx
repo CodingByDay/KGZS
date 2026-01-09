@@ -616,6 +616,7 @@ function CreateGroupModal({
               className={`w-full px-3 py-2 border rounded-lg ${
                 errors.name ? 'border-red-500' : 'border-gray-300'
               }`}
+              placeholder={t('common.placeholders.name')}
               required
             />
             {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
@@ -629,6 +630,7 @@ function CreateGroupModal({
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+              placeholder={t('common.placeholders.description')}
               rows={3}
             />
           </div>
@@ -708,6 +710,7 @@ function EditGroupModal({
               className={`w-full px-3 py-2 border rounded-lg ${
                 errors.name ? 'border-red-500' : 'border-gray-300'
               }`}
+              placeholder={t('common.placeholders.name')}
               required
             />
             {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
@@ -721,6 +724,7 @@ function EditGroupModal({
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+              placeholder={t('common.placeholders.description')}
               rows={3}
             />
           </div>
@@ -829,6 +833,7 @@ function CreateSubgroupModal({
               className={`w-full px-3 py-2 border rounded-lg ${
                 errors.name ? 'border-red-500' : 'border-gray-300'
               }`}
+              placeholder={t('common.placeholders.name')}
               required
             />
             {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
@@ -842,6 +847,7 @@ function CreateSubgroupModal({
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+              placeholder={t('common.placeholders.description')}
               rows={3}
             />
           </div>
@@ -921,6 +927,7 @@ function EditSubgroupModal({
               className={`w-full px-3 py-2 border rounded-lg ${
                 errors.name ? 'border-red-500' : 'border-gray-300'
               }`}
+              placeholder={t('common.placeholders.name')}
               required
             />
             {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
@@ -934,6 +941,7 @@ function EditSubgroupModal({
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+              placeholder={t('common.placeholders.description')}
               rows={3}
             />
           </div>

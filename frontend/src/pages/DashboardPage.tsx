@@ -3,10 +3,12 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { authService } from '@/application/services/AuthService';
 import { User } from '@/domain/types/User';
+import { UserType } from '@/domain/enums/UserType';
+import { UserRole } from '@/domain/enums/UserRole';
 import { ApiError } from '@/infrastructure/api/apiClient';
 import { AppShell } from '@/app/components/AppShell';
 import { dashboardService, DashboardStatistics, UserActivity } from '@/application/services/DashboardService';
-import { HiChartBar, HiFolder, HiCube, HiUserGroup, HiDocumentText, HiClock, HiInformationCircle } from 'react-icons/hi2';
+import { HiChartBar, HiFolder, HiCube, HiUserGroup, HiDocumentText, HiClock, HiInformationCircle, HiBanknotes } from 'react-icons/hi2';
 import { getRoleDisplayInfo, getRoleLabel } from '@/domain/enums/UserRoleDisplay';
 
 // Get version from package.json
@@ -100,13 +102,33 @@ export function DashboardPage() {
     );
   }
 
-  const statsCards = [
+  // Check if user is an organization user
+  const userTypeValue = user?.userType;
+  const userRoleValue = user?.role;
+  const userTypeNum = userTypeValue !== undefined && userTypeValue !== null 
+    ? (typeof userTypeValue === 'number' ? userTypeValue : Number(userTypeValue))
+    : null;
+  const isOrgUserByType = 
+    userTypeValue === UserType.OrganizationAdmin || 
+    userTypeValue === UserType.OrganizationUser ||
+    userTypeNum === 2 || // OrganizationAdmin = 2
+    userTypeNum === 3 || // OrganizationUser = 3
+    String(userTypeValue) === '2' ||
+    String(userTypeValue) === '3';
+  const isOrgUserByRole = 
+    userRoleValue === UserRole.OrganizationAdmin ||
+    String(userRoleValue) === 'OrganizationAdmin';
+  const isOrganizationUser = isOrgUserByType || isOrgUserByRole;
+
+  // Build stats cards based on user type
+  const allStatsCards = [
     {
       title: t('dashboard.statistics.evaluations'),
       value: statistics?.evaluationsCount ?? 0,
       icon: HiChartBar,
       color: 'bg-blue-500',
       link: '/app/evaluations',
+      accessibleToOrgUsers: true,
     },
     {
       title: t('dashboard.statistics.categories'),
@@ -114,6 +136,7 @@ export function DashboardPage() {
       icon: HiFolder,
       color: 'bg-green-500',
       link: '/app/categories',
+      accessibleToOrgUsers: false,
     },
     {
       title: t('dashboard.statistics.productSamples'),
@@ -121,6 +144,7 @@ export function DashboardPage() {
       icon: HiCube,
       color: 'bg-purple-500',
       link: '/app/productsamples',
+      accessibleToOrgUsers: true,
     },
     {
       title: t('dashboard.statistics.commissions'),
@@ -128,6 +152,7 @@ export function DashboardPage() {
       icon: HiUserGroup,
       color: 'bg-orange-500',
       link: '/app/commissions',
+      accessibleToOrgUsers: false,
     },
     {
       title: t('dashboard.statistics.protocols'),
@@ -135,8 +160,22 @@ export function DashboardPage() {
       icon: HiDocumentText,
       color: 'bg-indigo-500',
       link: '/app/protocols',
+      accessibleToOrgUsers: true,
+    },
+    {
+      title: t('nav.payments'),
+      value: statistics?.paymentsCount ?? 0,
+      icon: HiBanknotes,
+      color: 'bg-teal-500',
+      link: '/app/payments',
+      accessibleToOrgUsers: true,
     },
   ];
+
+  // Filter cards based on user type
+  const statsCards = isOrganizationUser 
+    ? allStatsCards.filter(card => card.accessibleToOrgUsers) // Organization users: only Prijave, Ocenjevanja, Zapisniki, Placila
+    : allStatsCards.filter(card => card.title !== t('nav.payments')); // Other users: all except payments
 
   return (
     <AppShell>
@@ -156,7 +195,7 @@ export function DashboardPage() {
           <h2 className="text-xl font-semibold text-gray-900 mb-4">
             {t('dashboard.statistics.title')}
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+          <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 ${isOrganizationUser ? 'xl:grid-cols-4' : 'xl:grid-cols-5'} gap-4`}>
             {statsCards.map((card) => {
               const Icon = card.icon;
               return (

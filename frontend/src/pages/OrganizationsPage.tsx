@@ -477,6 +477,7 @@ function CreateOrganizationModal({
                 setErrors({ ...errors, name: '' });
               }}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+              placeholder={t('common.placeholders.organizationName')}
             />
             {errors.name && <p className="text-red-600 text-sm mt-1">{errors.name}</p>}
           </div>
@@ -492,6 +493,7 @@ function CreateOrganizationModal({
                 setErrors({ ...errors, midNumber: '' });
               }}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+              placeholder={t('common.placeholders.midNumber')}
             />
             {errors.midNumber && <p className="text-red-600 text-sm mt-1">{errors.midNumber}</p>}
             <p className="text-xs text-gray-500 mt-1">{t('organizations.createModal.midNumberHelp')}</p>
@@ -505,6 +507,7 @@ function CreateOrganizationModal({
               value={formData.village}
               onChange={(e) => setFormData({ ...formData, village: e.target.value })}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+              placeholder={t('common.placeholders.village')}
             />
           </div>
           <div>
@@ -516,6 +519,7 @@ function CreateOrganizationModal({
               value={formData.address}
               onChange={(e) => setFormData({ ...formData, address: e.target.value })}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+              placeholder={t('common.placeholders.address')}
             />
           </div>
           <div>
@@ -527,6 +531,7 @@ function CreateOrganizationModal({
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+              placeholder={t('common.placeholders.email')}
             />
           </div>
           <div>
@@ -538,6 +543,7 @@ function CreateOrganizationModal({
               value={formData.phone}
               onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+              placeholder={t('common.placeholders.phone')}
             />
           </div>
           <div className="flex justify-end space-x-3 mt-6">
@@ -625,6 +631,7 @@ function UpdateOrganizationModal({
                 setErrors({ ...errors, name: '' });
               }}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+              placeholder={t('common.placeholders.organizationName')}
             />
             {errors.name && <p className="text-red-600 text-sm mt-1">{errors.name}</p>}
           </div>
@@ -640,6 +647,7 @@ function UpdateOrganizationModal({
                 setErrors({ ...errors, midNumber: '' });
               }}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+              placeholder={t('common.placeholders.midNumber')}
             />
             {errors.midNumber && <p className="text-red-600 text-sm mt-1">{errors.midNumber}</p>}
             <p className="text-xs text-gray-500 mt-1">{t('organizations.editModal.midNumberHelp')}</p>
@@ -653,6 +661,7 @@ function UpdateOrganizationModal({
               value={formData.village}
               onChange={(e) => setFormData({ ...formData, village: e.target.value })}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+              placeholder={t('common.placeholders.village')}
             />
           </div>
           <div>
@@ -664,6 +673,7 @@ function UpdateOrganizationModal({
               value={formData.address}
               onChange={(e) => setFormData({ ...formData, address: e.target.value })}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+              placeholder={t('common.placeholders.address')}
             />
           </div>
           <div>
@@ -675,6 +685,7 @@ function UpdateOrganizationModal({
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+              placeholder={t('common.placeholders.email')}
             />
           </div>
           <div>
@@ -686,6 +697,7 @@ function UpdateOrganizationModal({
               value={formData.phone}
               onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+              placeholder={t('common.placeholders.phone')}
             />
           </div>
           <div className="flex justify-end space-x-3 mt-6">

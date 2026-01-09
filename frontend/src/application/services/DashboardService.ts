@@ -6,6 +6,7 @@ export interface DashboardStatistics {
   productSamplesCount: number;
   commissionsCount: number;
   protocolsCount: number;
+  paymentsCount?: number;
 }
 
 export interface UserActivity {
@@ -27,12 +28,15 @@ export class DashboardService {
         apiClient.get<any[]>('/api/protocols').catch(() => []),
       ]);
 
+      const payments = await apiClient.get<any[]>('/api/payments').catch(() => []);
+
       return {
         evaluationsCount: evaluations.length,
         categoriesCount: categories.length,
         productSamplesCount: productSamples.length,
         commissionsCount: commissions.length,
         protocolsCount: protocols.length,
+        paymentsCount: payments.length,
       };
     } catch (error) {
       console.error('Failed to load dashboard statistics:', error);
@@ -42,6 +46,7 @@ export class DashboardService {
         productSamplesCount: 0,
         commissionsCount: 0,
         protocolsCount: 0,
+        paymentsCount: 0,
       };
     }
   }

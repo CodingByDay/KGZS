@@ -493,6 +493,7 @@ function CreateUserModal({
   onClose: () => void;
   onSubmit: (user: CreateUserRequest) => void;
 }) {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState<CreateUserRequest>({
     email: '',
     username: '',
@@ -530,6 +531,7 @@ function CreateUserModal({
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+              placeholder={t('common.placeholders.email')}
               required
             />
           </div>
@@ -540,6 +542,7 @@ function CreateUserModal({
               value={formData.firstName}
               onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+              placeholder={t('common.placeholders.firstName')}
               required
             />
           </div>
@@ -550,6 +553,7 @@ function CreateUserModal({
               value={formData.lastName}
               onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+              placeholder={t('common.placeholders.lastName')}
               required
             />
           </div>
@@ -560,6 +564,7 @@ function CreateUserModal({
               value={formData.password}
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+              placeholder={t('common.placeholders.password')}
               required
             />
           </div>
@@ -704,6 +709,7 @@ function UpdateProfileModal({
                 setErrors({ ...errors, firstName: '' });
               }}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+              placeholder={t('common.placeholders.firstName')}
             />
             {errors.firstName && <p className="text-red-600 text-sm mt-1">{errors.firstName}</p>}
           </div>
@@ -719,6 +725,7 @@ function UpdateProfileModal({
                 setErrors({ ...errors, lastName: '' });
               }}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+              placeholder={t('common.placeholders.lastName')}
             />
             {errors.lastName && <p className="text-red-600 text-sm mt-1">{errors.lastName}</p>}
           </div>
@@ -733,6 +740,7 @@ function UpdateProfileModal({
                 setFormData({ ...formData, phoneNumber: e.target.value });
               }}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+              placeholder={t('common.placeholders.phone')}
             />
           </div>
           <div>
@@ -747,6 +755,7 @@ function UpdateProfileModal({
                 setErrors({ ...errors, email: '' });
               }}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+              placeholder={t('common.placeholders.email')}
             />
             {errors.email && <p className="text-red-600 text-sm mt-1">{errors.email}</p>}
           </div>
@@ -822,6 +831,7 @@ function UpdatePasswordModal({
                 setError('');
               }}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+              placeholder={t('common.placeholders.password')}
             />
           </div>
           <div>
@@ -836,6 +846,7 @@ function UpdatePasswordModal({
                 setError('');
               }}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+              placeholder={t('common.placeholders.password')}
             />
             {error && <p className="text-red-600 text-sm mt-1">{error}</p>}
           </div>

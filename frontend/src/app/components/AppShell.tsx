@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { authService } from '@/application/services/AuthService';
 import { StorageService } from '@/infrastructure/storage/StorageService';
 import { UserRole } from '@/domain/enums/UserRole';
+import { UserType } from '@/domain/enums/UserType';
 import { getRoleDisplayInfo, getRoleLabel } from '@/domain/enums/UserRoleDisplay';
 import { User } from '@/domain/types/User';
 import { useTranslation } from 'react-i18next';
@@ -16,7 +17,8 @@ import {
   HiClipboardDocumentCheck,
   HiDocumentText,
   HiShieldCheck,
-  HiBuildingOffice
+  HiBuildingOffice,
+  HiBanknotes
 } from 'react-icons/hi2';
 import SI from 'country-flag-icons/react/3x2/SI';
 import GB from 'country-flag-icons/react/3x2/GB';
@@ -40,6 +42,8 @@ export function AppShell({ children }: AppShellProps) {
           const parsedUser = JSON.parse(userJson);
           console.log('AppShell: Loaded user from storage:', parsedUser);
           console.log('AppShell: ProfilePictureUrl:', parsedUser.profilePictureUrl);
+          console.log('AppShell: userType from storage:', parsedUser.userType, 'type:', typeof parsedUser.userType);
+          console.log('AppShell: role from storage:', parsedUser.role, 'type:', typeof parsedUser.role);
           setUser(parsedUser);
         } catch {
           // If parsing fails, try to load from API
@@ -83,6 +87,38 @@ export function AppShell({ children }: AppShellProps) {
   }, []);
 
   const isSuperAdmin = user?.role === UserRole.SuperAdmin || String(user?.role) === 'SuperAdmin';
+  // Check if user is an organization user (OrganizationAdmin or OrganizationUser)
+  // Handle both enum values, numeric values, and string values (from API/storage)
+  const userTypeValue = user?.userType;
+  const userRoleValue = user?.role;
+  const hasOrganizationId = !!user?.organizationId;
+  
+  // Convert userType to number for comparison (handles enum, number, or string)
+  const userTypeNum = userTypeValue !== undefined && userTypeValue !== null 
+    ? (typeof userTypeValue === 'number' ? userTypeValue : Number(userTypeValue))
+    : null;
+  
+  // Check userType (can be enum, number, or string from storage)
+  const isOrgUserByType = 
+    userTypeValue === UserType.OrganizationAdmin || 
+    userTypeValue === UserType.OrganizationUser ||
+    userTypeNum === 2 || // OrganizationAdmin = 2
+    userTypeNum === 3 || // OrganizationUser = 3
+    String(userTypeValue) === '2' || // Handle string "2"
+    String(userTypeValue) === '3'; // Handle string "3"
+  
+  // Check role as well (OrganizationAdmin role)
+  const isOrgUserByRole = 
+    userRoleValue === UserRole.OrganizationAdmin ||
+    String(userRoleValue) === 'OrganizationAdmin';
+  
+  // Also check if user has organizationId (additional indicator)
+  const isOrganizationUser = isOrgUserByType || isOrgUserByRole || (hasOrganizationId && !isSuperAdmin);
+  
+  // Debug logging
+  if (user) {
+    console.log('AppShell: User detection - userType:', userTypeValue, 'type:', typeof userTypeValue, 'role:', userRoleValue, 'organizationId:', user.organizationId, 'isOrganizationUser:', isOrganizationUser);
+  }
 
   const handleLogout = () => {
     authService.logout().finally(() => {
@@ -98,104 +134,168 @@ export function AppShell({ children }: AppShellProps) {
   };
 
   return (
-    <div className="min-h-screen bg-blue-50">
-      <div className="flex">
+    <div className="h-screen bg-blue-50 overflow-hidden">
+      <div className="flex h-full">
         {/* Sidebar */}
-        <aside className="w-64 bg-gradient-to-b from-blue-900 to-blue-800 shadow-xl min-h-screen flex flex-col">
+        <aside className="w-64 bg-gradient-to-b from-blue-900 to-blue-800 shadow-xl h-screen flex flex-col">
           <div className="p-4 border-b border-blue-700 flex-shrink-0">
             <Logo size="md" />
           </div>
           <nav className="p-4 space-y-1 flex-1 overflow-y-auto">
-            <Link
-              to="/app/dashboard"
-              className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all ${
-                isActive('/app/dashboard') 
-                  ? 'bg-blue-700 text-white shadow-md' 
-                  : 'text-blue-100 hover:bg-blue-700/50 hover:text-white'
-              }`}
-            >
-              <HiHome className="w-5 h-5" />
-              <span className="font-medium">{t('nav.dashboard')}</span>
-            </Link>
-            <Link
-              to="/app/productsamples"
-              className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all ${
-                isActive('/app/productsamples') 
-                  ? 'bg-blue-700 text-white shadow-md' 
-                  : 'text-blue-100 hover:bg-blue-700/50 hover:text-white'
-              }`}
-            >
-              <HiCube className="w-5 h-5" />
-              <span className="font-medium">{t('nav.productSamples')}</span>
-            </Link>
-            <Link
-              to="/app/categories"
-              className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all ${
-                isActive('/app/categories') 
-                  ? 'bg-blue-700 text-white shadow-md' 
-                  : 'text-blue-100 hover:bg-blue-700/50 hover:text-white'
-              }`}
-            >
-              <HiFolder className="w-5 h-5" />
-              <span className="font-medium">{t('nav.categories')}</span>
-            </Link>
-            <Link
-              to="/app/commissions"
-              className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all ${
-                isActive('/app/commissions') 
-                  ? 'bg-blue-700 text-white shadow-md' 
-                  : 'text-blue-100 hover:bg-blue-700/50 hover:text-white'
-              }`}
-            >
-              <HiUserGroup className="w-5 h-5" />
-              <span className="font-medium">{t('nav.commissions')}</span>
-            </Link>
-            <Link
-              to="/app/evaluations"
-              className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all ${
-                isActive('/app/evaluations') 
-                  ? 'bg-blue-700 text-white shadow-md' 
-                  : 'text-blue-100 hover:bg-blue-700/50 hover:text-white'
-              }`}
-            >
-              <HiClipboardDocumentCheck className="w-5 h-5" />
-              <span className="font-medium">{t('nav.evaluations')}</span>
-            </Link>
-            <Link
-              to="/app/protocols"
-              className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all ${
-                isActive('/app/protocols') 
-                  ? 'bg-blue-700 text-white shadow-md' 
-                  : 'text-blue-100 hover:bg-blue-700/50 hover:text-white'
-              }`}
-            >
-              <HiDocumentText className="w-5 h-5" />
-              <span className="font-medium">{t('nav.protocols')}</span>
-            </Link>
-            {isSuperAdmin && (
+            {isOrganizationUser ? (
+              // Organization users see: Dashboard, Prijave, Ocenjevanja, Zapisniki, Placila
               <>
                 <Link
-                  to="/app/admin/organizations"
+                  to="/app/dashboard"
                   className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all ${
-                    isActive('/app/admin/organizations') 
+                    isActive('/app/dashboard') 
                       ? 'bg-blue-700 text-white shadow-md' 
                       : 'text-blue-100 hover:bg-blue-700/50 hover:text-white'
                   }`}
                 >
-                  <HiBuildingOffice className="w-5 h-5" />
-                  <span className="font-medium">{t('nav.kmetije')}</span>
+                  <HiHome className="w-5 h-5" />
+                  <span className="font-medium">{t('nav.dashboard')}</span>
                 </Link>
                 <Link
-                  to="/app/admin"
+                  to="/app/productsamples"
                   className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all ${
-                    isActive('/app/admin') 
+                    isActive('/app/productsamples') 
                       ? 'bg-blue-700 text-white shadow-md' 
                       : 'text-blue-100 hover:bg-blue-700/50 hover:text-white'
                   }`}
                 >
-                  <HiShieldCheck className="w-5 h-5" />
-                  <span className="font-medium">{t('nav.admin')}</span>
+                  <HiCube className="w-5 h-5" />
+                  <span className="font-medium">{t('nav.productSamples')}</span>
                 </Link>
+                <Link
+                  to="/app/evaluations"
+                  className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all ${
+                    isActive('/app/evaluations') 
+                      ? 'bg-blue-700 text-white shadow-md' 
+                      : 'text-blue-100 hover:bg-blue-700/50 hover:text-white'
+                  }`}
+                >
+                  <HiClipboardDocumentCheck className="w-5 h-5" />
+                  <span className="font-medium">{t('nav.evaluations')}</span>
+                </Link>
+                <Link
+                  to="/app/protocols"
+                  className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all ${
+                    isActive('/app/protocols') 
+                      ? 'bg-blue-700 text-white shadow-md' 
+                      : 'text-blue-100 hover:bg-blue-700/50 hover:text-white'
+                  }`}
+                >
+                  <HiDocumentText className="w-5 h-5" />
+                  <span className="font-medium">{t('nav.protocols')}</span>
+                </Link>
+                <Link
+                  to="/app/payments"
+                  className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all ${
+                    isActive('/app/payments') 
+                      ? 'bg-blue-700 text-white shadow-md' 
+                      : 'text-blue-100 hover:bg-blue-700/50 hover:text-white'
+                  }`}
+                >
+                  <HiBanknotes className="w-5 h-5" />
+                  <span className="font-medium">{t('nav.payments')}</span>
+                </Link>
+              </>
+            ) : (
+              // Other users see full navigation
+              <>
+                <Link
+                  to="/app/dashboard"
+                  className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all ${
+                    isActive('/app/dashboard') 
+                      ? 'bg-blue-700 text-white shadow-md' 
+                      : 'text-blue-100 hover:bg-blue-700/50 hover:text-white'
+                  }`}
+                >
+                  <HiHome className="w-5 h-5" />
+                  <span className="font-medium">{t('nav.dashboard')}</span>
+                </Link>
+                <Link
+                  to="/app/productsamples"
+                  className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all ${
+                    isActive('/app/productsamples') 
+                      ? 'bg-blue-700 text-white shadow-md' 
+                      : 'text-blue-100 hover:bg-blue-700/50 hover:text-white'
+                  }`}
+                >
+                  <HiCube className="w-5 h-5" />
+                  <span className="font-medium">{t('nav.productSamples')}</span>
+                </Link>
+                <Link
+                  to="/app/categories"
+                  className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all ${
+                    isActive('/app/categories') 
+                      ? 'bg-blue-700 text-white shadow-md' 
+                      : 'text-blue-100 hover:bg-blue-700/50 hover:text-white'
+                  }`}
+                >
+                  <HiFolder className="w-5 h-5" />
+                  <span className="font-medium">{t('nav.categories')}</span>
+                </Link>
+                <Link
+                  to="/app/commissions"
+                  className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all ${
+                    isActive('/app/commissions') 
+                      ? 'bg-blue-700 text-white shadow-md' 
+                      : 'text-blue-100 hover:bg-blue-700/50 hover:text-white'
+                  }`}
+                >
+                  <HiUserGroup className="w-5 h-5" />
+                  <span className="font-medium">{t('nav.commissions')}</span>
+                </Link>
+                <Link
+                  to="/app/evaluations"
+                  className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all ${
+                    isActive('/app/evaluations') 
+                      ? 'bg-blue-700 text-white shadow-md' 
+                      : 'text-blue-100 hover:bg-blue-700/50 hover:text-white'
+                  }`}
+                >
+                  <HiClipboardDocumentCheck className="w-5 h-5" />
+                  <span className="font-medium">{t('nav.evaluations')}</span>
+                </Link>
+                <Link
+                  to="/app/protocols"
+                  className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all ${
+                    isActive('/app/protocols') 
+                      ? 'bg-blue-700 text-white shadow-md' 
+                      : 'text-blue-100 hover:bg-blue-700/50 hover:text-white'
+                  }`}
+                >
+                  <HiDocumentText className="w-5 h-5" />
+                  <span className="font-medium">{t('nav.protocols')}</span>
+                </Link>
+                {isSuperAdmin && (
+                  <>
+                    <Link
+                      to="/app/admin/organizations"
+                      className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all ${
+                        isActive('/app/admin/organizations') 
+                          ? 'bg-blue-700 text-white shadow-md' 
+                          : 'text-blue-100 hover:bg-blue-700/50 hover:text-white'
+                      }`}
+                    >
+                      <HiBuildingOffice className="w-5 h-5" />
+                      <span className="font-medium">{t('nav.kmetije')}</span>
+                    </Link>
+                    <Link
+                      to="/app/admin"
+                      className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all ${
+                        isActive('/app/admin') 
+                          ? 'bg-blue-700 text-white shadow-md' 
+                          : 'text-blue-100 hover:bg-blue-700/50 hover:text-white'
+                      }`}
+                    >
+                      <HiShieldCheck className="w-5 h-5" />
+                      <span className="font-medium">{t('nav.admin')}</span>
+                    </Link>
+                  </>
+                )}
               </>
             )}
           </nav>
@@ -366,7 +466,7 @@ export function AppShell({ children }: AppShellProps) {
         </aside>
 
         {/* Main content */}
-        <main className="flex-1 p-8">
+        <main className="flex-1 h-screen overflow-y-auto p-8">
           {children}
         </main>
       </div>

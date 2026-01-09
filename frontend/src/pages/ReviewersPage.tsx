@@ -477,6 +477,7 @@ function CreateReviewerModal({
               value={formData.firstName}
               onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+              placeholder={t('common.placeholders.firstName')}
             />
             {errors.firstName && <p className="text-red-600 text-sm mt-1">{errors.firstName}</p>}
           </div>
@@ -489,6 +490,7 @@ function CreateReviewerModal({
               value={formData.lastName}
               onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+              placeholder={t('common.placeholders.lastName')}
             />
             {errors.lastName && <p className="text-red-600 text-sm mt-1">{errors.lastName}</p>}
           </div>
@@ -501,6 +503,7 @@ function CreateReviewerModal({
               value={formData.phoneNumber}
               onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+              placeholder={t('common.placeholders.phone')}
             />
           </div>
           <div>
@@ -512,6 +515,7 @@ function CreateReviewerModal({
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+              placeholder={t('common.placeholders.email')}
             />
             {errors.email && <p className="text-red-600 text-sm mt-1">{errors.email}</p>}
           </div>
@@ -524,6 +528,7 @@ function CreateReviewerModal({
               value={formData.password}
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+              placeholder={t('common.placeholders.password')}
             />
             {errors.password && <p className="text-red-600 text-sm mt-1">{errors.password}</p>}
           </div>
@@ -605,6 +610,7 @@ function UpdateProfileModal({
                 if (errors.firstName) setErrors({ ...errors, firstName: '' });
               }}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+              placeholder={t('common.placeholders.firstName')}
             />
             {errors.firstName && <p className="text-red-600 text-sm mt-1">{errors.firstName}</p>}
           </div>
@@ -620,6 +626,7 @@ function UpdateProfileModal({
                 if (errors.lastName) setErrors({ ...errors, lastName: '' });
               }}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+              placeholder={t('common.placeholders.lastName')}
             />
             {errors.lastName && <p className="text-red-600 text-sm mt-1">{errors.lastName}</p>}
           </div>
@@ -632,6 +639,7 @@ function UpdateProfileModal({
               value={formData.phoneNumber}
               onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+              placeholder={t('common.placeholders.phone')}
             />
           </div>
           <div>
@@ -646,6 +654,7 @@ function UpdateProfileModal({
                 if (errors.email) setErrors({ ...errors, email: '' });
               }}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+              placeholder={t('common.placeholders.email')}
             />
             {errors.email && <p className="text-red-600 text-sm mt-1">{errors.email}</p>}
           </div>
@@ -765,6 +774,7 @@ function ResetPasswordModal({
                 setError('');
               }}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+              placeholder={t('common.placeholders.password')}
             />
           </div>
           {password && (
@@ -780,6 +790,7 @@ function ResetPasswordModal({
                   setError('');
                 }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                placeholder={t('common.placeholders.password')}
               />
             </div>
           )}

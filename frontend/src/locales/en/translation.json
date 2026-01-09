@@ -4,11 +4,12 @@
   },
   "nav": {
     "dashboard": "Dashboard",
-    "productSamples": "Product Samples",
+    "productSamples": "Applications",
     "categories": "Groups",
     "commissions": "Commissions",
     "evaluations": "Evaluations",
     "protocols": "Protocols",
+    "payments": "Payments",
     "kmetije": "Farms",
     "admin": "Admin",
     "profile": "Profile",
@@ -196,6 +197,21 @@
       "submitting": "Registering..."
     }
   },
+  "payments": {
+    "pageTitle": "Payments",
+    "table": {
+      "organization": "Organization",
+      "amount": "Amount",
+      "status": "Status",
+      "dueDate": "Due Date",
+      "paidDate": "Paid Date",
+      "invoiceNumber": "Invoice Number"
+    },
+    "messages": {
+      "loadError": "Failed to load payments",
+      "noPayments": "No payments found"
+    }
+  },
   "categories": {
     "title": "Food Groups",
     "subtitle": "Groups represent different food groups for evaluation",
@@ -323,7 +339,7 @@
       "title": "System Statistics",
       "evaluations": "Evaluation Events",
       "categories": "Groups",
-      "productSamples": "Product Samples",
+      "productSamples": "Applications",
       "commissions": "Commissions",
       "protocols": "Protocols"
     },
@@ -438,7 +454,21 @@
     "clearFilters": "Clear Filters",
     "search": "Search...",
     "all": "All",
-    "noResults": "No results found"
+    "noResults": "No results found",
+    "placeholders": {
+      "name": "Enter name",
+      "email": "Enter email",
+      "password": "Enter password",
+      "firstName": "Enter first name",
+      "lastName": "Enter last name",
+      "phone": "Enter phone number",
+      "address": "Enter address",
+      "village": "Enter village",
+      "description": "Enter description",
+      "organizationName": "Enter organization name",
+      "midNumber": "Enter MID number",
+      "username": "Enter username"
+    }
   },
   "language": {
     "sl": "Slovenian",

@@ -513,6 +513,7 @@ function CommissionModal({ users, commission, onClose, onSubmit }: CommissionMod
               className={`w-full px-3 py-2 border rounded-lg ${
                 errors.name ? 'border-red-500' : 'border-gray-300'
               }`}
+              placeholder={t('common.placeholders.name')}
               required
             />
             {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
@@ -526,6 +527,7 @@ function CommissionModal({ users, commission, onClose, onSubmit }: CommissionMod
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+              placeholder={t('common.placeholders.description')}
               rows={3}
             />
           </div>
